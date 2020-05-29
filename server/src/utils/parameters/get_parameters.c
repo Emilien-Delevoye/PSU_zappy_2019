@@ -9,9 +9,7 @@
 #include "utils/parameters.h"
 #include <stdlib.h>
 
-//const char *flags[] = {"-p", "-x", "-y", "-n", "-c", "-f", NULL};
-
-bool (*flags[7])(char **, data_server_t *) =
+bool (*fl[7])(char **, data_server_t *) =
 {
     p_flag, x_flag, y_flag, n_flag, c_flag, f_flag, NULL
 };
@@ -19,9 +17,11 @@ bool (*flags[7])(char **, data_server_t *) =
 data_server_t get_parameters(int ac, char **av)
 {
     data_server_t data = {0};
+    bool st = true;
 
-    for (int a = 0; a < ac && av[a]; ++a) {
-        for (int b = 0; flags[b]; ++b);
-    }
+    for (int a = 0; a < ac && av[a]; ++a)
+        for (int b = 0; fl[b]; ++b)
+            st = (fl[b](av + a, &data) == true && st == true ? true : false);
+    data.valid_params = st;
     return (data);
 }
