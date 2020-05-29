@@ -8,7 +8,13 @@
 NAME_SERVER	=	zappy_server
 
 SRC_SERVER	=	src/main.c	\
-			src/utils/parameters/get_parameters.c
+			src/utils/parameters/get_parameters.c	\
+			src/utils/parameters/c_flag.c	\
+			src/utils/parameters/f_flag.c	\
+			src/utils/parameters/n_flag.c	\
+			src/utils/parameters/p_flag.c	\
+			src/utils/parameters/x_flag.c	\
+			src/utils/parameters/y_flag.c
 
 OBJ_SERVER	=	$(SRC_SERVER:.c=.o)
 
