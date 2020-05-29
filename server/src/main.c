@@ -17,8 +17,8 @@ int usage(int return_val, char *av)
             "\twidth\tis the width of the world\n"
             "\theight\tis the height of the world\n"
             "\tnameX\tis the name of the Team X\n"
-            "\tclientsNb\tis the number of authorized clients per team"
-            "freq\tis the reciprocal of time unit for execution of actions"
+            "\tclientsNb\tis the number of authorized clients per team\n"
+            "\tfreq\tis the reciprocal of time unit for execution of actions"
             , av);
     return (return_val);
 }
