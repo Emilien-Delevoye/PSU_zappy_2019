@@ -17,7 +17,7 @@ jobs:
       - name: make clean
         run: make clean -C server/
       - name: make fclean -C server/
-        run: make ; make fclean -C server/
+        run: make -C server/ ; make fclean -C server/
       - name: make re -C server/
         run: make re -C server/
   update_remote:
