@@ -8,6 +8,7 @@
 #include "server.h"
 #include "map/setup_map.h"
 #include "utils/parameters.h"
+#include "sockets/control_socket.h"
 #include <stdio.h>
 
 int usage(int return_val, char *av)
@@ -31,6 +32,8 @@ int main(int ac, char **av)
     if (data.valid_params == false)
         return (usage(84, av[0]));
     if (setup_map(&data) == 84)
+        return (84);
+    if (setup_socket(&data) == 84)
         return (84);
     return (0);
 }
