@@ -23,7 +23,7 @@ data_server_t get_parameters(int ac, char **av)
         for (int b = 0; fl[b]; ++b)
             st = (fl[b](av + a, &data) == true && st == true ? true : false);
     if (data.team_nb < 1 || !data.team_names || data.port < 1 || data.width < 1
-        || data.height < 1 || data.client_nb || data.freq < 1)
+        || data.height < 1 || data.client_nb < 1 || data.freq < 1)
         st = false;
     data.valid_params = st;
     return (data);
