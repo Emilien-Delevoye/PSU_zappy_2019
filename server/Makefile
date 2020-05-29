@@ -14,7 +14,8 @@ SRC_SERVER	=	src/main.c	\
 			src/utils/parameters/n_flag.c	\
 			src/utils/parameters/p_flag.c	\
 			src/utils/parameters/x_flag.c	\
-			src/utils/parameters/y_flag.c
+			src/utils/parameters/y_flag.c	\
+			src/setup_map/setup_map.c
 
 OBJ_SERVER	=	$(SRC_SERVER:.c=.o)
 
