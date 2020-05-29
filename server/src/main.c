@@ -5,9 +5,13 @@
 ** Created by emilien
 */
 
-#include <stdio.h>
+#include "server.h"
+#include "utils/parameters.h"
 
-int main(int ac __attribute__((unused)), char **av __attribute__((unused)))
+int main(int ac, char **av)
 {
-    puts("Serveur zappy");
+    data_server_t data = get_parameters(ac, av);
+
+    (void)data;
+    return (0);
 }
