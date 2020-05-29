@@ -1,0 +1,35 @@
+##
+## EPITECH PROJECT, 2019
+## Makefile
+## File description:
+## Makefile
+##
+
+NAME_SERVER	=	zappy_server
+
+SRC_SERVER	=	src/main.c
+
+OBJ_SERVER	=	$(SRC_SERVER:.c=.o)
+
+CFLAGS = -W -Wall -Wextra -pedantic -ansi -std=gnu11 -I include
+
+all:	$(NAME_SERVER) $(NAME_CLIENT)
+
+$(NAME_SERVER): $(OBJ_SERVER)
+	gcc -o $(NAME_SERVER) $(OBJ_SERVER)
+
+debug:	CFLAGS += -g
+debug:	all
+
+debugre:	CFLAGS += -g
+debugre:	re
+
+clean:
+	rm -f $(OBJ_CLIENT) $(OBJ_SERVER)
+
+fclean: clean
+	rm -f $(NAME_CLIENT) $(NAME_SERVER)
+
+re: fclean all
+
+.PHONY	=	all $(NAME_SERVER) debug debugre clean fclean re
