@@ -19,7 +19,8 @@ SRC_SERVER	=	src/main.c	\
 			src/sockets/setup_socket.c	\
 			src/utils/server/close_server.c	\
 			src/sockets/run_server.c	\
-			src/sockets/select/select.c
+			src/sockets/select/select.c	\
+			src/sockets/accept_connections.c
 
 OBJ_SERVER	=	$(SRC_SERVER:.c=.o)
 

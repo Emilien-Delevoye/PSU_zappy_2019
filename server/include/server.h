@@ -11,6 +11,17 @@
 #include <stdbool.h>
 #include <sys/select.h>
 
+typedef struct client_s {
+    int fd;
+    struct client_s *prev;
+    struct client_s *next;
+} client_t;
+
+struct list_client_s {
+    client_t *first;
+    client_t *last;
+};
+
 typedef struct data_server_s {
     //Server settings
     int port;
@@ -25,6 +36,8 @@ typedef struct data_server_s {
     int fd;
     fd_set fdset_read;
     fd_set fdset_write;
+    //Clients structures
+    struct list_client_s l_cli;
 } data_server_t;
 
 #endif //SERVER_SERVER_H

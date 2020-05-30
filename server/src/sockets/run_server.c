@@ -5,6 +5,7 @@
 ** Created by emilien
 */
 
+#include "sockets/accept_connections.h"
 #include "sockets/run_server.h"
 #include "sockets/select.h"
 #include <signal.h>
@@ -51,6 +52,7 @@ int run_server(data_server_t *data)
         setup_fdset(data);
         if (!select_fd(data))
             return (0);
+        accept_connections(data);
     }
     return (0);
 }
