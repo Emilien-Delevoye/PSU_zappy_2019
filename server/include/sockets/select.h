@@ -11,6 +11,7 @@
 #include "server.h"
 #include <sys/select.h>
 
-void setup_fdset(data_server_t *data);
+void setup_fdset(data_server_t *);
+bool select_fd(data_server_t *);
 
 #endif //ZAPPY_SERVER_SELECT_H

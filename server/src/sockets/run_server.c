@@ -49,6 +49,8 @@ int run_server(data_server_t *data)
         return (84);
     while (server_running()) {
         setup_fdset(data);
+        if (!select_fd(data))
+            return (0);
     }
     return (0);
 }
