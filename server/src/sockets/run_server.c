@@ -6,6 +6,7 @@
 */
 
 #include "sockets/run_server.h"
+#include "sockets/select.h"
 #include <signal.h>
 #include <unistd.h>
 
@@ -47,7 +48,7 @@ int run_server(data_server_t *data)
     if (setup_sigcatch() < 0)
         return (84);
     while (server_running()) {
-
+        setup_fdset(data);
     }
     return (0);
 }

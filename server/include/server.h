@@ -9,6 +9,7 @@
 #define SERVER_SERVER_H
 
 #include <stdbool.h>
+#include <sys/select.h>
 
 typedef struct data_server_s {
     //Server settings
@@ -22,6 +23,8 @@ typedef struct data_server_s {
     bool valid_params;
     //Server socket
     int fd;
+    fd_set fdset_read;
+    fd_set fdset_write;
 } data_server_t;
 
 #endif //SERVER_SERVER_H
