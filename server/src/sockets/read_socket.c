@@ -8,6 +8,7 @@
 #include "server.h"
 #include "sockets/select.h"
 #include <unistd.h>
+#include <stdio.h>
 
 void read_buffer(data_server_t *data, client_t *cli)
 {
@@ -15,6 +16,7 @@ void read_buffer(data_server_t *data, client_t *cli)
 
     if (!read(cli->fd, buffer, 128))
         close_client(data, cli);
+    printf("Buffer read : %s\n", buffer);
 }
 
 void read_socket(data_server_t *data)

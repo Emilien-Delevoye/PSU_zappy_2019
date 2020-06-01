@@ -10,6 +10,7 @@
 #include <netinet/in.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdio.h>
 
 void add_client_to_list(data_server_t *data, int new_fd)
 {
@@ -30,6 +31,7 @@ void add_client_to_list(data_server_t *data, int new_fd)
         data->l_cli.last->next = new;
         data->l_cli.last = new;
     }
+    printf("New connection (client %d)\n", new_fd);
 }
 
 void accept_connections(data_server_t *data)
