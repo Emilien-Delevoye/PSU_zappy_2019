@@ -13,6 +13,9 @@ void setup_fdset(data_server_t *data)
     FD_ZERO(&data->fdset_read);
     FD_ZERO(&data->fdset_write);
     FD_SET(data->fd, &data->fdset_read);
+    for (client_t *cur = data->l_cli.first; cur; cur = cur->next) {
+        FD_SET(cur->fd, &data->fdset_read);
+    }
 }
 
 static int get_max_fd(data_server_t *data)
