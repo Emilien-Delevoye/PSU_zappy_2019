@@ -10,12 +10,14 @@
 #include <unistd.h>
 #include <stdio.h>
 
-void read_buffer(data_server_t *data, client_t *cli)
+void read_buffer(client_t *cli)
 {
     char buffer[129] = {0};
 
-    if (!read(cli->fd, buffer, 128))
-        close_client(data, cli);
+    if (!read(cli->fd, buffer, 128)) {
+        cli->to_close = true;
+        return;
+    }
     printf("Buffer read : %s\n", buffer);
 }
 
@@ -23,5 +25,5 @@ void read_socket(data_server_t *data)
 {
     for (client_t *cli = data->l_cli.first; cli; cli = cli->next)
         if (FD_ISSET(cli->fd, &data->fdset_read))
-            read_buffer(data, cli);
+            read_buffer(cli);
 }

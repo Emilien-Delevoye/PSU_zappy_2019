@@ -24,11 +24,13 @@ void add_client_to_list(data_server_t *data, int new_fd)
     new->fd = new_fd;
     new->next = NULL;
     new->prev = NULL;
+    new->to_close = false;
     if (!data->l_cli.first) {
         data->l_cli.first = new;
         data->l_cli.last = new;
     } else {
         data->l_cli.last->next = new;
+        new->prev = data->l_cli.last;
         data->l_cli.last = new;
     }
     printf("New connection (client %d)\n", new_fd);

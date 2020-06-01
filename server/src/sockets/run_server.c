@@ -54,6 +54,7 @@ int run_server(data_server_t *data)
             return (0);
         accept_connections(data);
         read_socket(data);
+        close_clients(data);
     }
     return (0);
 }

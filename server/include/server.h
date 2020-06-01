@@ -13,6 +13,7 @@
 
 typedef struct client_s {
     int fd;
+    bool to_close;
     struct client_s *prev;
     struct client_s *next;
 } client_t;
