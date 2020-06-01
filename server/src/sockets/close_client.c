@@ -44,7 +44,7 @@ static void remove_alone_element(data_server_t *data, client_t *cli)
 
 void close_client(data_server_t *data, client_t *cli)
 {
-    printf("Disconnection fo user %d\n", cli->fd);
+    printf("User %d disconnected\n", cli->fd);
     if (cli->next && cli->prev) {
         remove_middle_element(cli);
         return;
