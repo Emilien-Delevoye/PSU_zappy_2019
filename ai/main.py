@@ -9,7 +9,10 @@ def take_args():
     parser.add_argument("-h", help="is the name of the machine; localhost by default")
     parser.parse_args()
     args = parser.parse_args()
-    return int(args.p), str(args.n), str(args.h)
+    if args.h is None:
+        return int(args.p), str(args.n), str("localhost")
+    else:
+        return int(args.p), str(args.n), str(args.h)
 
 
 def main():
