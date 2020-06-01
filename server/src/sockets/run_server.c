@@ -53,6 +53,7 @@ int run_server(data_server_t *data)
         if (!select_fd(data))
             return (0);
         accept_connections(data);
+        read_socket(data);
     }
     return (0);
 }

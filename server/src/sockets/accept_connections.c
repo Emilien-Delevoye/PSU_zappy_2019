@@ -23,6 +23,7 @@ void accept_connections(data_server_t *data)
         return;
     new->fd = accept(data->fd, (struct sockaddr *)&addr_in, (socklen_t *)&len);
     new->next = NULL;
+    new->prev = NULL;
     if (!data->l_cli.first) {
         data->l_cli.first = new;
         data->l_cli.last = new;
