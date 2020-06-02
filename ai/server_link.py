@@ -15,7 +15,7 @@ class ServerLink:
         self.thread_running = False
         self.thread = Thread()
         self.activeConnection = False
-        self.buffers = {"read": [], "write": []}
+        self.buffers = {"read": str(), "write": bytes()}
 
     def read_write(self):
         while self.thread_running is True:
@@ -25,12 +25,14 @@ class ServerLink:
                 write_sckt.append(self.socket)
             readable, writable, useless = select.select(read_sckt, write_sckt, [], 0)
             if len(readable) != 0:
-                self.buffers["read"].append(str(readable[0].recv(1024), 'utf-8'))
-                if len(self.buffers["read"][0]) == 0:
+                buf = str(readable[0].recv(1024), 'utf-8')
+                if len(buf) == 0:
                     self.activeConnection = False
                     exit(0)
-            if len(writable) != 0:
-                writable.send(bytes(self.buffers["write"][0]))
+                self.buffers["read"] += buf
+            if len(writable) != 0 and len(self.buffers["write"]) != 0:
+                writable[0].send(bytes(self.buffers["write"]))
+                self.buffers["write"] = bytes()
 
     def connect(self):
         self.socket.connect((self.hostname, self.port))
@@ -50,17 +52,25 @@ class ServerLink:
         self.thread = Thread(target=self.read_write)
         self.thread.start()
 
-    def write(self):
-        data = bytes("Pouet", 'utf-8')
-        assert self.socket.send(data)
+    def write(self, string):
+        data = bytes(string, 'utf-8')
+        self.buffers["write"] += data
 
     def read(self):
         if len(self.buffers["read"]) > 0:
-            output = self.buffers["read"][0]
-            del self.buffers["read"][0]
+            output = ""
+            for i in self.buffers["read"]:
+                if i == '\n':
+                    output += i
+                    break
+                output += i
+            for i in output:
+                if i == '\n':
+                    self.buffers["read"] = self.buffers["read"][len(output):]
+                    return output
+            return None
         else:
-            output = None
-        return output
+            return None
 
     def disconnect(self):
         self.thread_running = False
