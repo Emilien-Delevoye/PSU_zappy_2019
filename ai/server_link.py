@@ -55,10 +55,10 @@ class ServerLink:
         assert self.socket.send(data)
 
     def read(self):
-        try:
+        if len(self.buffers["read"]) > 0:
             output = self.buffers["read"][0]
             del self.buffers["read"][0]
-        except IndexError:
+        else:
             output = None
         return output
 
@@ -69,3 +69,9 @@ class ServerLink:
 
     def is_alive(self):
         return self.activeConnection
+
+    def ready_to_read(self):
+        if len(self.buffers["read"]) > 0:
+            return True
+        else:
+            return False
