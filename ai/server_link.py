@@ -2,6 +2,22 @@ import socket
 from threading import Thread
 import select
 import sys
+from enum import Enum
+
+
+class Command(Enum):
+    Forward = 0,
+    Right = 1,
+    Left = 2,
+    Look = 3,
+    Inventory = 4,
+    Broadcast = 5,
+    Connect_nbr = 6,
+    Fork = 7,
+    Eject = 8,
+    Take = 9,
+    Set = 10,
+    Incantation = 11
 
 
 class ServerLink:
@@ -85,3 +101,15 @@ class ServerLink:
             return True
         else:
             return False
+
+    def send_action(self, command, argument=""):
+        str_commands = {Command.Forward: "Forward", Command.Right: "Right", Command.Left: "Left", Command.Look: "Look",
+                        Command.Inventory: "Inventory", Command.Broadcast: "Broadcast",
+                        Command.Connect_nbr: "Connect_nbr", Command.Fork: "Fork", Command.Eject: "Eject",
+                        Command.Take: "Take", Command.Set: "Set", Command.Incantation: "Incantation"}
+        if command not in Command:
+            return False
+        if command is not Command.Broadcast:
+            self.buffers["write"] += bytes(str_commands[command] + "\n", 'utf-8')
+        else:
+            self.buffers["write"] += bytes(str_commands[command] + " " + argument + "\n", 'utf-8')
