@@ -1,4 +1,4 @@
-from server_link import ServerLink
+from server_link import ServerLink, Command
 import argparse
 from sys import stderr
 
@@ -22,17 +22,16 @@ def main():
     hostname = str()
     try:
         port, name, hostname = take_args()
+        if port is None or name is None or hostname is None:
+            exit(84)
     except (ValueError, TypeError):
         exit(84)
-    if port is None or name is None or hostname is None:
-        exit(84)
-    newClient = ServerLink(hostname, port)
+    newClient = ServerLink(hostname, port, name)
     try:
         newClient.connect()
     except ConnectionRefusedError:
         print("Connection failed", file=stderr)
-    newClient.write()
-    newClient.read()
+        exit(84)
     newClient.disconnect()
 
 
