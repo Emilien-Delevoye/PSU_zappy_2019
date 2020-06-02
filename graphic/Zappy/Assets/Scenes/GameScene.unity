@@ -214,6 +214,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 1
+      - m_Target: {fileID: 2144528916}
+        m_MethodName: DisconectFromServer
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
 --- !u!114 &463592169
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1488,6 +1499,17 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 742440416}
         m_MethodName: QuitGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
+      - m_Target: {fileID: 2144528916}
+        m_MethodName: DisconectFromServer
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2809,6 +2831,7 @@ GameObject:
   - component: {fileID: 2144528910}
   - component: {fileID: 2144528914}
   - component: {fileID: 2144528915}
+  - component: {fileID: 2144528916}
   m_Layer: 0
   m_Name: Scene
   m_TagString: Untagged
@@ -2938,3 +2961,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PauseMenu: {fileID: 1361404939}
+  client: {fileID: 2144528916}
+--- !u!114 &2144528916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2144528906}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: caf359db4c5c1874497493a0fb9836ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

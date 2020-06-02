@@ -7,10 +7,11 @@ public class GameScene : MonoBehaviour
 {
     public GameObject PauseMenu;
 
+    public Client client;
+
     // Start is called before the first frame update
     void Start()
     {
-        
     }
 
     // Update is called once per frame
@@ -19,6 +20,7 @@ public class GameScene : MonoBehaviour
         if (Input.GetKey(KeyCode.Escape))
         {
             PauseMenu.SetActive(true);
+            
         }
     }
 }
