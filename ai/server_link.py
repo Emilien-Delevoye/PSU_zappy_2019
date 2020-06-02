@@ -12,9 +12,9 @@ class ServerLink:
         self.teamName = team_name
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setblocking(True)
-        self.test_val = 0
         self.thread_running = False
         self.thread = Thread()
+        self.activeConnection = False
         self.buffers = {"read": [], "write": []}
 
     def read_write(self):
@@ -26,6 +26,9 @@ class ServerLink:
             readable, writable, useless = select.select(read_sckt, write_sckt, [], 0)
             if len(readable) != 0:
                 self.buffers["read"].append(str(readable[0].recv(1024), 'utf-8'))
+                if len(self.buffers["read"][0]) == 0:
+                    self.activeConnection = False
+                    exit(0)
             if len(writable) != 0:
                 writable.send(bytes(self.buffers["write"][0]))
 
@@ -42,6 +45,7 @@ class ServerLink:
             exit(84)
         else:
             print(coReturn)
+        self.activeConnection = True
         self.thread_running = True
         self.thread = Thread(target=self.read_write)
         self.thread.start()
@@ -62,3 +66,6 @@ class ServerLink:
         self.thread_running = False
         self.thread.join()
         self.socket.close()
+
+    def is_alive(self):
+        return self.activeConnection
