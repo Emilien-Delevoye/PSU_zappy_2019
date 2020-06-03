@@ -21,6 +21,16 @@ static map_t *create_node(void)
     return (new);
 }
 
+static void read_to_create_links(data_server_t *data, map_t *first)
+{
+    if (data->width < 2)
+        return;
+    for (map_t *cur_1 = first->top; cur_1; cur_1 = cur_1->top) {
+        (void)(NULL);
+        first = first->top;
+    }
+}
+
 int setup_map(data_server_t *data)
 {
     map_t *cur = create_node();
@@ -38,5 +48,6 @@ int setup_map(data_server_t *data)
         }
         for (cur; cur->left; cur = cur->left);
     }
+    read_to_create_links(data, cur);
     return (0);
 }
