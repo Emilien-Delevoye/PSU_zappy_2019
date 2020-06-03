@@ -8,7 +8,7 @@
 #include "map/setup_map.h"
 #include <stdlib.h>
 
-map_t *create_node(void)
+static map_t *create_node(void)
 {
     map_t *new = malloc(sizeof(map_t));
 
@@ -23,23 +23,20 @@ map_t *create_node(void)
 
 int setup_map(data_server_t *data)
 {
-    map_t *first = create_node();
-    map_t *cur_start = first;
-    map_t *cur;
+    map_t *cur = create_node();
 
-    if (!first)
-        return (84);
-    data->top_left = first;
-    for (int a = 1; a < data->height; ++a) {
-        cur = cur_start;
+    for (int a = 0; a < data->height; ++a) {
+        if (a != 0) {
+            cur->bottom = create_node();
+            cur->bottom->top = cur;
+            cur = cur->bottom;
+        }
         for (int b = 1; b < data->width; ++b) {
             cur->right = create_node();
             cur->right->left = cur;
             cur = cur->right;
         }
-        cur_start->bottom = create_node();
-        cur_start->bottom->top = cur_start;
-        cur_start = cur_start->bottom;
+        for (cur; cur->left; cur = cur->left);
     }
     return (0);
 }
