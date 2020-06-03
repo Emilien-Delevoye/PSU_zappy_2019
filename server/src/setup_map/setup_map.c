@@ -31,6 +31,28 @@ static void create_links(map_t *top, map_t *bottom)
     }
 }
 
+static void create_boarders(map_t *first)
+{
+    map_t *top_l = first;
+    map_t *top_r;
+
+    for (top_r = first; top_r->right; top_r = top_r->right);
+    while (top_r) {
+        top_r->right = top_l;
+        top_l->left = top_r;
+        top_r = top_r->bottom;
+        top_l = top_l->bottom;
+    }
+    top_l = first;
+    for (top_r = first; top_r->bottom; top_r = top_r->bottom);
+    while (!top_l->top) {
+        top_l->top = top_r;
+        top_r->top = top_l;
+        top_r = top_r->right;
+        top_l = top_l->right;
+    }
+}
+
 static void read_to_create_links(data_server_t *data, map_t *first)
 {
     if (data->width < 2)
@@ -39,6 +61,7 @@ static void read_to_create_links(data_server_t *data, map_t *first)
         create_links(cur_1, first);
         first = first->top;
     }
+    create_boarders(first);
 }
 
 int setup_map(data_server_t *data)
