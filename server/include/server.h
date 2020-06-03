@@ -12,6 +12,7 @@
 #include <sys/select.h>
 
 typedef struct map_s {
+    unsigned int coord[2];
     struct map_s *right;
     struct map_s *left;
     struct map_s *top;

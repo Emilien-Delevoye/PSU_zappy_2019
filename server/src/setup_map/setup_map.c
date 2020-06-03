@@ -8,12 +8,14 @@
 #include "map/setup_map.h"
 #include <stdlib.h>
 
-static map_t *create_node(void)
+static map_t *create_node(unsigned int x, unsigned int y)
 {
     map_t *new = malloc(sizeof(map_t));
 
     if (!new)
         return (NULL);
+    new->coord[0] = x;
+    new->coord[1] = y;
     new->right = NULL;
     new->left = NULL;
     new->bottom = NULL;
@@ -47,7 +49,7 @@ static void create_boarders(map_t *first)
     for (top_r = first; top_r->bottom; top_r = top_r->bottom);
     while (!top_l->top) {
         top_l->top = top_r;
-        top_r->top = top_l;
+        top_r->bottom = top_l;
         top_r = top_r->right;
         top_l = top_l->right;
     }
@@ -66,21 +68,24 @@ static void read_to_create_links(data_server_t *data, map_t *first)
 
 int setup_map(data_server_t *data)
 {
-    map_t *cur = create_node();
+    map_t *cur = create_node(0, 0);
 
-    for (int a = 0; a < data->height; ++a) {
+    for (unsigned int a = 0; a < data->height; ++a) {
         if (a != 0) {
-            cur->bottom = create_node();
+            cur->bottom = create_node(a, 0);
             cur->bottom->top = cur;
             cur = cur->bottom;
         }
-        for (int b = 1; b < data->width; ++b) {
-            cur->right = create_node();
+        for (unsigned int b = 1; b < data->width; ++b) {
+            cur->right = create_node(a, b);
             cur->right->left = cur;
             cur = cur->right;
         }
         for (cur; cur->left; cur = cur->left);
     }
     read_to_create_links(data, cur);
+    for (cur; cur->coord[0] != 0; cur = cur->top);
+    for (cur; cur->coord[1] != 0; cur = cur->left);
+    data->top_left = cur;
     return (0);
 }
