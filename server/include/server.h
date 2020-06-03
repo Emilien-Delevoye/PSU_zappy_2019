@@ -11,6 +11,13 @@
 #include <stdbool.h>
 #include <sys/select.h>
 
+typedef struct map_s {
+    struct map_s *right;
+    struct map_s *left;
+    struct map_s *top;
+    struct map_s *bottom;
+} map_t;
+
 typedef struct client_s {
     int fd;
     bool to_close;
@@ -39,6 +46,7 @@ typedef struct data_server_s {
     fd_set fdset_write;
     //Clients structures
     struct list_client_s l_cli;
+    map_t *top_left;
 } data_server_t;
 
 #endif //SERVER_SERVER_H
