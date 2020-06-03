@@ -23,7 +23,8 @@ SRC_SERVER	=	src/main.c	\
 			src/sockets/accept_connections.c	\
 			src/sockets/read_socket.c	\
 			src/sockets/close_clients/utils_close_client.c	\
-			src/sockets/close_clients/close_client.c
+			src/sockets/close_clients/close_client.c	\
+			src/setup_map/create_map.c
 
 OBJ_SERVER	=	$(SRC_SERVER:.c=.o)
 
