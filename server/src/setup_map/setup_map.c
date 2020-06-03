@@ -21,12 +21,22 @@ static map_t *create_node(void)
     return (new);
 }
 
+static void create_links(map_t *top, map_t *bottom)
+{
+    while (top) {
+        top->bottom = bottom;
+        bottom->top = top;
+        bottom = bottom->right;
+        top = top->right;
+    }
+}
+
 static void read_to_create_links(data_server_t *data, map_t *first)
 {
     if (data->width < 2)
         return;
     for (map_t *cur_1 = first->top; cur_1; cur_1 = cur_1->top) {
-        (void)(NULL);
+        create_links(cur_1, first);
         first = first->top;
     }
 }
