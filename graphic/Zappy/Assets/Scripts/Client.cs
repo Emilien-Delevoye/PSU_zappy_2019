@@ -1,24 +1,42 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using System.Net.Sockets;
 
 public class Client : MonoBehaviour
 {
     static private TcpClient client;
 
+    //Byte[] data = System.Text.Encoding.ASCII.GetBytes(message);
+
     public Client()
     {
 
     }
 
-    public void ConnectToServer(string ip, int port)
+    public bool ConnectToServer(string ip, int port)
     {
-        client = new TcpClient(ip, port);
+        try
+        {
+            client = new TcpClient();
+            client.ConnectAsync(ip, port);
+            if (client.Connected)
+                return true;
+            return false;
+        }
+        catch (SocketException)
+        {
+            Debug.Log("Can't connect to the server.");
+            return false;
+        }
     }
 
     public void DisconectFromServer()
     {
         client.Close();
     }
+    
+    public bool Connected()
+    {
+        return client.Connected;
+    }
+
 }
