@@ -64,6 +64,9 @@ static void read_to_create_links(data_server_t *data, map_t *first)
         first = first->top;
     }
     create_boarders(first);
+    for (first; first->coord[0] != 0; first = first->top);
+    for (first; first->coord[1] != 0; first = first->left);
+    data->top_left = first;
 }
 
 int setup_map(data_server_t *data)
@@ -84,8 +87,5 @@ int setup_map(data_server_t *data)
         for (cur; cur->left; cur = cur->left);
     }
     read_to_create_links(data, cur);
-    for (cur; cur->coord[0] != 0; cur = cur->top);
-    for (cur; cur->coord[1] != 0; cur = cur->left);
-    data->top_left = cur;
     return (0);
 }
