@@ -48,6 +48,11 @@ typedef struct data_server_s {
     //Clients structures
     struct list_client_s l_cli;
     map_t *top_left;
+    //Timer structures
+    struct timeval tv;
+    struct tm *tm;
+    long int timer;
+    int sec;
 } data_server_t;
 
 #endif //SERVER_SERVER_H

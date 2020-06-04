@@ -24,7 +24,8 @@ SRC_SERVER	=	src/main.c	\
 			src/sockets/read_socket.c	\
 			src/sockets/close_clients/utils_close_client.c	\
 			src/sockets/close_clients/close_client.c	\
-			src/setup_map/create_map.c
+			src/setup_map/create_map.c	\
+			src/utils/time/time.c
 
 OBJ_SERVER	=	$(SRC_SERVER:.c=.o)
 
