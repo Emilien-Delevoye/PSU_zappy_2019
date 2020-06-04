@@ -24,19 +24,14 @@ void timer(data_server_t *data)
 {
     long int timer;
     int sec;
-    char str[3];
-    memset(str, 0, 3);
 
     gettimeofday(&data->tv, NULL);
     data->tm = localtime(&data->tv.tv_sec);
     timer = data->tv.tv_usec;
     sec = data->tm->tm_sec;
-    if ((sec - data->sec) * 1000000 + timer - data->timer > data->freq * 1000000) {
+    if ((sec - data->sec) * 1000000 + timer - data->timer > 1 / (double)data->freq * 1000000) {
         //TODO: do action here
         printf("sec == %d\n", sec);
-        sprintf(str, "%d", sec);
-        if (data->l_cli.first)
-            write(data->l_cli.first->fd, str, 3);
         data->timer = data->tv.tv_usec;
         data->sec = data->tm->tm_sec;
     }
