@@ -51,7 +51,7 @@ char *gnl(int fd, bool r_s)
         (a_read > 0)) {
         str = my_lstrcat(str, buffer, READ_SIZE);
         a_read = read(fd, buffer, READ_SIZE);
-        if (a_read == 0)
+        if (a_read == 0 || (a_read == 1 && buffer[0] == 4))
             return (NULL);
     }
     str = my_lstrcat(str, buffer, len(buffer, '\n'));
