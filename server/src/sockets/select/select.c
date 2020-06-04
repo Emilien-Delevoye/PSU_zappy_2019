@@ -29,8 +29,12 @@ static int get_max_fd(data_server_t *data)
 
 bool select_fd(data_server_t *data)
 {
+    struct timeval tv;
+
+    tv.tv_usec = 0;
+    tv.tv_sec = 0;
     if (select(get_max_fd(data), &data->fdset_read,
-        &data->fdset_write, NULL, NULL) < 0) {
+        &data->fdset_write, NULL, &tv) < 0) {
         return (false);
     }
     return (true);
