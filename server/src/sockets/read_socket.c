@@ -9,6 +9,8 @@
 #include "sockets/select.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
 
 void read_buffer(client_t *cli)
 {
@@ -19,6 +21,8 @@ void read_buffer(client_t *cli)
         return;
     }
     printf("Buffer read : %s\n", buffer);
+    if (strcmp(buffer, "ping") == 0)
+        write(cli->fd, "pong\n", 5);
     free(buffer);
 }
 
