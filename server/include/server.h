@@ -34,8 +34,8 @@ struct list_client_s {
 typedef struct data_server_s {
     //Server settings
     int port;
-    unsigned int width;
-    unsigned int height;
+    int width;
+    int height;
     char **team_names;
     unsigned int team_nb;
     unsigned short client_nb;
@@ -47,7 +47,7 @@ typedef struct data_server_s {
     fd_set fdset_write;
     //Clients structures
     struct list_client_s l_cli;
-    map_t *top_left;
+    map_t *bottom_left;
     //Timer structures
     struct timeval tv;
     struct tm *tm;

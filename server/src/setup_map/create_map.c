@@ -66,5 +66,5 @@ void read_to_create_links(data_server_t *data, map_t *first)
     create_boarders(first);
     for (; first->coord[0] != 0; first = first->top);
     for (; first->coord[1] != 0; first = first->left);
-    data->top_left = first;
+    data->bottom_left = first;
 }

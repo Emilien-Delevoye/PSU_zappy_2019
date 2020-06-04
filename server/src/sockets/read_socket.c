@@ -7,18 +7,23 @@
 
 #include "server.h"
 #include "sockets/select.h"
-#include <unistd.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
 
 void read_buffer(client_t *cli)
 {
-    char buffer[129] = {0};
+    char *buffer = gnl(cli->fd, true);
 
-    if (!read(cli->fd, buffer, 128)) {
+    if (!buffer) {
         cli->to_close = true;
         return;
     }
     printf("Buffer read : %s\n", buffer);
+    if (strcmp(buffer, "ping") == 0)
+        write(cli->fd, "pong\n", 5);
+    free(buffer);
 }
 
 void read_socket(data_server_t *data)
