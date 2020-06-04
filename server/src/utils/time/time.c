@@ -27,7 +27,7 @@ void timer(data_server_t *data)
     data->tm = localtime(&data->tv.tv_sec);
     timer = data->tv.tv_usec;
     sec = data->tm->tm_sec;
-    if ((sec - data->sec) * 1000000 + timer - data->timer > data->freq) {
+    if ((sec - data->sec) * 1000000 + timer - data->timer > data->freq * 1000000) {
         //TODO: do action here
         printf("sec == %d\n", sec);
         data->timer = data->tv.tv_usec;
