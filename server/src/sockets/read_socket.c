@@ -9,8 +9,8 @@
 #include "sockets/select.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
+#include "utils/write_list.h"
 
 void read_buffer(client_t *cli)
 {
@@ -22,7 +22,7 @@ void read_buffer(client_t *cli)
     }
     printf("Buffer read : %s\n", buffer);
     if (strcmp(buffer, "ping") == 0)
-        write(cli->fd, "pong\n", 5);
+        add_to_write_list(cli, "pong\n");
     free(buffer);
 }
 
