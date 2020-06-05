@@ -30,9 +30,7 @@ void timer(data_server_t *data)
     timer = data->tv.tv_usec;
     sec = data->tm->tm_sec;
     if ((sec - data->sec) * 1000000 + timer - data->timer > 1 /
-    (double)data->freq * 1000000) {
-
-        printf("sec == %d\n", sec);
+        (double)data->freq * 1000000) {
         data->timer = data->tv.tv_usec;
         data->sec = data->tm->tm_sec;
     }

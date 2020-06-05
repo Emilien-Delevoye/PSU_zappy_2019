@@ -38,7 +38,7 @@ char *my_lstrcat(char *str, char *src, int nb)
     return (new_str);
 }
 
-char *gnl(int fd, bool r_s, bool *to_close)
+char *gnl(int fd, bool *to_close)
 {
     static char buffer[READ_SIZE] = "";
     ssize_t a_r = READ_SIZE;
@@ -47,7 +47,7 @@ char *gnl(int fd, bool r_s, bool *to_close)
     if (str == NULL)
         return (NULL);
     str[0] = 0;
-    while (r_s == true && len(buffer, '\n') == len(buffer, '\0') &&
+    while (len(buffer, '\n') == len(buffer, '\0') &&
         (a_r > 0)) {
         str = my_lstrcat(str, buffer, READ_SIZE);
         a_r = read(fd, buffer, READ_SIZE);

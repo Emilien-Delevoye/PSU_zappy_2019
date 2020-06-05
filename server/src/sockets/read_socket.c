@@ -12,8 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-void add_to_end_list(char *buffer, command_queue_t *new, command_queue_t *cur,
-    short counter)
+void add_to_end_list(command_queue_t *new, command_queue_t *cur, short counter)
 {
     while (cur->next) {
         cur = cur->next;
@@ -21,7 +20,6 @@ void add_to_end_list(char *buffer, command_queue_t *new, command_queue_t *cur,
     }
     if (counter > 10) {
         free(new);
-        free(buffer);
         return;
     }
     cur->next = new;
@@ -36,16 +34,16 @@ static void add_to_client(client_t *cli, char *buffer)
     if (!new)
         return;
     new->next = NULL;
-    new->command = buffer;
+    new->command = strdup(buffer);
     if (!cli->cmd_queue)
         cli->cmd_queue = new;
     else
-        add_to_end_list(buffer, new, cur, counter);
+        add_to_end_list(new, cur, counter);
 }
 
 void read_buffer(client_t *cli)
 {
-    char *buffer = gnl(cli->fd, true, &cli->to_close);
+    char *buffer = gnl(cli->fd, &cli->to_close);
 
     while (buffer) {
         add_to_client(cli, buffer);
@@ -53,7 +51,7 @@ void read_buffer(client_t *cli)
         if (strcmp(buffer, "ping") == 0)
             add_to_write_list(cli, "pong\n");
         free(buffer);
-        buffer = gnl(cli->fd, true, &cli->to_close);
+        buffer = gnl(cli->fd, &cli->to_close);
     }
 }
 

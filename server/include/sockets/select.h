@@ -19,6 +19,6 @@ void read_socket(data_server_t *);
 void write_socket(data_server_t *);
 void close_clients(data_server_t *);
 void remove_a_client(data_server_t *, client_t *);
-char *gnl(int fd, bool r_s, bool *to_close);
+char *gnl(int fd, bool *to_close);
 
 #endif //ZAPPY_SERVER_SELECT_H
