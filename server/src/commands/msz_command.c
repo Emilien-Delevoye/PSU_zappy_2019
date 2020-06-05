@@ -6,6 +6,7 @@
 */
 
 #include "utils/write_list.h"
+#include "sockets/select.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -22,7 +23,7 @@ void msz_command(client_t *cli, data_server_t *data)
     sprintf(y, "%d", data->width);
     str = malloc(sizeof(char) * 7 + strlen(x) + strlen(y));
     if (str == NULL)
-        return;
+        remove_a_client(data, cli);
     memset(str, 0, sizeof(char) * 7 + strlen(x) + strlen(y));
     strcat(str, "msz ");
     strcat(str, x);
