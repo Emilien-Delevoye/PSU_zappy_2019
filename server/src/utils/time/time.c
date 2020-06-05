@@ -9,7 +9,6 @@
 #include <time.h>
 #include <sys/time.h>
 #include <stdio.h>
-#include <unistd.h>
 #include <string.h>
 
 void setup_timer(data_server_t *data)
@@ -31,7 +30,6 @@ void timer(data_server_t *data)
     sec = data->tm->tm_sec;
     if ((sec - data->sec) * 1000000 + timer - data->timer > 1 /
     (double)data->freq * 1000000) {
-
         printf("sec == %d\n", sec);
         data->timer = data->tv.tv_usec;
         data->sec = data->tm->tm_sec;
