@@ -13,5 +13,6 @@
 int setup_map(data_server_t *);
 map_t *create_node(unsigned int, unsigned int);
 void read_to_create_links(data_server_t *, map_t *);
+void free_map(data_server_t);
 
 #endif //ZAPPY_SERVER_SETUP_MAP_H
