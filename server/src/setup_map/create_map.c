@@ -55,10 +55,27 @@ static void create_boarders(map_t *first)
     }
 }
 
+static void setup_link_1_width(map_t *cur)
+{
+    map_t *save_first = cur;
+    map_t *save_second;
+
+    while (cur) {
+        save_second = cur;
+        cur->right = cur;
+        cur->left = cur;
+        cur = cur->top;
+    }
+    save_second->top = save_first;
+    save_first->bottom = save_second;
+}
+
 void read_to_create_links(data_server_t *data, map_t *first)
 {
-    if (data->width < 2)
+    if (data->width < 2) {
+        setup_link_1_width(first);
         return;
+    }
     for (map_t *cur_1 = first->top; cur_1; cur_1 = cur_1->top) {
         create_links(cur_1, first);
         first = first->top;
