@@ -24,9 +24,15 @@ typedef struct write_cli_s {
     struct write_cli_s *next;
 } write_cli_t;
 
+typedef struct command_queue_s {
+    char *command;
+    struct command_queue_s *next;
+} command_queue_t;
+
 typedef struct client_s {
     int fd;
     bool to_close;
+    command_queue_t *cmd_queue;
     write_cli_t *list_msg;
     struct client_s *prev;
     struct client_s *next;
