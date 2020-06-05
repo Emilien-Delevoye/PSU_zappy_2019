@@ -17,6 +17,7 @@ public class CrystalGeneration : MonoBehaviour
         rotation.x = 0;
         rotation.y = 0;
         rotation.z = 0;
+        spawnee.transform.localScale = new Vector3(0.4f, 0.4f, 0.4f);
         for (int i = 0; i < 40; i++)
         {
             pos.x = Random.Range(-5f, 5f);

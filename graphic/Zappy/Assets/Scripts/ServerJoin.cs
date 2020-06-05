@@ -61,10 +61,11 @@ public class ServerJoin : MonoBehaviour
     {
         if (client.Connected())
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+            client.SendMessageToServer("Client connected.\n");
             loading = false;
             loadingModel.SetActive(false);
             loadingText.SetActive(false);
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
             return;
         }
         timeToConnect -= Time.deltaTime;
