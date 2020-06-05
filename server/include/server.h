@@ -19,9 +19,15 @@ typedef struct map_s {
     struct map_s *bottom;
 } map_t;
 
+typedef struct write_cli_s {
+    char *to_write;
+    struct write_cli_s *next;
+} write_cli_t;
+
 typedef struct client_s {
     int fd;
     bool to_close;
+    write_cli_t *list_msg;
     struct client_s *prev;
     struct client_s *next;
 } client_t;

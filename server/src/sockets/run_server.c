@@ -49,7 +49,6 @@ int run_server(data_server_t *data)
 {
     if (setup_sigcatch() < 0)
         return (84);
-    setup_timer(data);
     while (server_running()) {
         setup_fdset(data);
         if (!select_fd(data))

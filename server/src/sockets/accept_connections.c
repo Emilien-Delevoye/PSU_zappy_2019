@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <string.h>
 
 void add_client_to_list(data_server_t *data, int new_fd)
 {
@@ -21,9 +22,8 @@ void add_client_to_list(data_server_t *data, int new_fd)
         close(new_fd);
         return;
     }
+    memset(new, 0, sizeof(client_t));
     new->fd = new_fd;
-    new->next = NULL;
-    new->prev = NULL;
     new->to_close = false;
     if (!data->l_cli.first) {
         data->l_cli.first = new;

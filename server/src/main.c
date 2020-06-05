@@ -9,6 +9,7 @@
 #include "map/setup_map.h"
 #include "utils/parameters.h"
 #include "utils/close_server.h"
+#include "utils/timer.h"
 #include "sockets/control_socket.h"
 #include "sockets/run_server.h"
 #include <stdio.h>
@@ -37,6 +38,7 @@ int main(int ac, char **av)
         return (84);
     if (setup_socket(&data) == 84)
         return (84);
+    setup_timer(&data);
     if (run_server(&data) == 84)
         return (84);
     close_server(data);
