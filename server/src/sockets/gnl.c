@@ -38,24 +38,24 @@ char *my_lstrcat(char *str, char *src, int nb)
     return (new_str);
 }
 
-char *gnl(int fd, bool r_s)
+char *gnl(int fd, bool r_s, bool *to_close)
 {
     static char buffer[READ_SIZE] = "";
-    ssize_t a_read = READ_SIZE;
+    ssize_t a_r = READ_SIZE;
     char *str = malloc(sizeof(char) * (READ_SIZE));
 
     if (str == NULL)
         return (NULL);
     str[0] = 0;
     while (r_s == true && len(buffer, '\n') == len(buffer, '\0') &&
-        (a_read > 0)) {
+        (a_r > 0)) {
         str = my_lstrcat(str, buffer, READ_SIZE);
-        a_read = read(fd, buffer, READ_SIZE);
-        if (a_read == 0 || (a_read == 1 && buffer[0] == 4))
+        a_r = read(fd, buffer, READ_SIZE);
+        if ((a_r == 0 || (a_r == 1 && buffer[0] == 4)) && (*to_close = true))
             return (NULL);
     }
     str = my_lstrcat(str, buffer, len(buffer, '\n'));
-    if (len(str, '\0') || len(buffer, '\0') || len(str, '\0') < a_read)
+    if (len(str, '\0') || len(buffer, '\0') || len(str, '\0') < a_r)
         return (str);
     free(str);
     return (NULL);

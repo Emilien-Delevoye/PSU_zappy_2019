@@ -45,17 +45,16 @@ static void add_to_client(client_t *cli, char *buffer)
 
 void read_buffer(client_t *cli)
 {
-    char *buffer = gnl(cli->fd, true);
+    char *buffer = gnl(cli->fd, true, &cli->to_close);
 
-    if (!buffer) {
-        cli->to_close = true;
-        return;
+    while (buffer) {
+        add_to_client(cli, buffer);
+        printf("Buffer read : %s\n", buffer);
+        if (strcmp(buffer, "ping") == 0)
+            add_to_write_list(cli, "pong\n");
+        free(buffer);
+        buffer = gnl(cli->fd, true, &cli->to_close);
     }
-    add_to_client(cli, buffer);
-    printf("Buffer read : %s\n", buffer);
-    if (strcmp(buffer, "ping") == 0)
-        add_to_write_list(cli, "pong\n");
-    free(buffer);
 }
 
 void read_socket(data_server_t *data)
