@@ -5,12 +5,12 @@
 ** Created by emilien
 */
 
+#include "utils/write_list.h"
 #include "server.h"
 #include "sockets/select.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "utils/write_list.h"
 
 void read_buffer(client_t *cli)
 {
