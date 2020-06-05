@@ -12,8 +12,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <unistd.h>
-
 void add_to_end_list(char *buffer, command_queue_t *new, command_queue_t *cur,
     short counter)
 {
@@ -47,12 +45,8 @@ static void add_to_client(client_t *cli, char *buffer)
 
 void read_buffer(client_t *cli)
 {
-    char buffer[256];
-    memset(buffer, 0, 256);
-    int value;
-    value = read(cli->fd, buffer, 256);
-    if (value == 0)
-        return;
+    char *buffer = gnl(cli->fd, true);
+
     if (!buffer) {
         cli->to_close = true;
         return;
