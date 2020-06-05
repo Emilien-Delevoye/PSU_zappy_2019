@@ -16,7 +16,6 @@ static write_cli_t *create_write_list(char *buffer)
     if (!new)
         return (NULL);
     new->to_write = strdup(buffer);
-    new->to_write = NULL;
     new->next = NULL;
     return (new);
 }

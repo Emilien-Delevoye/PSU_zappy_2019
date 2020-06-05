@@ -54,6 +54,7 @@ int run_server(data_server_t *data)
         if (!select_fd(data))
             return (0);
         accept_connections(data);
+        write_socket(data);
         read_socket(data);
         close_clients(data);
         timer(data);
