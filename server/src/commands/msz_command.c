@@ -21,6 +21,8 @@ void msz_command(client_t *cli, data_server_t *data)
     sprintf(x, "%d", data->height);
     sprintf(y, "%d", data->width);
     str = malloc(sizeof(char) * 7 + strlen(x) + strlen(y));
+    if (str == NULL)
+        return;
     memset(str, 0, sizeof(char) * 7 + strlen(x) + strlen(y));
     strcat(str, "msz ");
     strcat(str, x);
