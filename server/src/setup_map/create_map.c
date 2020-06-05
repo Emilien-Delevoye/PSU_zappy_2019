@@ -74,13 +74,13 @@ void read_to_create_links(data_server_t *data, map_t *first)
 {
     if (data->width < 2) {
         setup_link_1_width(first);
-        return;
+    } else {
+        for (map_t *cur_1 = first->top; cur_1; cur_1 = cur_1->top) {
+            create_links(cur_1, first);
+            first = first->top;
+        }
+        create_boarders(first);
     }
-    for (map_t *cur_1 = first->top; cur_1; cur_1 = cur_1->top) {
-        create_links(cur_1, first);
-        first = first->top;
-    }
-    create_boarders(first);
     for (; first->coord[0] != 0; first = first->top);
     for (; first->coord[1] != 0; first = first->left);
     data->bottom_left = first;
