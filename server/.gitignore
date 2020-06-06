@@ -1,6 +1,0 @@
-CMakeLists.txt
-zappy_server
-*.o
-.idea
-cmake-build-debug
-/vgcore.*
