@@ -9,7 +9,6 @@
 #include <time.h>
 #include <sys/time.h>
 #include <stdio.h>
-#include <unistd.h>
 #include <string.h>
 
 void setup_timer(data_server_t *data)
