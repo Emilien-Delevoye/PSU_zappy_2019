@@ -13,7 +13,7 @@
 #include <string.h>
 #include <unistd.h>
 
-void add_to_end_list(command_queue_t *new, command_queue_t *cur, short counter)
+bool add_to_end_list(command_queue_t *new, command_queue_t *cur, short counter)
 {
     while (cur->next) {
         cur = cur->next;
@@ -21,25 +21,27 @@ void add_to_end_list(command_queue_t *new, command_queue_t *cur, short counter)
     }
     if (counter > 10) {
         free(new);
-        return;
+        return (false);
     }
     cur->next = new;
+    return (true);
 }
 
-void add_to_client(client_t *cli, char *buffer)
+bool add_to_client(client_t *cli, char *buffer)
 {
     command_queue_t *new = malloc(sizeof(command_queue_t));
     command_queue_t *cur = cli->cmd_queue;
     short counter = 0;
 
     if (!new)
-        return;
+        return (false);
     new->next = NULL;
     new->command = strdup(buffer);
     if (!cli->cmd_queue)
         cli->cmd_queue = new;
     else
-        add_to_end_list(new, cur, counter);
+        return add_to_end_list(new, cur, counter);
+    return (true);
 }
 
 char *my_strcat(char *origin, const char *to_cat)
@@ -59,7 +61,7 @@ char *my_strcat(char *origin, const char *to_cat)
 
 void read_buffer(client_t *cli)
 {
-    char tmp_buffer[10] = {0};
+    char tmp_buffer[READ_SIZE] = {0};
     ssize_t len = read(cli->fd, &tmp_buffer, (sizeof(tmp_buffer) - 1));
 
     while (len == (sizeof(tmp_buffer) - 1)) {
