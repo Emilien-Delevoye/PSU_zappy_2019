@@ -26,7 +26,7 @@ void add_to_end_list(command_queue_t *new, command_queue_t *cur, short counter)
     cur->next = new;
 }
 
-static void add_to_client(client_t *cli, char *buffer)
+void add_to_client(client_t *cli, char *buffer)
 {
     command_queue_t *new = malloc(sizeof(command_queue_t));
     command_queue_t *cur = cli->cmd_queue;
@@ -66,8 +66,9 @@ void read_buffer(client_t *cli)
         cli->buffer = my_strcat(cli->buffer, tmp_buffer);
         len = read(cli->fd, &tmp_buffer, (sizeof(tmp_buffer) - 1));
     }
-    cli->buffer = my_strcat(cli->buffer, tmp_buffer);
-    puts(cli->buffer);
+    if (len > 0)
+        cli->buffer = my_strcat(cli->buffer, tmp_buffer);
+    extract_command(cli);
     if (len == 0)
         cli->to_close = true;
 }
