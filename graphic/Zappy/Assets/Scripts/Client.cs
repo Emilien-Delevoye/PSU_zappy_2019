@@ -74,6 +74,7 @@ public class Client : MonoBehaviour
 
             Int32 bytes = stream.Read(receiver, 0, receiver.Length);
             responseData = System.Text.Encoding.ASCII.GetString(receiver, 0, bytes);
+            Debug.Log("Receive: " + responseData);
             return responseData;
         }
         return null;
@@ -88,6 +89,7 @@ public class Client : MonoBehaviour
 
             Int32 bytes = stream.Read(receiver, 0, receiver.Length);
             responseData = System.Text.Encoding.ASCII.GetString(receiver, 0, bytes);
+            Debug.Log("Receive: " + responseData);
             return responseData;
         }
         return null;

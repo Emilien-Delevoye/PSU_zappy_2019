@@ -2773,15 +2773,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2144528907}
-  - component: {fileID: 2144528909}
-  - component: {fileID: 2144528908}
-  - component: {fileID: 2144528913}
-  - component: {fileID: 2144528912}
-  - component: {fileID: 2144528911}
-  - component: {fileID: 2144528910}
   - component: {fileID: 2144528914}
   - component: {fileID: 2144528915}
-  - component: {fileID: 2144528917}
   m_Layer: 0
   m_Name: Scene
   m_TagString: Untagged
@@ -2805,84 +2798,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2144528908
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2144528906}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0190d44a0912ea4cbf1067283eecebb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spawnee: {fileID: 1940535376811764, guid: 381c30b6d7bd64ac198546e129599840, type: 3}
---- !u!114 &2144528909
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2144528906}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0190d44a0912ea4cbf1067283eecebb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spawnee: {fileID: 1538421454515366, guid: b20d368476d6f41d7922c75ef0db5ff9, type: 3}
---- !u!114 &2144528910
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2144528906}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0190d44a0912ea4cbf1067283eecebb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spawnee: {fileID: 1067278100072704, guid: 25e2659cb537b44b6b2e6c2239deeaf1, type: 3}
---- !u!114 &2144528911
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2144528906}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0190d44a0912ea4cbf1067283eecebb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spawnee: {fileID: 1955932395058818, guid: e38b99f7588d24092ae6bd4282256c5c, type: 3}
---- !u!114 &2144528912
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2144528906}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0190d44a0912ea4cbf1067283eecebb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spawnee: {fileID: 1811144861758264, guid: 060656f3a77394676a89e799354dc1d3, type: 3}
---- !u!114 &2144528913
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2144528906}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0190d44a0912ea4cbf1067283eecebb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spawnee: {fileID: 1385396912894416, guid: fc3aea0dcdb7f4c409dc76318147307e, type: 3}
 --- !u!114 &2144528914
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2910,19 +2825,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PauseMenu: {fileID: 1361404939}
-  client: {fileID: 1244156572}
---- !u!114 &2144528917
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2144528906}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 47c146c5ecd642646b0be3e5670f504b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
   client: {fileID: 1244156572}
   plane: {fileID: 5617662893916625581, guid: 0519e885e05787c4abc46f5b8ebbcbf6, type: 3}
   linemate: {fileID: 1940535376811764, guid: 381c30b6d7bd64ac198546e129599840, type: 3}
