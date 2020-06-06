@@ -13,6 +13,8 @@ static void free_command_queue(client_t *cli)
 {
     command_queue_t *save = NULL;
 
+    if (cli->buffer)
+        free(cli->buffer);
     for (command_queue_t *c = cli->cmd_queue; c; c = c->next) {
         if (!save)
             continue;
