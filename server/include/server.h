@@ -10,6 +10,7 @@
 
 #include <stdbool.h>
 #include <sys/select.h>
+#include <stdio.h>
 
 typedef struct map_s {
     unsigned int coord[2];
@@ -32,6 +33,7 @@ typedef struct command_queue_s {
 typedef struct client_s {
     int fd;
     bool to_close;
+    char *buffer;
     command_queue_t *cmd_queue;
     write_cli_t *list_msg;
     struct client_s *prev;

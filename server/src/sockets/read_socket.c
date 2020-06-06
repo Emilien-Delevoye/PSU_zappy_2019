@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 void add_to_end_list(command_queue_t *new, command_queue_t *cur, short counter)
 {
@@ -41,18 +42,34 @@ static void add_to_client(client_t *cli, char *buffer)
         add_to_end_list(new, cur, counter);
 }
 
+char *my_strcat(char *origin, const char *to_cat)
+{
+    size_t len_origin = (origin ? strlen(origin) : 0);
+    char *output = malloc(len_origin + strlen(to_cat) + 1);
+
+    if (!output)
+        return (NULL);
+    if (origin)
+        strcpy(output, origin);
+    strcpy(output + len_origin, to_cat);
+    if (origin)
+        free(origin);
+    return (output);
+}
+
 void read_buffer(client_t *cli)
 {
-    char *buffer = gnl(cli->fd, &cli->to_close);
+    char tmp_buffer[10] = {0};
+    ssize_t len = read(cli->fd, &tmp_buffer, (sizeof(tmp_buffer) - 1));
 
-    while (buffer) {
-        add_to_client(cli, buffer);
-        printf("Buffer read : %s\n", buffer);
-        if (strcmp(buffer, "ping") == 0)
-            add_to_write_list(cli, "pong\n");
-        free(buffer);
-        buffer = gnl(cli->fd, &cli->to_close);
+    while (len == (sizeof(tmp_buffer) - 1)) {
+        cli->buffer = my_strcat(cli->buffer, tmp_buffer);
+        len = read(cli->fd, &tmp_buffer, (sizeof(tmp_buffer) - 1));
     }
+    cli->buffer = my_strcat(cli->buffer, tmp_buffer);
+    puts(cli->buffer);
+    if (len == 0)
+        cli->to_close = true;
 }
 
 void read_socket(data_server_t *data)
