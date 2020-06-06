@@ -8,6 +8,17 @@
 #include "server.h"
 #include <stdlib.h>
 
+void free_team_names(data_server_t data)
+{
+    if (!data.team_names)
+        return;
+    for (int a = 0; data.team_names[a]; ++a) {
+        printf("%s\n", data.team_names[a]);
+        free(data.team_names[a]);
+    }
+    free(data.team_names);
+}
+
 void free_map(data_server_t data)
 {
     map_t *left = data.bottom_left;

@@ -25,8 +25,8 @@ static void create_tab(data_server_t *data, char **av)
     data->team_names = malloc(sizeof(char *) * (data->team_nb + 1));
     if (!data->team_names)
         return;
-    for (unsigned int a = 0; a < data->team_nb; ++a) {
-        data->team_names[a] = strdup(av[a]);
+    for (unsigned int a = 0; a < (data->team_nb - 1); ++a) {
+        data->team_names[a] = strdup(av[a + 1]);
         data->team_names[a + 1] = NULL;
     }
 }
@@ -42,8 +42,8 @@ bool n_flag(char **av, data_server_t *data)
     if (use_flag == true || !av[1] || nb_team == 0)
         return (false);
     use_flag = true;
-    create_tab(data, av);
     data->team_nb = nb_team;
+    create_tab(data, av);
     if (!data->team_names || data->team_nb < 1)
         return (false);
     return (true);
