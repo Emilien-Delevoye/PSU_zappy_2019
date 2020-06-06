@@ -9,21 +9,26 @@
 #include "sockets/select.h"
 #include <stdlib.h>
 
-void close_clients(data_server_t *data)
+static void free_command_queue(client_t *cli)
 {
     command_queue_t *save = NULL;
 
+    for (command_queue_t *c = cli->cmd_queue; c; c = c->next) {
+        if (!save)
+            continue;
+        if (save->command)
+            free(save->command);
+        free(save);
+        save = c;
+    }
+}
+
+void close_clients(data_server_t *data)
+{
     for (client_t *cli = data->l_cli.first; cli; cli = cli->next) {
         if (cli->to_close == false)
             continue;
-        for (command_queue_t *c = cli->cmd_queue; c; c = c->next) {
-            if (save) {
-                if (save->command)
-                    free(save->command);
-                free(save);
-            }
-            save = c;
-        }
+        free_command_queue(cli);
         remove_a_client(data, cli);
         close_clients(data);
         return;
