@@ -6,3 +6,5 @@ cmake-build-debug
 /tests/src/main.gcno
 /tests_run
 /tests/server_tests
+*.gcno
+*.gcda
