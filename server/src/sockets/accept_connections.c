@@ -47,5 +47,6 @@ void accept_connections(data_server_t *data)
     new_fd = accept(data->fd, (struct sockaddr *)&addr_in, (socklen_t *)&len);
     if (new_fd < 0)
         return;
+    write(new_fd, "WELCOME\n", 8);
     add_client_to_list(data, new_fd);
 }

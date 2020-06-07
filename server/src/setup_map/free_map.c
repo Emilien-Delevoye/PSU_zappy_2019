@@ -10,13 +10,13 @@
 
 void free_team_names(data_server_t data)
 {
-    if (!data.team_names)
+    if (!data.params.team_names)
         return;
-    for (int a = 0; data.team_names[a]; ++a) {
-        printf("%s\n", data.team_names[a]);
-        free(data.team_names[a]);
+    for (int a = 0; data.params.team_names[a]; ++a) {
+        printf("%s\n", data.params.team_names[a]);
+        free(data.params.team_names[a]);
     }
-    free(data.team_names);
+    free(data.params.team_names);
 }
 
 void free_map(data_server_t data)
@@ -25,10 +25,10 @@ void free_map(data_server_t data)
     map_t *cur;
     map_t *to_free;
 
-    for (int a = 0; a < data.height; ++a) {
-        if (data.width > 1)
+    for (int a = 0; a < data.params.height; ++a) {
+        if (data.params.width > 1)
             cur = left->right;
-        for (int b = 1; b < data.width; ++b) {
+        for (int b = 1; b < data.params.width; ++b) {
             to_free = cur;
             cur = cur->right;
             free(to_free);

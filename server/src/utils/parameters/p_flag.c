@@ -30,8 +30,8 @@ bool p_flag(char **av, data_server_t *data)
     if (use_flag == true || !av[1])
         return (false);
     use_flag = true;
-    data->port = get_port(av[1]);
-    if (data->port < 1)
+    data->params.port = get_port(av[1]);
+    if (data->params.port < 1)
         return (false);
     return (true);
 }

@@ -34,17 +34,17 @@ map_t *create_cur_elem(map_t *cur, unsigned int a, unsigned int b)
 
 int setup_map(data_server_t *data)
 {
-    map_t *cur = create_node(data->height - 1, 0);
+    map_t *cur = create_node(data->params.height - 1, 0);
 
-    if (data->height <= 0 || data->width <= 0)
+    if (data->params.height <= 0 || data->params.width <= 0)
         return (84);
-    for (int a = data->height - 1; a >= 0; --a) {
-        if (a != data->height - 1) {
+    for (int a = data->params.height - 1; a >= 0; --a) {
+        if (a != data->params.height - 1) {
             cur = create_first_elem(cur, a);
             if (!cur)
                 return (84);
         }
-        for (int b = 1; b < data->width; ++b) {
+        for (int b = 1; b < data->params.width; ++b) {
             cur = create_cur_elem(cur, a, b);
             if (!cur)
                 return (84);

@@ -45,8 +45,7 @@ struct list_client_s {
     client_t *last;
 };
 
-typedef struct data_server_s {
-    //Server settings
+typedef struct param_s {
     int port;
     int width;
     int height;
@@ -55,6 +54,11 @@ typedef struct data_server_s {
     unsigned short client_nb;
     unsigned int freq;
     bool valid_params;
+} param_t;
+
+typedef struct data_server_s {
+    //Server settings
+    param_t params;
     //Server socket
     int fd;
     fd_set fdset_read;

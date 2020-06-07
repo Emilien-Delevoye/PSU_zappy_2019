@@ -72,7 +72,7 @@ static void setup_link_1_width(map_t *cur)
 
 void read_to_create_links(data_server_t *data, map_t *first)
 {
-    if (data->width < 2) {
+    if (data->params.width < 2) {
         setup_link_1_width(first);
     } else {
         for (map_t *cur_1 = first->top; cur_1; cur_1 = cur_1->top) {

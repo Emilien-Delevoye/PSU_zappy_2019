@@ -9,10 +9,13 @@
 #include <string.h>
 #include <stdio.h>
 
-static unsigned int get_height(char *height_in)
+static int get_height(char *height_in)
 {
     int height;
 
+    for (int a = 0; height_in[a]; ++a)
+        if (height_in[a] > '9' || height_in[a] < '0')
+            return (-1);
     if (sscanf(height_in, "%d", &height) != 1)
         height = -1;
     return (height);
@@ -27,8 +30,8 @@ bool y_flag(char **av, data_server_t *data)
     if (use_flag == true || !av[1])
         return (false);
     use_flag = true;
-    data->height = get_height(av[1]);
-    if (data->height < 1)
+    data->params.height = get_height(av[1]);
+    if (data->params.height < 1)
         return (false);
     return (true);
 }

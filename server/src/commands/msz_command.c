@@ -19,8 +19,8 @@ void msz_command(client_t *cli, data_server_t *data)
 
     memset(x, 0, sizeof(x));
     memset(y, 0, sizeof(y));
-    sprintf(x, "%d", data->height);
-    sprintf(y, "%d", data->width);
+    sprintf(x, "%d", data->params.height);
+    sprintf(y, "%d", data->params.width);
     str = malloc(sizeof(char) * 7 + strlen(x) + strlen(y));
     if (str == NULL)
         remove_a_client(data, cli);

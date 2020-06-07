@@ -17,8 +17,8 @@ void test_map(map_t *cur, int x, int y)
 TEST(setup_map, setup_1x1_map)
 {
     data_server_t data;
-    data.width = 1;
-    data.height = 1;
+    data.params.width = 1;
+    data.params.height = 1;
     map_t *cur;
 
     EXPECT_EQ(setup_map(&data), 0);
@@ -34,8 +34,8 @@ TEST(setup_map, setup_1x1_map)
 TEST(setup_map, setup_10x10_map)
 {
     data_server_t data;
-    data.width = 10;
-    data.height = 10;
+    data.params.width = 10;
+    data.params.height = 10;
     map_t *cur;
 
     EXPECT_EQ(setup_map(&data), 0);
@@ -55,8 +55,8 @@ TEST(setup_map, setup_10x10_map)
 TEST(setup_map, setup_negative_map)
 {
     data_server_t data;
-    data.width = -1;
-    data.height = -1;
+    data.params.width = -1;
+    data.params.height = -1;
 
     EXPECT_EQ(setup_map(&data), 84);
 }

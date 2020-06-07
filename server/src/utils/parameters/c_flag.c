@@ -13,6 +13,9 @@ static unsigned int get_client_nb(char *client_nb_in)
 {
     int client_nb;
 
+    for (int a = 0; client_nb_in[a]; ++a)
+        if (client_nb_in[a] > '9' || client_nb_in[a] < '0')
+            return (-1);
     if (sscanf(client_nb_in, "%d", &client_nb) != 1)
         client_nb = -1;
     return (client_nb);
@@ -27,8 +30,8 @@ bool c_flag(char **av, data_server_t *data)
     if (use_flag == true || !av[1])
         return (false);
     use_flag = true;
-    data->client_nb = get_client_nb(av[1]);
-    if (data->client_nb < 1)
+    data->params.client_nb = get_client_nb(av[1]);
+    if (data->params.client_nb < 1)
         return (false);
     return (true);
 }

@@ -17,12 +17,12 @@ TEST(get_parameters, classic_test)
         (char *)"400", nullptr};
     data_server_t data = get_parameters(18, static_cast<char **>(params));
 
-    EXPECT_EQ(data.port, 4242);
-    EXPECT_EQ(data.width, 1);
-    EXPECT_EQ(data.height, 3);
-    EXPECT_EQ(data.freq, 400);
-    EXPECT_EQ(data.team_nb, 6);
-    EXPECT_EQ(data.valid_params, true);
+    EXPECT_EQ(data.params.port, 4242);
+    EXPECT_EQ(data.params.width, 1);
+    EXPECT_EQ(data.params.height, 3);
+    EXPECT_EQ(data.params.freq, 400);
+    EXPECT_EQ(data.params.team_nb, 6);
+    EXPECT_EQ(data.params.valid_params, true);
 }
 
 TEST(get_parameters, no_teams)
@@ -32,8 +32,8 @@ TEST(get_parameters, no_teams)
         (char *)"12", (char *)"-f", (char *)"400", nullptr};
     data_server_t data = get_parameters(12, static_cast<char **>(params));
 
-    EXPECT_EQ(data.team_nb, 0);
-    EXPECT_EQ(data.valid_params, false);
+    EXPECT_EQ(data.params.team_nb, 0);
+    EXPECT_EQ(data.params.valid_params, false);
 }
 
 TEST(get_parameters, no_params_after_team)
@@ -43,8 +43,8 @@ TEST(get_parameters, no_params_after_team)
         (char *)"12", (char *)"-f", (char *)"400", (char *)"-n", nullptr};
     data_server_t data = get_parameters(12, static_cast<char **>(params));
 
-    EXPECT_EQ(data.team_nb, 0);
-    EXPECT_EQ(data.valid_params, false);
+    EXPECT_EQ(data.params.team_nb, 0);
+    EXPECT_EQ(data.params.valid_params, false);
 }
 
 TEST(get_parameters, p_wrong_flag)
@@ -56,6 +56,6 @@ TEST(get_parameters, p_wrong_flag)
         (char *)"400", nullptr};
     data_server_t data = get_parameters(18, static_cast<char **>(params));
 
-    EXPECT_EQ(data.port, 0);
-    EXPECT_EQ(data.valid_params, false);
+    EXPECT_EQ(data.params.port, 0);
+    EXPECT_EQ(data.params.valid_params, false);
 }
