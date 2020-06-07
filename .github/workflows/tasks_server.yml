@@ -34,8 +34,8 @@ jobs:
   unit_tests:
     runs-on: self-hosted
     steps:
+      - uses: actions/checkout@v2
       - name: Start unit tests
-        uses: actions/checkout@v2
         run: make unit_tests
       - name: Codecov
         uses: codecov/codecov-action@v1.0.7
