@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - dev_server
+      - test_actions
       - master
     pull_request:
 
@@ -30,3 +31,14 @@ jobs:
         run: cd PSU_zappy_2019 ; git remote add blih git@git.epitech.eu:/emilien.delevoye@epitech.eu/PSU_zappy_2019
       - name: push
         run: cd PSU_zappy_2019 ; git push blih
+  unit_tests:
+    runs-on: self-hosted
+    steps:
+      - name: Start unit tests
+        uses: actions/checkout@v2
+        run: make unit_tests
+      - name: Codecov
+        uses: codecov/codecov-action@v1.0.7
+        with:
+          token: 01f9eabc-56f3-4979-8928-620f507b0fb6
+
