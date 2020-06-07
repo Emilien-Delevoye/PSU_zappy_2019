@@ -34,7 +34,8 @@ SRC_SERVER	=	server/src/utils/parameters/get_parameters.c	\
 			server/src/commands/msz_command.c	\
 			server/src/utils/extract_command.c
 
-SRC_TEST	=	tests/src/main.cpp
+SRC_TEST	=	tests/src/main.cpp	\
+			tests/src/get_parameters.cpp
 
 OBJ	=	$(SRC_SERVER:.c=.o)
 
@@ -43,7 +44,7 @@ OBJ_SRC_MAIN	=	$(SRC_MAIN_SERVER:.c=.o)
 OBJ_SRC_TEST	=	$(SRC_TEST:.cpp=.o)
 
 CFLAGS	=	-W -Wall -Wextra -I server/include
-CPPFLAGS	=	-W -Wall -Wextra -I server/include
+CPPFLAGS	=	-W -Wall -Wextra -I server/include -I tests/include
 
 all:	$(NAME_SERVER)
 

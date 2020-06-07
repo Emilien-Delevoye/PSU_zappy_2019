@@ -39,6 +39,6 @@ add_executable(server_tests
         ../server/src/sockets/write_socket.c
         ../server/src/setup_map/free_map.c
         ../server/src/utils/extract_command.c
-        src/main.cpp)
+        src/main.cpp src/get_parameters.cpp include/tests.h)
 
 target_link_libraries(server_tests gtest gtest_main pthread gcov)

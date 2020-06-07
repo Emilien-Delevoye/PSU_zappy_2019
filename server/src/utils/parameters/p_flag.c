@@ -13,6 +13,9 @@ static int get_port(char *port_in)
 {
     int port;
 
+    for (int a = 0; port_in[a]; ++a)
+        if (port_in[a] > '9' || port_in[a] < '0')
+            return (-1);
     if (sscanf(port_in, "%d", &port) != 1)
         port = -1;
     return (port);
