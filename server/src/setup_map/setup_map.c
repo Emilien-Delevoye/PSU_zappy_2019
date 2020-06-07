@@ -36,6 +36,8 @@ int setup_map(data_server_t *data)
 {
     map_t *cur = create_node(data->height - 1, 0);
 
+    if (data->height <= 0 || data->width <= 0)
+        return (84);
     for (int a = data->height - 1; a >= 0; --a) {
         if (a != data->height - 1) {
             cur = create_first_elem(cur, a);
