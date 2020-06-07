@@ -27,7 +27,7 @@ static void free_command_queue(client_t *cli)
 
 void close_clients(data_server_t *data)
 {
-    for (client_t *cli = data->l_cli.first; cli; cli = cli->next) {
+    for (client_t *cli = data->l_waiting.first; cli; cli = cli->next) {
         if (cli->to_close == false)
             continue;
         free_command_queue(cli);

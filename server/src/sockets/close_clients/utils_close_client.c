@@ -22,7 +22,7 @@ static void remove_middle_element(client_t *cli)
 static void remove_last_element(data_server_t *data, client_t *cli)
 {
     cli->prev->next = NULL;
-    data->l_cli.last = cli->prev;
+    data->l_waiting.last = cli->prev;
     printf("User %d disconnected\n", cli->fd);
     close(cli->fd);
     free(cli);
@@ -31,7 +31,7 @@ static void remove_last_element(data_server_t *data, client_t *cli)
 static void remove_first_element(data_server_t *data, client_t *cli)
 {
     cli->next->prev = NULL;
-    data->l_cli.first = cli->next;
+    data->l_waiting.first = cli->next;
     printf("User %d disconnected\n", cli->fd);
     close(cli->fd);
     free(cli);
@@ -39,8 +39,8 @@ static void remove_first_element(data_server_t *data, client_t *cli)
 
 static void remove_alone_element(data_server_t *data, client_t *cli)
 {
-    data->l_cli.first = NULL;
-    data->l_cli.last = NULL;
+    data->l_waiting.first = NULL;
+    data->l_waiting.last = NULL;
     printf("User %d disconnected\n", cli->fd);
     close(cli->fd);
     free(cli);

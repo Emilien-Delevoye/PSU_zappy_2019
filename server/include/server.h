@@ -59,13 +59,19 @@ typedef struct param_s {
 typedef struct data_server_s {
     //Server settings
     param_t params;
+
     //Server socket
     int fd;
     fd_set fdset_read;
     fd_set fdset_write;
+
     //Clients structures
-    struct list_client_s l_cli;
+    struct list_client_s l_waiting;
+    struct list_client_s l_connected;
+
+    //Map pointer :
     map_t *bottom_left;
+
     //Timer structures
     struct timeval tv;
     struct tm *tm;

@@ -25,13 +25,13 @@ void add_client_to_list(data_server_t *data, int new_fd)
     memset(new, 0, sizeof(client_t));
     new->fd = new_fd;
     new->to_close = false;
-    if (!data->l_cli.first) {
-        data->l_cli.first = new;
-        data->l_cli.last = new;
+    if (!data->l_waiting.first) {
+        data->l_waiting.first = new;
+        data->l_waiting.last = new;
     } else {
-        data->l_cli.last->next = new;
-        new->prev = data->l_cli.last;
-        data->l_cli.last = new;
+        data->l_waiting.last->next = new;
+        new->prev = data->l_waiting.last;
+        data->l_waiting.last = new;
     }
     printf("New connection (client %d)\n", new_fd);
 }
