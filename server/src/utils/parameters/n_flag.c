@@ -17,7 +17,7 @@ static unsigned int count_teams(char **av)
         return (0);
     while (av[a] && av[a][0] != '-')
         ++a;
-    return (a);
+    return (a - 1);
 }
 
 static void create_tab(data_server_t *data, char **av)
