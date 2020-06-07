@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - dev_server
-      - test_actions
       - master
     pull_request:
 
