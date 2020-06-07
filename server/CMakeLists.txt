@@ -36,4 +36,6 @@ add_executable(zappy_server
         src/utils/write_list/write_list.c
         src/sockets/write_socket.c
         src/setup_map/free_map.c
+        src/commands/every_commands.c
+        src/commands/msz_command.c
         src/utils/extract_command.c)

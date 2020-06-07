@@ -35,6 +35,8 @@ static void set_new_buffer(client_t *cli, char *tmp_buffer)
         return;
     }
     new = malloc(len + 1);
+    if (!new)
+        return;
     for (int a = 0; tmp_buffer[a]; ++a) {
         new[a] = tmp_buffer[a];
         new[a + 1] = 0;

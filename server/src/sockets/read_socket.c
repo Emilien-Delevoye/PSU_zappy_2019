@@ -37,6 +37,10 @@ bool add_to_client(client_t *cli, char *buffer)
         return (false);
     new->next = NULL;
     new->command = strdup(buffer);
+    if (!new->command) {
+        free(new);
+        return (false);
+    }
     if (!cli->cmd_queue)
         cli->cmd_queue = new;
     else
