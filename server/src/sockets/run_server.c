@@ -57,7 +57,7 @@ int run_server(data_server_t *data)
         write_socket(data);
         read_socket(data);
         close_clients(data);
-        //timer(data);
+        timer(data);
     }
     return (0);
 }

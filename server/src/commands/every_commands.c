@@ -8,6 +8,7 @@
 #include "utils/write_list.h"
 #include "commands/commands.h"
 #include <string.h>
+#include <stdio.h>
 
 static void (*array[1])(client_t *, data_server_t *) = {msz_command};
 
@@ -20,5 +21,18 @@ void call_command_function(data_server_t *data, client_t *cli)
             array[i](cli, data);
             return;
         }
+    }
+}
+
+void loop_tmp_check_every_buffer(data_server_t *data)
+{
+    client_t *current = data->l_connected.first;
+
+    while (current) {
+        if (current->cmd_queue && current->cmd_queue->command) {
+            printf("--%s--\n", current->cmd_queue->command);
+            call_command_function(data, current);
+        }
+        current = current->next;
     }
 }
