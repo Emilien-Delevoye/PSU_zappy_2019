@@ -50,6 +50,7 @@ static void create_boarders(map_t *first)
     top_l = first;
     for (top_r = first; top_r->bottom; top_r = top_r->bottom);
     while (!top_l->top) {
+        generate_stone_on_one_case(top_r);
         top_l->top = top_r;
         top_r->bottom = top_l;
         top_r = top_r->right;
@@ -76,12 +77,16 @@ static void setup_link_1_width(map_t *cur)
 void read_to_create_links(data_server_t *data, map_t *first)
 {
     if (data->params.width < 2) {
+        printf("test1\n");
         setup_link_1_width(first);
     } else {
         for (map_t *cur_1 = first->top; cur_1; cur_1 = cur_1->top) {
+            printf("test2\n");
+            generate_stone_on_one_case(cur_1);
             create_links(cur_1, first);
             first = first->top;
         }
+        printf("boarders\n");
         create_boarders(first);
     }
     for (; first->coord[0] != 0; first = first->top);

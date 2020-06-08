@@ -11,6 +11,8 @@
 #include "utils/timer.h"
 #include <signal.h>
 #include <unistd.h>
+#include <time.h>
+#include <stdlib.h>
 
 static int memory_running(int new_val)
 {
@@ -47,6 +49,7 @@ static bool server_running(void)
 
 int run_server(data_server_t *data)
 {
+    srand(time(NULL));
     if (setup_sigcatch() < 0)
         return (84);
     while (server_running()) {
