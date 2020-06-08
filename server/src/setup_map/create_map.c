@@ -6,6 +6,7 @@
 */
 
 #include "server.h"
+#include "map/setup_map.h"
 #include <stdlib.h>
 
 map_t *create_node(unsigned int x, unsigned int y)
@@ -26,6 +27,7 @@ map_t *create_node(unsigned int x, unsigned int y)
 static void create_links(map_t *top, map_t *bottom)
 {
     while (top) {
+        generate_stone_on_one_case(top);
         top->bottom = bottom;
         bottom->top = top;
         bottom = bottom->right;
@@ -61,6 +63,7 @@ static void setup_link_1_width(map_t *cur)
     map_t *save_second;
 
     while (cur) {
+        generate_stone_on_one_case(cur);
         save_second = cur;
         cur->right = cur;
         cur->left = cur;

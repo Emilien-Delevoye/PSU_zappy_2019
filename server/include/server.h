@@ -12,12 +12,23 @@
 #include <sys/select.h>
 #include <stdio.h>
 
+enum items_type {
+    LINEMATE,
+    DERAUMERE,
+    SIBUR,
+    MENDIANE,
+    PHIRAS,
+    THYSTAME,
+    FOOD
+};
+
 typedef struct map_s {
     unsigned int coord[2];
     struct map_s *right;
     struct map_s *left;
     struct map_s *top;
     struct map_s *bottom;
+    enum items_type items[7];
 } map_t;
 
 typedef struct write_cli_s {

@@ -31,7 +31,8 @@ SRC_SERVER	=	src/main.c	\
 			src/setup_map/free_map.c	\
 			src/commands/every_commands.c	\
 			src/commands/msz_command.c	\
-			src/utils/extract_command.c
+			src/utils/extract_command.c	\
+			src/setup_map/generate_map.c
 
 OBJ_SERVER	=	$(SRC_SERVER:.c=.o)
 
