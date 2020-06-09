@@ -26,7 +26,7 @@ static void create_tab(data_server_t *d, char **av)
         malloc(sizeof(char *) * (d->params.team_nb + 1));
     if (!d->params.team_names)
         return;
-    for (unsigned int a = 0; a < (d->params.team_nb - 1); ++a) {
+    for (unsigned int a = 0; a < d->params.team_nb; ++a) {
         d->params.team_names[a] = strdup(av[a + 1]);
         d->params.team_names[a + 1] = NULL;
     }
