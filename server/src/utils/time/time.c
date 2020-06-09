@@ -5,6 +5,7 @@
 ** Every function for timer
 */
 
+#include "commands/commands.h"
 #include "utils/timer.h"
 #include <time.h>
 #include <sys/time.h>
@@ -30,6 +31,7 @@ void timer(data_server_t *data)
     sec = data->tm->tm_sec;
     if ((sec - data->sec) * 1000000 + timer - data->timer > 1 /
         (double)data->params.freq * 1000000) {
+        loop_tmp_check_every_buffer(data);
         data->timer = data->tv.tv_usec;
         data->sec = data->tm->tm_sec;
     }

@@ -11,24 +11,17 @@
 #include <string.h>
 #include <stdlib.h>
 
-void msz_command(client_t *cli, data_server_t *data)
+void msz_command(client_t *cli, data_server_t *data,
+    __attribute__((unused))char **arg)
 {
-    char x[11];
-    char y[11];
     char *str;
 
-    memset(x, 0, sizeof(x));
-    memset(y, 0, sizeof(y));
-    sprintf(x, "%d", data->params.height);
-    sprintf(y, "%d", data->params.width);
-    str = malloc(sizeof(char) * 7 + strlen(x) + strlen(y));
-    if (str == NULL)
+    str = malloc(sizeof(char) * 29);
+    if (str == NULL) {
         remove_a_client(data, cli);
-    memset(str, 0, sizeof(char) * 7 + strlen(x) + strlen(y));
-    strcat(str, "msz ");
-    strcat(str, x);
-    strcat(str, " ");
-    strcat(str, y);
-    strcat(str, "\n");
+        return;
+    }
+    memset(str, 0, 29);
+    sprintf(str, "msz %d %d\n", data->params.width, data->params.height);
     add_to_write_list(cli, str);
 }

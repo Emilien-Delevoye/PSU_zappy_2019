@@ -39,4 +39,10 @@ add_executable(zappy_server
         src/commands/every_commands.c
         src/commands/msz_command.c
         include/commands/commands.h
-        src/utils/extract_command.c src/sockets/valid_client.c src/sockets/close_clients/utils_close_cli_co.c src/commands/remove_first_cmd_queue.c)
+        src/utils/extract_command.c
+        src/sockets/valid_client.c
+        src/sockets/close_clients/utils_close_cli_co.c
+        src/commands/remove_first_cmd_queue.c
+        src/utils/my_str_to_word_array.c
+        src/commands/bct_command.c
+        src/setup_map/generate_map.c)
