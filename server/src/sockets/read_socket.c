@@ -71,19 +71,23 @@ void read_buffer(client_t *cli)
         cli->buffer = my_strcat(cli->buffer, tmp_buffer);
         len = read(cli->fd, &tmp_buffer, (sizeof(tmp_buffer) - 1));
     }
+    if (len == 0) {
+        cli->to_close = true;
+        return;
+    }
     if (len > 0)
         cli->buffer = my_strcat(cli->buffer, tmp_buffer);
     extract_command(cli);
-    if (len == 0)
-        cli->to_close = true;
 }
 
 void read_socket(data_server_t *data)
 {
-    for (client_t *cli = data->l_waiting.first; cli; cli = cli->next) {
-        if (FD_ISSET(cli->fd, &data->fdset_read)) {
+    for (client_t *cli = data->l_connected.first; cli; cli = cli->next)
+        if (FD_ISSET(cli->fd, &data->fdset_read))
             read_buffer(cli);
-        }
+    for (client_t *cli = data->l_waiting.first; cli; cli = cli->next) {
+        if (FD_ISSET(cli->fd, &data->fdset_read))
+            read_buffer(cli);
         valid_client(data, cli);
     }
 }

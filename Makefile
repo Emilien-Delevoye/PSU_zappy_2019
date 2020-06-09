@@ -24,6 +24,7 @@ SRC_SERVER	=	server/src/utils/parameters/get_parameters.c	\
 			server/src/sockets/accept_connections.c	\
 			server/src/sockets/read_socket.c	\
 			server/src/sockets/close_clients/utils_close_client.c	\
+			server/src/sockets/close_clients/utils_close_cli_co.c	\
 			server/src/sockets/close_clients/close_client.c	\
 			server/src/setup_map/create_map.c	\
 			server/src/utils/time/time.c	\
