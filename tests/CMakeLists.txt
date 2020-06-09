@@ -39,6 +39,12 @@ add_executable(server_tests
         ../server/src/sockets/write_socket.c
         ../server/src/setup_map/free_map.c
         ../server/src/utils/extract_command.c
+        ../server/src/utils/my_str_to_word_array.c
+        ../server/src/setup_map/generate_map.c
+        ../server/src/commands/bct_command.c
+        ../server/src/setup_map/generate_map.c
+        ../server/src/commands/every_commands.c
+        ../server/src/commands/msz_command.c
         ../server/include/commands/commands.h
         src/main.cpp src/get_parameters.cpp include/tests.h src/setup_map.cpp ../server/src/commands/remove_first_cmd_queue.c)
 
