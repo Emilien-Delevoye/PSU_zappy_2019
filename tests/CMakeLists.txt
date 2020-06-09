@@ -50,6 +50,7 @@ add_executable(server_tests
         ../server/src/sockets/close_clients/utils_close_cli_co.c
         src/main.cpp src/get_parameters.cpp include/tests.h
         src/setup_map.cpp
+        src/bct_command.cpp src/msz_command.cpp src/str_to_word_array.cpp
         ../server/src/commands/remove_first_cmd_queue.c
         src/valid_client.cpp)
 

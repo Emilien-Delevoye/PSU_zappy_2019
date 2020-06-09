@@ -11,6 +11,8 @@ int spaces(const char *str)
 {
     int counter_spaces = 0;
 
+    if (!str)
+        return counter_spaces;
     for (int i = 0; str[i + 1] != '\0'; i++) {
         if ((str[i] == ' ' && (str[i + 1] != ' ' && str[i + 1] != '\0' &&
         str[i + 1] != '\t')) || (str[i] == '\t' &&
@@ -57,12 +59,12 @@ char **my_str_to_word_array(char *str)
 
     if (all == NULL)
         return NULL;
-    if (spaces(str) == 0 &&
+    if (str && spaces(str) == 0 &&
         (str[0] == ' ' || str[0] == '\0' || str[0] == '\t')) {
         all = check_null();
         return (all);
     }
-    for (int i = 0; str[i] != '\0'; i++) {
+    for (int i = 0; str && str[i] != '\0'; i++) {
         dup = get_dup(str, &i, dup);
         if (dup != NULL && dup[0] != '\0') {
             all[counter_str] = dup;

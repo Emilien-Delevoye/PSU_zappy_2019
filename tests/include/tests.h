@@ -17,6 +17,10 @@ extern "C" {
     void free_map(data_server_t data);
     void add_client_to_list(data_server_t *data, int new_fd);
     void valid_client(data_server_t *data, client_t *cli);
+    void bct_command(client_t *cli, data_server_t *data, char **arg);
+    void msz_command(client_t *cli, data_server_t *data,
+        __attribute__((unused))char **arg);
+    char **my_str_to_word_array(char *str);
 }
 
 #endif //ZAPPY_TESTS_H
