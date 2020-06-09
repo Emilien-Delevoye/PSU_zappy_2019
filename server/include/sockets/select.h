@@ -21,5 +21,6 @@ void close_clients(data_server_t *);
 void remove_a_client(data_server_t *, client_t *);
 void extract_command(client_t *);
 bool add_to_client(client_t *, char *);
+void valid_client(data_server_t *, client_t *);
 
 #endif //ZAPPY_SERVER_SELECT_H

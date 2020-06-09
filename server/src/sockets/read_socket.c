@@ -5,7 +5,6 @@
 ** Created by emilien
 */
 
-#include "utils/write_list.h"
 #include "server.h"
 #include "sockets/select.h"
 #include <stdio.h>
@@ -81,7 +80,10 @@ void read_buffer(client_t *cli)
 
 void read_socket(data_server_t *data)
 {
-    for (client_t *cli = data->l_waiting.first; cli; cli = cli->next)
-        if (FD_ISSET(cli->fd, &data->fdset_read))
+    for (client_t *cli = data->l_waiting.first; cli; cli = cli->next) {
+        if (FD_ISSET(cli->fd, &data->fdset_read)) {
             read_buffer(cli);
+        }
+        valid_client(data, cli);
+    }
 }
