@@ -6,6 +6,7 @@
 */
 
 #include "server.h"
+#include "sockets/select.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -64,4 +65,5 @@ void valid_client(data_server_t *data, client_t *cli)
     for (int a = 0; data->params.team_names && data->params.team_names[a]; ++a)
         if (strcmp(data->params.team_names[a], cli->cmd_queue->command) == 0)
             client_validation(data, cli, a);
+    remove_first_cmd_queue(cli);
 }
