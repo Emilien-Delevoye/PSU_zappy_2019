@@ -16,7 +16,7 @@ int setup_socket(data_server_t *data)
     int opt = -1;
 
     data->fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (data->fd < 0)
+    if (data->fd < 0 || data->params.port < 1)
         return (84);
     if (setsockopt(data->fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
         return (84);

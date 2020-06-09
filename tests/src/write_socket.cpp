@@ -14,15 +14,21 @@ static void test_get_max_fd(data_server_t *data)
     EXPECT_EQ(select_fd(data), true);
 }
 
+static void setup_write_socket(data_server_t *data)
+{
+    for (int a = 1; a < 3; ++a) {
+        FD_SET(a, &data->fdset_write);
+        add_client_to_list(data, a);
+    }
+}
+
 TEST(write_socket, write_socket)
 {
-    data_server_t data = {0};
+    data_server_t data;
     std::string out[2];
 
-    FD_SET(1, &data.fdset_write);
-    FD_SET(2, &data.fdset_write);
-    add_client_to_list(&data, 1);
-    add_client_to_list(&data, 2);
+    memset(&data, 0, sizeof(data_server_t));
+    setup_write_socket(&data);
     client_validation(&data, data.l_waiting.first, 1);
     test_get_max_fd(&data);
     client_validation(&data, data.l_waiting.first, 2);
