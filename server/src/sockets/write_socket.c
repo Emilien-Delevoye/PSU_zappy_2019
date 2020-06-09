@@ -30,7 +30,7 @@ static void write_to_client(client_t *c)
 
 void write_socket(data_server_t *data)
 {
-    for (client_t *c = data->l_waiting.first; c; c = c->next)
+    for (client_t *c = data->l_connected.first; c; c = c->next)
         if (c->list_msg && FD_ISSET(c->fd, &data->fdset_write))
             write_to_client(c);
 }

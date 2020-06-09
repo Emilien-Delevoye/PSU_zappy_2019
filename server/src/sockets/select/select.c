@@ -25,11 +25,6 @@ void setup_fdset(data_server_t *data)
     FD_SET(data->fd, &data->fdset_read);
     list_fd_set(data, data->l_waiting.first);
     list_fd_set(data, data->l_connected.first);
-    /*for (client_t *cur = data->l_waiting.first; cur; cur = cur->next) {
-        FD_SET(cur->fd, &data->fdset_read);
-        if (cur->list_msg)
-            FD_SET(cur->fd, &data->fdset_write);
-    }*/
 }
 
 static int get_max_fd(data_server_t *data)
