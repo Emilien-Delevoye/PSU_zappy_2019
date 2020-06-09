@@ -37,8 +37,9 @@ SRC_SERVER	=	server/src/utils/parameters/get_parameters.c	\
 			server/src/sockets/valid_client.c	\
 			server/src/commands/remove_first_cmd_queue.c	\
 			server/src/setup_map/generate_map.c	\
-            server/src/utils/my_str_to_word_array.c	\
-            server/src/commands/bct_command.c
+			server/src/utils/my_str_to_word_array.c	\
+			server/src/commands/bct_command.c	\
+
 
 SRC_TEST	=	tests/src/main.cpp	\
 			tests/src/get_parameters.cpp	\
@@ -46,7 +47,8 @@ SRC_TEST	=	tests/src/main.cpp	\
 			tests/src/valid_client.cpp	\
 			tests/src/bct_command.cpp	\
 			tests/src/msz_command.cpp	\
-			tests/src/str_to_word_array.cpp
+			tests/src/str_to_word_array.cpp	\
+			tests/src/write_list.cpp
 
 OBJ	=	$(SRC_SERVER:.c=.o)
 
