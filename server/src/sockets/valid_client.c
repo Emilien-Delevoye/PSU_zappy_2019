@@ -30,10 +30,17 @@ static void remove_from_first_list(data_server_t *data, client_t *cli)
     if (cli->next == NULL && cli->prev == NULL) {
         data->l_waiting.first = NULL;
         data->l_waiting.last = NULL;
+        return;
     } else if (cli->prev) {
+        cli->prev->next = cli->next;
         data->l_waiting.last = cli->prev;
+        cli->prev = NULL;
+        cli->next = NULL;
     } else {
+        cli->next->prev = cli->prev;
         data->l_waiting.first = cli->next;
+        cli->prev = NULL;
+        cli->next = NULL;
     }
 }
 

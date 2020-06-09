@@ -39,7 +39,8 @@ SRC_SERVER	=	server/src/utils/parameters/get_parameters.c	\
 
 SRC_TEST	=	tests/src/main.cpp	\
 			tests/src/get_parameters.cpp	\
-			tests/src/setup_map.cpp
+			tests/src/setup_map.cpp	\
+			tests/src/valid_client.cpp
 
 OBJ	=	$(SRC_SERVER:.c=.o)
 

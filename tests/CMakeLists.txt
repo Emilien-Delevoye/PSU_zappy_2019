@@ -40,6 +40,11 @@ add_executable(server_tests
         ../server/src/setup_map/free_map.c
         ../server/src/utils/extract_command.c
         ../server/include/commands/commands.h
-        src/main.cpp src/get_parameters.cpp include/tests.h src/setup_map.cpp ../server/src/commands/remove_first_cmd_queue.c)
+        ../server/src/sockets/valid_client.c
+        ../server/src/sockets/close_clients/utils_close_cli_co.c
+        src/main.cpp src/get_parameters.cpp include/tests.h
+        src/setup_map.cpp
+        ../server/src/commands/remove_first_cmd_queue.c
+        src/valid_client.cpp)
 
 target_link_libraries(server_tests gtest gtest_main pthread gcov)
