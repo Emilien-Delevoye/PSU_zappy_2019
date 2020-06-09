@@ -8,16 +8,28 @@
 #include "sockets/select.h"
 #include <stdlib.h>
 
+static void list_fd_set(data_server_t *data, client_t *first)
+{
+    while (first) {
+        FD_SET(first->fd, &data->fdset_read);
+        if (first->list_msg)
+            FD_SET(first->fd, &data->fdset_write);
+        first = first->next;
+    }
+}
+
 void setup_fdset(data_server_t *data)
 {
     FD_ZERO(&data->fdset_read);
     FD_ZERO(&data->fdset_write);
     FD_SET(data->fd, &data->fdset_read);
-    for (client_t *cur = data->l_waiting.first; cur; cur = cur->next) {
+    list_fd_set(data, data->l_waiting.first);
+    list_fd_set(data, data->l_connected.first);
+    /*for (client_t *cur = data->l_waiting.first; cur; cur = cur->next) {
         FD_SET(cur->fd, &data->fdset_read);
         if (cur->list_msg)
             FD_SET(cur->fd, &data->fdset_write);
-    }
+    }*/
 }
 
 static int get_max_fd(data_server_t *data)
@@ -25,6 +37,9 @@ static int get_max_fd(data_server_t *data)
     int max_fd = data->fd;
 
     for (client_t *cur = data->l_waiting.first; cur; cur = cur->next)
+        if (cur->fd > max_fd)
+            max_fd = cur->fd;
+    for (client_t *cur = data->l_connected.first; cur; cur = cur->next)
         if (cur->fd > max_fd)
             max_fd = cur->fd;
     return (max_fd + 1);

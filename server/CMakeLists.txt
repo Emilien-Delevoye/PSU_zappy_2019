@@ -38,4 +38,4 @@ add_executable(zappy_server
         src/setup_map/free_map.c
         src/commands/every_commands.c
         src/commands/msz_command.c
-        src/utils/extract_command.c)
+        src/utils/extract_command.c src/sockets/valid_client.c src/sockets/close_clients/utils_close_cli_co.c)

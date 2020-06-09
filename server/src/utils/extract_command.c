@@ -66,7 +66,7 @@ static bool cli_too_many_cmd(client_t *cli)
     char counter = 0;
 
     if (!cur)
-        return (true);
+        return (false);
     while (cur) {
         cur = cur->next;
         if (counter > 10) {

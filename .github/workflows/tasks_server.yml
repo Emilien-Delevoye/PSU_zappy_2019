@@ -13,14 +13,14 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v2
-      - name: make -C server/
-        run: make -C server/
+      - name: make
+        run: make
       - name: make clean
-        run: make clean -C server/
-      - name: make fclean -C server/
-        run: make -C server/ ; make fclean -C server/
-      - name: make re -C server/
-        run: make re -C server/
+        run: make clean
+      - name: make fclean
+        run: make ; make fclean
+      - name: make re
+        run: make re
   update_remote:
     runs-on: self-hosted
     steps:

@@ -35,4 +35,12 @@ void close_clients(data_server_t *data)
         close_clients(data);
         return;
     }
+    for (client_t *cli = data->l_connected.first; cli; cli = cli->next) {
+        if (cli->to_close == false)
+            continue;
+        free_command_queue(cli);
+        remove_a_client_connected(data, cli);
+        close_clients(data);
+        return;
+    }
 }

@@ -45,6 +45,7 @@ typedef struct client_s {
     int fd;
     bool to_close;
     char *buffer;
+    unsigned short team_id;
     command_queue_t *cmd_queue;
     write_cli_t *list_msg;
     struct client_s *prev;
