@@ -10,7 +10,8 @@
 
 #include "server.h"
 
-void msz_command(client_t *cli, data_server_t *data);
+void msz_command(client_t *cli, data_server_t *data, __attribute__((unused))char **arg);
+void bct_command(client_t *client, data_server_t *data, char **arg);
 void loop_tmp_check_every_buffer(data_server_t *data);
 
 #endif //PSU_ZAPPY_2019_COMMANDS_H

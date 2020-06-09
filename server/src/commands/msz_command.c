@@ -11,7 +11,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-void msz_command(client_t *cli, data_server_t *data)
+void msz_command(client_t *cli, data_server_t *data, __attribute__((unused))char **arg)
 {
     char x[11];
     char y[11];

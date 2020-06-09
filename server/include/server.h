@@ -13,13 +13,13 @@
 #include <stdio.h>
 
 enum items_type {
+    FOOD,
     LINEMATE,
     DERAUMERE,
     SIBUR,
     MENDIANE,
     PHIRAS,
-    THYSTAME,
-    FOOD
+    THYSTAME
 };
 
 typedef struct map_s {
