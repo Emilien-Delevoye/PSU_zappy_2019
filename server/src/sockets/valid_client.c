@@ -44,7 +44,7 @@ static void remove_from_first_list(data_server_t *data, client_t *cli)
     }
 }
 
-static void client_validation(data_server_t *data, client_t *cli, int team_id)
+void client_validation(data_server_t *data, client_t *cli, int team_id)
 {
     if (cli->next != NULL && cli->prev != NULL) {
         cli->next->prev = cli->prev;

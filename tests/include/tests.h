@@ -20,6 +20,10 @@ extern "C" {
     void bct_command(client_t *cli, data_server_t *data, char **arg);
     void msz_command(client_t *cli, data_server_t *data, char **arg);
     char **my_str_to_word_array(char *str);
+    void write_socket(data_server_t *data);
+    void client_validation(data_server_t *data, client_t *cli, int team_id);
+    void setup_fdset(data_server_t *data);
+    bool select_fd(data_server_t *data);
 }
 
 #endif //ZAPPY_TESTS_H
