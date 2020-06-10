@@ -65,6 +65,7 @@ typedef struct param_s {
     unsigned int team_nb;
     unsigned short client_nb;
     unsigned int freq;
+    unsigned short *r_cli;
     bool valid_params;
 } param_t;
 

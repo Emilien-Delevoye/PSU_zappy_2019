@@ -25,8 +25,12 @@ data_server_t get_parameters(int ac, char **av)
     if (data.params.team_nb < 1 || !data.params.team_names ||
         data.params.port < 1 || data.params.width < 1
         || data.params.height < 1 || data.params.client_nb < 1 ||
-        data.params.freq < 1)
+        data.params.freq < 1 || !data.params.r_cli)
         st = false;
     data.params.valid_params = st;
+    if (!data.params.r_cli)
+        return (data);
+    for (unsigned short a = 0; a != data.params.team_nb; ++a)
+        data.params.r_cli[a] = data.params.client_nb;
     return (data);
 }

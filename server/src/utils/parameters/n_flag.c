@@ -32,6 +32,17 @@ static void create_tab(data_server_t *d, char **av)
     }
 }
 
+static bool create_names(data_server_t *data)
+{
+    data->params.r_cli =
+        malloc(sizeof(unsigned short) * (data->params.team_nb + 1));
+    if (!data->params.r_cli)
+        return (false);
+    memset(data->params.r_cli, 0,
+        sizeof(unsigned short) * (data->params.team_nb + 1));
+    return (true);
+}
+
 bool n_flag(char **av, data_server_t *data)
 {
     static bool use_flag = false;
@@ -47,5 +58,5 @@ bool n_flag(char **av, data_server_t *data)
     create_tab(data, av);
     if (!data->params.team_names || data->params.team_nb < 1)
         return (false);
-    return (true);
+    return (create_names(data));
 }
