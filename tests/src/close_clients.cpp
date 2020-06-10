@@ -23,6 +23,10 @@ TEST(close_clients, remove_a_client)
     remove_a_client(&data, data.l_waiting.first);
     remove_a_client(&data, data.l_waiting.last);
     remove_a_client(&data, data.l_waiting.first);
+    EXPECT_EQ(data.l_waiting.first, nullptr);
+    EXPECT_EQ(data.l_waiting.last, nullptr);
+    EXPECT_EQ(data.l_connected.first, nullptr);
+    EXPECT_EQ(data.l_connected.last, nullptr);
 }
 
 TEST(close_clients, remove_a_cli_co)
@@ -39,6 +43,10 @@ TEST(close_clients, remove_a_cli_co)
     remove_a_client_connected(&data, data.l_connected.first);
     remove_a_client_connected(&data, data.l_connected.last);
     remove_a_client_connected(&data, data.l_connected.first);
+    EXPECT_EQ(data.l_waiting.first, nullptr);
+    EXPECT_EQ(data.l_waiting.last, nullptr);
+    EXPECT_EQ(data.l_connected.first, nullptr);
+    EXPECT_EQ(data.l_connected.last, nullptr);
 }
 
 TEST(close_clients, close_clients)
