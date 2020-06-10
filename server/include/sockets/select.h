@@ -24,5 +24,6 @@ void extract_command(client_t *);
 bool add_to_client(client_t *, char *);
 void valid_client(data_server_t *, client_t *);
 void remove_first_cmd_queue(client_t *);
+void add_to_write_list(client_t *cli, char *buffer);
 
 #endif //ZAPPY_SERVER_SELECT_H

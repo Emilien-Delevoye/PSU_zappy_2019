@@ -46,6 +46,8 @@ static void remove_from_first_list(data_server_t *data, client_t *cli)
 
 void client_validation(data_server_t *data, client_t *cli, int team_id)
 {
+    char team_nb[20] = {0};
+
     if (cli->next != NULL && cli->prev != NULL) {
         cli->next->prev = cli->prev;
         cli->prev->next = cli->next;
@@ -54,6 +56,11 @@ void client_validation(data_server_t *data, client_t *cli, int team_id)
     }
     cli->team_id = (unsigned short)team_id;
     add_to_valid_list(data, cli);
+    if (!data->params.r_cli)
+        sprintf(team_nb, "0\n");
+    else
+        sprintf(team_nb, "%d\n", --data->params.r_cli[cli->team_id]);
+    add_to_write_list(cli, team_nb);
 }
 
 void valid_client(data_server_t *data, client_t *cli)
