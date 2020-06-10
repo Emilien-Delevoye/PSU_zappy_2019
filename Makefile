@@ -53,7 +53,8 @@ SRC_TEST	=	tests/src/bct_command.cpp	\
                         tests/src/time.cpp	\
                         tests/src/valid_client.cpp	\
                         tests/src/write_list.cpp	\
-                        tests/src/write_socket.cpp
+                        tests/src/write_socket.cpp	\
+			tests/src/close_clients.cpp
 
 OBJ	=	$(SRC_SERVER:.c=.o)
 

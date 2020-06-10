@@ -29,6 +29,9 @@ extern "C" {
     void timer(data_server_t *data);
     void setup_timer(data_server_t *data);
     void close_server(data_server_t data);
+    void close_clients(data_server_t *data);
+    void remove_a_client_connected(data_server_t *data, client_t *cli);
+    void remove_a_client(data_server_t *data, client_t *cli);
 }
 
 #endif //ZAPPY_TESTS_H
