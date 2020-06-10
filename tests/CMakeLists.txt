@@ -52,6 +52,6 @@ add_executable(server_tests
         src/setup_map.cpp
         src/bct_command.cpp src/msz_command.cpp src/str_to_word_array.cpp
         ../server/src/commands/remove_first_cmd_queue.c
-        src/valid_client.cpp src/write_list.cpp src/write_socket.cpp src/setup_socket.cpp src/read_socket.cpp)
+        src/valid_client.cpp src/write_list.cpp src/write_socket.cpp src/setup_socket.cpp src/read_socket.cpp src/time.cpp src/close_server.cpp)
 
 target_link_libraries(server_tests gtest gtest_main pthread gcov)

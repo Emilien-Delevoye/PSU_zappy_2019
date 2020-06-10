@@ -26,6 +26,9 @@ extern "C" {
     bool select_fd(data_server_t *data);
     int setup_socket(data_server_t *data);
     void read_socket(data_server_t *data);
+    void timer(data_server_t *data);
+    void setup_timer(data_server_t *data);
+    void close_server(data_server_t data);
 }
 
 #endif //ZAPPY_TESTS_H

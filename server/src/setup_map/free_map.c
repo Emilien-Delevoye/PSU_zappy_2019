@@ -25,6 +25,8 @@ void free_map(data_server_t data)
     map_t *cur;
     map_t *to_free;
 
+    if (!left)
+        return;
     for (int a = 0; a < data.params.height; ++a) {
         if (data.params.width > 1)
             cur = left->right;
