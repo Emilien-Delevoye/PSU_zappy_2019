@@ -35,6 +35,7 @@ TEST(write_socket, write_socket)
     add_to_write_list(data.l_connected.first, strdup("test1"));
     add_to_write_list(data.l_connected.last, strdup("test2"));
     test_get_max_fd(&data);
+    write_socket(&data);
     testing::internal::CaptureStdout();
     testing::internal::CaptureStderr();
     write_socket(&data);
