@@ -11,3 +11,4 @@ cmake-build-debug
 /tests/server_tests
 *.gcno
 *.gcda
+/zappy_example_server
