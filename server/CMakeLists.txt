@@ -45,4 +45,5 @@ add_executable(zappy_server
         src/commands/remove_first_cmd_queue.c
         src/utils/my_str_to_word_array.c
         src/commands/bct_command.c
-        src/setup_map/generate_map.c)
+        src/setup_map/generate_map.c
+        src/utils/list_actions/new_client_to_wait_list.c)

@@ -57,6 +57,11 @@ struct list_client_s {
     client_t *last;
 };
 
+typedef struct list_actions_s {
+    client_t *cli;
+    struct list_actions_s *next;
+} list_actions_t;
+
 typedef struct param_s {
     int port;
     int width;
@@ -84,6 +89,10 @@ typedef struct data_server_s {
 
     //Map pointer :
     map_t *bottom_left;
+
+    //Working clients :
+    list_actions_t *cli_work;
+    list_actions_t *cli_wait;
 
     //Timer structures
     struct timeval tv;

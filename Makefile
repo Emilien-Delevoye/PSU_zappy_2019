@@ -39,7 +39,7 @@ SRC_SERVER	=	server/src/utils/parameters/get_parameters.c	\
 			server/src/setup_map/generate_map.c	\
 			server/src/utils/my_str_to_word_array.c	\
 			server/src/commands/bct_command.c	\
-
+			server/src/utils/list_actions/new_client_to_wait_list.c
 
 SRC_TEST	=	tests/src/bct_command.cpp	\
                         tests/src/close_server.cpp	\
