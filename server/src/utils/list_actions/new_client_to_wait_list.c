@@ -7,6 +7,7 @@
 
 #include "server.h"
 #include <stdlib.h>
+#include <string.h>
 
 static list_actions_t *new_node(client_t *cli)
 {
@@ -14,6 +15,7 @@ static list_actions_t *new_node(client_t *cli)
 
     if (!new)
         return (NULL);
+    memset(new, 0, sizeof(list_actions_t));
     new->next = NULL;
     new->cli = cli;
     return (new);
