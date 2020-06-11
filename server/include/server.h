@@ -28,7 +28,7 @@ typedef struct map_s {
     struct map_s *left;
     struct map_s *top;
     struct map_s *bottom;
-    enum items_type items[7];
+    unsigned int items[7];
 } map_t;
 
 typedef struct write_cli_s {

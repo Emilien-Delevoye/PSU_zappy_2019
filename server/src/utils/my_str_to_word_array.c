@@ -47,6 +47,8 @@ char *get_dup(const char *str, int *i, char *dup)
         dup[j] = str[*i];
         *i += 1;
     }
+    if (str[*i] != ' ' && str[*i] != '\t')
+        *i -= 1;
     dup[counter_malloc] = '\0';
     return (dup);
 }
@@ -66,7 +68,7 @@ char **my_str_to_word_array(char *str)
     }
     for (int i = 0; str && str[i] != '\0'; i++) {
         dup = get_dup(str, &i, dup);
-        if (dup != NULL && dup[0] != '\0') {
+        if (dup && dup[0] != '\0') {
             all[counter_str] = dup;
             counter_str++;
         }
