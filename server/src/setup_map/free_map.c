@@ -16,6 +16,8 @@ void free_team_names(data_server_t data)
         printf("%s\n", data.params.team_names[a]);
         free(data.params.team_names[a]);
     }
+    if (data.params.r_cli)
+        free(data.params.r_cli);
     free(data.params.team_names);
 }
 

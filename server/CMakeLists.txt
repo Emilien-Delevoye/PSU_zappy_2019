@@ -46,4 +46,4 @@ add_executable(zappy_server
         src/utils/my_str_to_word_array.c
         src/commands/bct_command.c
         src/setup_map/generate_map.c
-        src/utils/list_actions/new_client_to_wait_list.c)
+        src/utils/list_actions/new_client_to_wait_list.c src/ai_interaction/ai_interaction_main.c)
