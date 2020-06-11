@@ -32,6 +32,7 @@ extern "C" {
     void close_clients(data_server_t *data);
     void remove_a_client_connected(data_server_t *data, client_t *cli);
     void remove_a_client(data_server_t *data, client_t *cli);
+    void new_client_to_ww_list(client_t *cli, list_actions_t **cli_work);
 }
 
 #endif //ZAPPY_TESTS_H
