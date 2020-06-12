@@ -29,7 +29,7 @@ void call_command_function(data_server_t *data, client_t *cli, char **arg)
 
 void loop_tmp_check_every_buffer(data_server_t *data)
 {
-    client_t *current = data->l_connected.first;
+    client_t *current = data->l_graphical.first;
 
     while (current) {
         if (current->cmd_queue && current->cmd_queue->command) {
