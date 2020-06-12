@@ -16,23 +16,14 @@ extern "C" {
     int setup_map(data_server_t *data);
     void free_map(data_server_t data);
     void add_client_to_list(data_server_t *data, int new_fd);
-    void valid_client(data_server_t *d, client_t *cli);
     void bct_command(client_t *cli, data_server_t *data, char **arg);
     void msz_command(client_t *cli, data_server_t *data, char **arg);
     char **my_str_to_word_array(char *str);
-    void write_socket(data_server_t *data);
     void client_validation(data_server_t *data, client_t *cli, int team_id);
-    void setup_fdset(data_server_t *data);
-    bool select_fd(data_server_t *data);
     int setup_socket(data_server_t *data);
-    void read_socket(data_server_t *data);
     void timer(data_server_t *data);
     void setup_timer(data_server_t *data);
     void close_server(data_server_t data);
-    void close_clients(data_server_t *data);
-    void remove_a_client_connected(data_server_t *data, client_t *cli);
-    void remove_a_client(data_server_t *data, client_t *cli);
-    void new_client_to_ww_list(client_t *cli, list_actions_t **cli_work);
     void graphical_validation(data_server_t *data, client_t *cli);
 }
 
