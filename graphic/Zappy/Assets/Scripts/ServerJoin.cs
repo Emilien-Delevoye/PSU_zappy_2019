@@ -61,7 +61,7 @@ public class ServerJoin : MonoBehaviour
     {
         if (client.Connected())
         {
-            client.SendMessageToServer("Client connected.\n");
+            client.SendMessageToServer("GRAPHICAL42\n");
             loading = false;
             loadingModel.SetActive(false);
             loadingText.SetActive(false);

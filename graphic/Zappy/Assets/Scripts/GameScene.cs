@@ -22,9 +22,7 @@ public class GameScene : MonoBehaviour
 
 
     public GameObject character;
-    public RuntimeAnimatorController runtimeAnimator;
-    private Animator animator;
-
+    //private Animator animator;
 
     private Vector3 spawnPos;
 
@@ -55,6 +53,7 @@ public class GameScene : MonoBehaviour
             _orientation = orientation;
             _level = level;
             _teamName = teamName;
+            _animator = _gameObject.gameObject.GetComponent<Animator>();
             _gameObject.transform.position = new Vector3(UnityEngine.Random.Range(posX + 0.2f, posX + 0.8f), 0, UnityEngine.Random.Range(posY + 0.2f, posY + 0.8f));
             if (orientation == 1)
                 _gameObject.transform.eulerAngles = new Vector3(0f, 0f, 0f);
@@ -77,22 +76,21 @@ public class GameScene : MonoBehaviour
         {
             _posToMoveX = posX;
             _posToMoveY = posY;
-            //_gameObject.transform.position += _gameObject.transform.forward * Time.deltaTime;
-            //_gameObject.transform.position = Vector3.MoveTowards(_gameObject.transform.position, new Vector3(posX, 0f, posY), 800f);
-            //_gameObject.transform.Translate(_posX * Time.deltaTime, 0, _posY * Time.deltaTime);
         }
 
         public bool NeedToMove()
         {
             if (_posToMoveX == _posX && _posToMoveY == _posY)
+            {
+                _animator.SetInteger("run", 0);
                 return false;
+            }
+            _animator.SetInteger("run", 1);
             return true;
-           
         }
 
         public void Move()
         {
-            Debug.Log("pos to move: " + _posToMoveY + " pos : " + _posY);
             if (_posToMoveX/2 >= _gameObject.transform.position.x - 0.5f && _posToMoveX/2 <= _gameObject.transform.position.x + 0.5f)
             {
                 _posX = _posToMoveX;
@@ -117,6 +115,7 @@ public class GameScene : MonoBehaviour
         }
 
         private GameObject _gameObject;
+        private Animator _animator;
         private int _number;
         private int _posX;
         private int _posY;
@@ -140,8 +139,7 @@ public class GameScene : MonoBehaviour
         mapPos.z = startPointZ;
 
         characters = new Dictionary<int, Character>();
-        animator = character.gameObject.GetComponent<Animator>();
-        animator.runtimeAnimatorController = runtimeAnimator;
+        //animator = character.gameObject.GetComponent<Animator>();
 
         SetUpAssetsSize();
         SetUpSizeMap();
@@ -196,7 +194,6 @@ public class GameScene : MonoBehaviour
     {
         if (arguments.Length >= 5)
         {
-            Debug.Log(int.Parse(arguments[3]));
             characters[int.Parse(arguments[1])].SetPointToMove(int.Parse(arguments[2]), int.Parse(arguments[3]));
             characters[int.Parse(arguments[1])].SetOrientation(int.Parse(arguments[4]));
         } else
