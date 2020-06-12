@@ -63,7 +63,21 @@ void client_validation(data_server_t *data, client_t *cli, int team_id)
     new_client_to_ww_list(cli, &data->cli_wait);
 }
 
-void valid_client(data_server_t *data, client_t *cli)
+static void graphical_validation(data_server_t *data, client_t *cli)
+{
+    if (cli->next && cli->prev) {
+        cli->next->prev = cli->prev;
+        cli->prev->next = cli->next;
+    } else {
+        remove_from_first_list(data, cli);
+    }
+    data->l_graphical.first = cli;
+    data->l_graphical.last = cli;
+    cli->next = NULL;
+    cli->prev = NULL;
+}
+
+void valid_client(data_server_t *d, client_t *cli)
 {
     char *cmd;
     command_queue_t *to_delete;
@@ -76,8 +90,11 @@ void valid_client(data_server_t *data, client_t *cli)
         cli->cmd_queue = cli->cmd_queue->next;
         free(to_delete);
     }
-    for (int a = 0; data->params.team_names && data->params.team_names[a]; ++a)
-        if (strcmp(data->params.team_names[a], cli->cmd_queue->command) == 0)
-            client_validation(data, cli, a);
+    for (int a = 0; d->params.team_names && d->params.team_names[a]; ++a) {
+        if (strcmp(d->params.team_names[a], cli->cmd_queue->command) == 0)
+            client_validation(d, cli, a);
+        if (strcmp(cli->cmd_queue->command, "GRAPHICAL42\n") == 0)
+            graphical_validation(d, cli);
+    }
     remove_first_cmd_queue(cli);
 }

@@ -87,6 +87,7 @@ typedef struct data_server_s {
     //Clients structures
     struct list_client_s l_waiting;
     struct list_client_s l_connected;
+    struct list_client_s l_graphical;
 
     //Map pointer :
     map_t *bottom_left;
