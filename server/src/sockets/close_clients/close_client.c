@@ -7,6 +7,7 @@
 
 #include "server.h"
 #include <stdlib.h>
+#include <unistd.h>
 
 static void free_command_queue(client_t *cli)
 {
@@ -22,6 +23,17 @@ static void free_command_queue(client_t *cli)
         free(save);
         save = c;
     }
+}
+
+static void close_graphical(data_server_t *data, client_t *first)
+{
+    if (!first || first->to_close == false)
+        return;
+    free_command_queue(first);
+    close(first->fd);
+    free(first);
+    data->l_connected.first = NULL;
+    data->l_connected.last = NULL;
 }
 
 void close_clients(data_server_t *data)
@@ -42,4 +54,5 @@ void close_clients(data_server_t *data)
         close_clients(data);
         return;
     }
+    close_graphical(data, data->l_connected.first);
 }
