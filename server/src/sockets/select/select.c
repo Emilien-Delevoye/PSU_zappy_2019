@@ -37,6 +37,9 @@ static int get_max_fd(data_server_t *data)
     for (client_t *cur = data->l_connected.first; cur; cur = cur->next)
         if (cur->fd > max_fd)
             max_fd = cur->fd;
+    for (client_t *cur = data->l_graphical.first; cur; cur = cur->next)
+        if (cur->fd > max_fd)
+            max_fd = cur->fd;
     return (max_fd + 1);
 }
 

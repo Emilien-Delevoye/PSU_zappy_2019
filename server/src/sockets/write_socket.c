@@ -36,4 +36,7 @@ void write_socket(data_server_t *data)
     for (client_t *c = data->l_waiting.first; c; c = c->next)
         if (c->list_msg && FD_ISSET(c->fd, &data->fdset_write))
             write_to_client(c);
+    for (client_t *c = data->l_graphical.first; c; c = c->next)
+        if (c->list_msg && FD_ISSET(c->fd, &data->fdset_write))
+            write_to_client(c);
 }
