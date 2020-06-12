@@ -7,6 +7,8 @@
 
 #include "server.h"
 
+extern const struct cmd_ai_s cmd[];
+
 static void do_move_node(data_server_t *data, list_actions_t *prev,
     list_actions_t *tmp)
 {
@@ -38,16 +40,19 @@ static void move_to_work_list(list_actions_t *cur, data_server_t *data,
     }
 }
 
-static void calc_cu_time(data_server_t *data, struct timeval *tv, int duration)
+static void calc_cu_time(data_server_t *data, struct timeval *tv, int duration,
+    list_actions_t *cur)
 {
-    double time = (double)duration / data->params.freq;
+    double time = (double)cmd[duration].duration / data->params.freq;
     int seconds = (int)time;
     double microseconds = ((time - (int)time) * 1000000);
 
-    tv->tv_usec += microseconds;
-    if (tv->tv_usec > 1000000)
+    cur->tv.tv_sec = tv->tv_sec;
+    cur->tv.tv_usec = tv->tv_usec;
+    cur->tv.tv_usec += microseconds;
+    if (cur->tv.tv_usec > 1000000)
         seconds += (int)(microseconds / 1000000);
-    tv->tv_sec += seconds;
+    cur->tv.tv_sec += seconds;
 }
 
 void move_wait_to_work_list(data_server_t *data, client_t *cli,
@@ -59,7 +64,7 @@ void move_wait_to_work_list(data_server_t *data, client_t *cli,
     for (list_actions_t *cur = data->cli_wait; cur; cur = cur->next) {
         next = cur->next;
         if (cur->cli == cli) {
-            calc_cu_time(data, &cu_time, cmd_nb);
+            calc_cu_time(data, &cu_time, cmd_nb, cur);
             move_to_work_list(cur, data, cu_time);
             if (!prev)
                 data->cli_wait = next;
