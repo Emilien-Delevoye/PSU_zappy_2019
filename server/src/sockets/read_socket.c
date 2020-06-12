@@ -89,5 +89,4 @@ void read_socket(data_server_t *data)
             read_buffer(cli);
         valid_client(data, cli);
     }
-    ai_interaction(data);
 }

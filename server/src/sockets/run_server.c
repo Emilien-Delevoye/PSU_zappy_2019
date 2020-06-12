@@ -59,6 +59,7 @@ int run_server(data_server_t *data)
         write_socket(data);
         read_socket(data);
         close_clients(data);
+        ai_interaction(data);
         timer(data);
     }
     return (0);
