@@ -15,12 +15,21 @@ static void update_work_cli(data_server_t *data)
     (void)data;
 }
 
-static void update_waiting_cli(data_server_t *data, struct timeval cur_time)
+static void update_waiting_cli(data_server_t *data, struct timeval cur_time,
+    list_actions_t *first)
 {
-    for (list_actions_t *cur = data->cli_wait; cur; cur = cur->next) {
-        if (!cur->cli->cmd_queue)
+    list_actions_t *prev = NULL;
+
+    for (list_actions_t *cur = first; cur; cur = cur->next) {
+        if (!cur->cli->cmd_queue) {
+            prev = cur;
             continue;
+        }
         read_new_cmd(data, cur->cli, cur_time);
+        if (prev)
+            update_waiting_cli(data, cur_time, prev);
+        else
+            update_waiting_cli(data, cur_time, data->cli_wait);
     }
 }
 
@@ -37,5 +46,5 @@ void ai_interaction(data_server_t *data)
 
     update_time(tv);
     update_work_cli(data);
-    update_waiting_cli(data, tv[0]);
+    update_waiting_cli(data, tv[0], data->cli_wait);
 }

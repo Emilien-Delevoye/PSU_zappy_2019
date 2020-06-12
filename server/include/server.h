@@ -125,5 +125,5 @@ void ai_interaction(data_server_t *data);
 void read_new_cmd(data_server_t *data, client_t *cl, struct timeval cu_time);
 void move_wait_to_work_list(data_server_t *data, client_t *cli,
     struct timeval cu_time, short cmd_nb);
-
+void new_client_to_ww_list(client_t *cli, list_actions_t **cli_work);
 #endif //SERVER_SERVER_H

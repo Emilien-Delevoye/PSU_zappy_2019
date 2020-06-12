@@ -8,7 +8,8 @@
 #include "server.h"
 #include <string.h>
 
-const struct cmd_ai_s cmd[] = {{"Forward", 7},
+const struct cmd_ai_s cmd[] = {
+    {"Forward", 7},
     {"Right", 7},
     {"Left", 7},
     {"Look", 7},
