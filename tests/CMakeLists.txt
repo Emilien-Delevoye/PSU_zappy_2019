@@ -27,7 +27,6 @@ add_executable(server_tests
         ../server/src/sockets/run_server.c
         ../server/include/sockets/run_server.h
         ../server/src/sockets/select/select.c
-        ../server/include/sockets/select.h
         ../server/src/sockets/accept_connections.c
         ../server/include/sockets/accept_connections.h
         ../server/src/sockets/read_socket.c
@@ -60,6 +59,7 @@ add_executable(server_tests
         src/read_socket.cpp
         src/time.cpp
         src/close_server.cpp
-        src/close_clients.cpp src/new_client_to_ww_list.cpp)
+        src/close_clients.cpp
+        src/new_client_to_ww_list.cpp)
 
 target_link_libraries(server_tests gtest gtest_main pthread gcov)
