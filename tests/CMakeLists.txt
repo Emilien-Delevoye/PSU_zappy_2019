@@ -23,7 +23,6 @@ add_executable(server_tests
         ../server/include/map/setup_map.h
         ../server/include/sockets/control_socket.h
         ../server/include/utils/close_server.h
-        ../server/src/utils/time/time.c
         ../server/src/sockets/run_server.c
         ../server/include/sockets/run_server.h
         ../server/src/sockets/select/select.c
@@ -59,7 +58,6 @@ add_executable(server_tests
         src/write_socket.cpp
         src/setup_socket.cpp
         src/read_socket.cpp
-        src/time.cpp
         src/close_server.cpp
         src/close_clients.cpp
         src/new_client_to_ww_list.cpp)

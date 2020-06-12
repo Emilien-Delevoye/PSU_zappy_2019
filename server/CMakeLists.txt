@@ -21,7 +21,6 @@ add_executable(zappy_server
         include/map/setup_map.h
         include/sockets/control_socket.h
         include/utils/close_server.h
-        src/utils/time/time.c
         src/sockets/run_server.c
         include/sockets/run_server.h
         src/sockets/select/select.c

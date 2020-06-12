@@ -27,7 +27,6 @@ SRC_SERVER	=	server/src/utils/parameters/get_parameters.c	\
 			server/src/sockets/close_clients/utils_close_cli_co.c	\
 			server/src/sockets/close_clients/close_client.c	\
 			server/src/setup_map/create_map.c	\
-			server/src/utils/time/time.c	\
 			server/src/utils/write_list/write_list.c	\
 			server/src/sockets/write_socket.c	\
 			server/src/setup_map/free_map.c	\
@@ -53,7 +52,6 @@ SRC_TEST	=	tests/src/bct_command.cpp	\
                         tests/src/setup_map.cpp	\
                         tests/src/setup_socket.cpp	\
                         tests/src/str_to_word_array.cpp	\
-                        tests/src/time.cpp	\
                         tests/src/valid_client.cpp	\
                         tests/src/write_list.cpp	\
                         tests/src/write_socket.cpp	\

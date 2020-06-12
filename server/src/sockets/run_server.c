@@ -7,7 +7,6 @@
 
 #include "sockets/accept_connections.h"
 #include "sockets/run_server.h"
-#include "utils/timer.h"
 #include <signal.h>
 #include <unistd.h>
 #include <time.h>
@@ -60,7 +59,7 @@ int run_server(data_server_t *data)
         read_socket(data);
         close_clients(data);
         ai_interaction(data);
-        timer(data);
+        loop_tmp_check_every_buffer(data);
     }
     return (0);
 }
