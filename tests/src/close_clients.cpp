@@ -72,3 +72,16 @@ TEST(close_clients, close_clients)
     EXPECT_EQ(data.l_waiting.first, nullptr);
     EXPECT_EQ(data.l_waiting.last, nullptr);
 }
+
+TEST(close_clients, close_graphical)
+{
+    data_server_t data;
+
+    memset(&data, 0, sizeof(data_server_t));
+    add_client_to_list(&data, 0);
+    graphical_validation(&data, data.l_waiting.first);
+    data.l_graphical.first->to_close = true;
+    close_clients(&data);
+    EXPECT_EQ(data.l_graphical.first, nullptr);
+    EXPECT_EQ(data.l_graphical.last, nullptr);
+}
