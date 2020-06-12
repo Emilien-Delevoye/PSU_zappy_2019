@@ -102,4 +102,28 @@ typedef struct data_server_s {
     int sec;
 } data_server_t;
 
+struct cmd_ai_s {
+    const char *c;
+    int duration;
+};
+
+#define READ_SIZE 2048
+
+bool add_to_client(client_t *, char *);
+bool select_fd(data_server_t *);
+void setup_fdset(data_server_t *);
+void read_socket(data_server_t *);
+void write_socket(data_server_t *);
+void close_clients(data_server_t *);
+void remove_a_client(data_server_t *, client_t *);
+void remove_a_client_connected(data_server_t *, client_t *);
+void extract_command(client_t *);
+void valid_client(data_server_t *, client_t *);
+void remove_first_cmd_queue(client_t *);
+void add_to_write_list(client_t *cli, char *buffer);
+void ai_interaction(data_server_t *data);
+void read_new_cmd(data_server_t *data, client_t *cl, struct timeval cu_time);
+void move_wait_to_work_list(data_server_t *data, client_t *cli,
+    struct timeval cu_time, short cmd_nb);
+
 #endif //SERVER_SERVER_H

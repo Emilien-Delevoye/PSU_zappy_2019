@@ -5,7 +5,6 @@
 ** File for the bct command
 */
 
-#include "sockets/select.h"
 #include "utils/write_list.h"
 #include "server.h"
 #include <stdlib.h>

@@ -6,7 +6,6 @@
 */
 
 #include "server.h"
-#include "sockets/select.h"
 #include <stdlib.h>
 #include <string.h>
 

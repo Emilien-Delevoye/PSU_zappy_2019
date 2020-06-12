@@ -6,7 +6,6 @@
 */
 
 #include "server.h"
-#include "sockets/select.h"
 #include <stdlib.h>
 
 static void free_command_queue(client_t *cli)

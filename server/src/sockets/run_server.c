@@ -7,7 +7,6 @@
 
 #include "sockets/accept_connections.h"
 #include "sockets/run_server.h"
-#include "sockets/select.h"
 #include "utils/timer.h"
 #include <signal.h>
 #include <unistd.h>

@@ -8,7 +8,6 @@
 #include "utils/write_list.h"
 #include "commands/commands.h"
 #include "lib.h"
-#include "sockets/select.h"
 #include <string.h>
 #include <stdio.h>
 
