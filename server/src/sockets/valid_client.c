@@ -60,6 +60,7 @@ void client_validation(data_server_t *data, client_t *cli, int team_id)
     else
         sprintf(team_nb, "%d\n", --data->params.r_cli[cli->team_id]);
     add_to_write_list(cli, team_nb);
+    new_client_to_ww_list(cli, &data->cli_wait);
 }
 
 void valid_client(data_server_t *data, client_t *cli)
