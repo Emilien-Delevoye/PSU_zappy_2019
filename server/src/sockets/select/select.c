@@ -24,6 +24,7 @@ void setup_fdset(data_server_t *data)
     FD_SET(data->fd, &data->fdset_read);
     list_fd_set(data, data->l_waiting.first);
     list_fd_set(data, data->l_connected.first);
+    list_fd_set(data, data->l_graphical.first);
 }
 
 static int get_max_fd(data_server_t *data)

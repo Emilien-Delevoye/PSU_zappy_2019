@@ -93,8 +93,10 @@ void valid_client(data_server_t *d, client_t *cli)
     for (int a = 0; d->params.team_names && d->params.team_names[a]; ++a) {
         if (strcmp(d->params.team_names[a], cli->cmd_queue->command) == 0)
             client_validation(d, cli, a);
-        if (strcmp(cli->cmd_queue->command, "GRAPHICAL42\n") == 0)
+        if (strcmp(cli->cmd_queue->command, "GRAPHICAL42") == 0) {
             graphical_validation(d, cli);
+            break;
+        }
     }
     remove_first_cmd_queue(cli);
 }
