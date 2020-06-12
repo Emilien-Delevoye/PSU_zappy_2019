@@ -59,7 +59,7 @@ struct list_client_s {
 
 typedef struct list_actions_s {
     client_t *cli;
-    struct timeval tv[2];
+    struct timeval tv;
     struct list_actions_s *next;
 } list_actions_t;
 
