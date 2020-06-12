@@ -37,21 +37,23 @@ add_executable(server_tests
         ../server/src/utils/write_list/write_list.c
         ../server/src/sockets/write_socket.c
         ../server/src/setup_map/free_map.c
-        ../server/src/utils/extract_command.c
-        ../server/src/utils/my_str_to_word_array.c
-        ../server/src/setup_map/generate_map.c
-        ../server/src/commands/bct_command.c
-        ../server/src/setup_map/generate_map.c
         ../server/src/commands/every_commands.c
         ../server/src/commands/msz_command.c
         ../server/include/commands/commands.h
+        ../server/src/utils/extract_command.c
         ../server/src/sockets/valid_client.c
         ../server/src/sockets/close_clients/utils_close_cli_co.c
+        ../server/src/commands/remove_first_cmd_queue.c
+        ../server/src/utils/my_str_to_word_array.c
+        ../server/src/commands/bct_command.c
+        ../server/src/setup_map/generate_map.c
         ../server/src/utils/list_actions/new_client_to_wait_list.c
+        ../server/src/ai_interaction/ai_interaction_main.c
+        ../server/src/ai_interaction/ai_commands_main.c
+        ../server/src/utils/list_actions/move_waiting_to_working_list.c
         src/main.cpp src/get_parameters.cpp include/tests.h
         src/setup_map.cpp
         src/bct_command.cpp src/msz_command.cpp src/str_to_word_array.cpp
-        ../server/src/commands/remove_first_cmd_queue.c
         src/valid_client.cpp
         src/write_list.cpp
         src/write_socket.cpp

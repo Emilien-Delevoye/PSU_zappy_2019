@@ -13,6 +13,7 @@ TEST(close_server, close_server)
 {
     data_server_t data;
 
+    memset(&data, 0, sizeof(data_server_t));
     data.fd = open("Makefile", O_RDONLY);
     data.params.team_names = new char *[4];
     data.params.team_names[0] = strdup("Team1");
