@@ -94,4 +94,8 @@ tests_run: clean $(OBJ) $(OBJ_SRC_TEST)
 	./tests_run
 	rm tests_run
 
+tests_build: CFLAGS += --coverage
+tests_build: clean $(OBJ) $(OBJ_SRC_TEST)
+	g++ $(OBJ) $(OBJ_SRC_TEST) -o tests_run -lgtest -lgtest_main -lpthread --coverage -I tests/include -I server/include
+
 re:	fclean all
