@@ -32,8 +32,8 @@ static void close_graphical(data_server_t *data, client_t *first)
     free_command_queue(first);
     close(first->fd);
     free(first);
-    data->l_connected.first = NULL;
-    data->l_connected.last = NULL;
+    data->l_graphical.first = NULL;
+    data->l_graphical.last = NULL;
 }
 
 void close_clients(data_server_t *data)
@@ -54,5 +54,5 @@ void close_clients(data_server_t *data)
         close_clients(data);
         return;
     }
-    close_graphical(data, data->l_connected.first);
+    close_graphical(data, data->l_graphical.first);
 }

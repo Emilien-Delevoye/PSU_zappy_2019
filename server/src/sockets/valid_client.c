@@ -63,7 +63,7 @@ void client_validation(data_server_t *data, client_t *cli, int team_id)
     new_client_to_ww_list(cli, &data->cli_wait);
 }
 
-static void graphical_validation(data_server_t *data, client_t *cli)
+void graphical_validation(data_server_t *data, client_t *cli)
 {
     if (cli->next && cli->prev) {
         cli->next->prev = cli->prev;
