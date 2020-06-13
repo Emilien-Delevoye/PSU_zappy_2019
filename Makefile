@@ -43,7 +43,8 @@ SRC_SERVER	=	server/src/utils/parameters/get_parameters.c	\
 			server/src/ai_interaction/ai_commands_main.c	\
 			server/src/utils/list_actions/move_waiting_to_working_list.c	\
 			server/src/commands/pnw_command.c	\
-			server/src/sockets/generate_new_drone.c
+			server/src/sockets/generate_new_drone.c	\
+			server/src/sockets/close_clients/close_in_cli_ww_list.c
 
 SRC_TEST	=	tests/src/bct_command.cpp	\
                         tests/src/close_server.cpp	\

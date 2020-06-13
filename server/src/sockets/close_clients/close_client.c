@@ -51,6 +51,7 @@ void close_clients(data_server_t *data)
             continue;
         free_command_queue(cli);
         remove_a_client_connected(data, cli);
+        close_in_cli_ww_list(data, cli);
         close_clients(data);
         return;
     }
