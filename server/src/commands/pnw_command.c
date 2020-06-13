@@ -7,12 +7,13 @@
 
 #include "server.h"
 
-void pnw_command(data_server_t *data)
+void pnw_command(data_server_t *data, client_t *cli,
+    __attribute__((unused))char **arg)
 {
-//    int n = player_number;
+    int n = cli->drone->id;
 //    int x = 0;
 //    int y = 0;
-//    int O = orientation;
-//    int L = player_incation_level = 0;
-//    char *N = team_name;
+    int O = cli->drone->orientation;
+    int L = cli->drone->lvl = 0;
+    char *N = data->params.team_names[cli->team_id];
 }

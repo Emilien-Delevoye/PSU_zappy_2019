@@ -11,6 +11,6 @@
 #include "server.h"
 
 void accept_connections(data_server_t *data);
-drone_t *initialise_new_drone();
+drone_t *initialise_new_drone(int previous_id);
 
 #endif //ZAPPY_SERVER_ACCEPT_CONNECTIONS_H

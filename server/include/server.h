@@ -45,6 +45,7 @@ typedef struct drone_s {
     unsigned int inventory[7];
     int lvl;
     int orientation;
+    int id;
 } drone_t;
 
 typedef struct client_s {
