@@ -6,12 +6,36 @@
 */
 
 #include "server.h"
+#include "sockets/accept_connections.h"
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
+
+static bool add_drone(client_t *new)
+{
+    new->drone = initialise_new_drone(0);
+    if (!new->drone) {
+        free(new);
+        close(new->fd);
+        return (false);
+    }
+    return (true);
+}
+
+void setup_cli_in_list(data_server_t *data, client_t *new)
+{
+    if (!data->l_waiting.first) {
+        data->l_waiting.first = new;
+        data->l_waiting.last = new;
+    } else {
+        data->l_waiting.last->next = new;
+        new->prev = data->l_waiting.last;
+        data->l_waiting.last = new;
+    }
+}
 
 void add_client_to_list(data_server_t *data, int new_fd)
 {
@@ -24,15 +48,10 @@ void add_client_to_list(data_server_t *data, int new_fd)
     }
     memset(new, 0, sizeof(client_t));
     new->fd = new_fd;
+    if (add_drone(new) == false)
+        return;
     new->to_close = false;
-    if (!data->l_waiting.first) {
-        data->l_waiting.first = new;
-        data->l_waiting.last = new;
-    } else {
-        data->l_waiting.last->next = new;
-        new->prev = data->l_waiting.last;
-        data->l_waiting.last = new;
-    }
+    setup_cli_in_list(data, new);
     printf("New connection (client %d)\n", new_fd);
 }
 

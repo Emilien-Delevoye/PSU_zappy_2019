@@ -50,6 +50,7 @@ add_executable(server_tests
         ../server/src/ai_interaction/ai_interaction_main.c
         ../server/src/ai_interaction/ai_commands_main.c
         ../server/src/utils/list_actions/move_waiting_to_working_list.c
+        ../server/src/sockets/generate_new_drone.c
         src/main.cpp src/get_parameters.cpp include/tests.h
         src/setup_map.cpp
         src/bct_command.cpp src/msz_command.cpp src/str_to_word_array.cpp
