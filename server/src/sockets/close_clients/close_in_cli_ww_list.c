@@ -6,6 +6,7 @@
 */
 
 #include "server.h"
+#include <stdlib.h>
 
 static void remove_node(list_actions_t **list, list_actions_t *prev,
     list_actions_t *cur)
@@ -15,6 +16,7 @@ static void remove_node(list_actions_t **list, list_actions_t *prev,
         return;
     }
     prev->next = cur->next;
+    free(cur);
 }
 
 void read_list(list_actions_t **list, client_t *cli)
