@@ -61,11 +61,14 @@ public class ServerJoin : MonoBehaviour
     {
         if (client.Connected())
         {
-            client.SendMessageToServer("GRAPHICAL42\n");
-            loading = false;
-            loadingModel.SetActive(false);
-            loadingText.SetActive(false);
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+            if (client.WaitMessageFromServer() == "WELCOME\n")
+            {
+                client.SendMessageToServer("GRAPHICAL42\n");
+                loading = false;
+                loadingModel.SetActive(false);
+                loadingText.SetActive(false);
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+            }
             return;
         }
         timeToConnect -= Time.deltaTime;

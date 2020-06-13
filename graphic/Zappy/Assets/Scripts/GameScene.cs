@@ -99,7 +99,15 @@ public class GameScene : MonoBehaviour
             {
                 _posY = _posToMoveY;
             }
-            _gameObject.transform.Translate(_posToMoveX * Time.deltaTime * 0.5f, 0, _posToMoveY * Time.deltaTime * 0.5f, Space.World);
+            if (_posToMoveX > _posX)
+                _gameObject.transform.Translate(1f * Time.deltaTime, 0, 0, Space.World);
+            if (_posToMoveY > _posY)
+                _gameObject.transform.Translate(0, 0, 1f * Time.deltaTime, Space.World);
+            if (_posToMoveX < _posX)
+                _gameObject.transform.Translate(-1f * Time.deltaTime, 0, 0, Space.World);
+            if (_posToMoveY < _posY)
+                _gameObject.transform.Translate(0, 0, -1f * Time.deltaTime, Space.World);
+
         }
 
         public void SetOrientation(int orientation)
@@ -172,8 +180,11 @@ public class GameScene : MonoBehaviour
             receiveMessage = "pnw 0 0 0 2 3 Team1\n";
         else if (tmp == 150)
             receiveMessage = "ppo 0 5 0 2\n";
+        else if (tmp == 300)
+            receiveMessage = "ppo 0 0 0 4\n";
         else
             receiveMessage = null;
+        Debug.Log(tmp);
         ++tmp;
         if (receiveMessage != null)
         {
@@ -246,8 +257,7 @@ public class GameScene : MonoBehaviour
     private void SetUpSizeMap()
     {
         client.SendMessageToServer("msz\n");
-        //receiveMessage = client.WaitMessageFromServer();
-        receiveMessage = "msz 20 20\n";
+        receiveMessage = client.WaitMessageFromServer();
 
         if (receiveMessage != null)
         {
@@ -305,8 +315,7 @@ public class GameScene : MonoBehaviour
     private void SetUpTile()
     {
         Array.Clear(arguments, 0, arguments.Length);
-        //receiveMessage = client.WaitMessageFromServer();
-        receiveMessage = "bct 0 0 1 1 1 1 1 1 1\n";
+        receiveMessage = client.WaitMessageFromServer();
 
         if (receiveMessage != null)
         {
