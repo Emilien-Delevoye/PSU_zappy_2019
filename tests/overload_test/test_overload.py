@@ -2,7 +2,7 @@
 
 import sys
 from server_link import ServerLink
-
+import time
 
 def main():
     if len(sys.argv) != 4:
@@ -17,6 +17,7 @@ def main():
         new = ServerLink(ip, port, "Team1")
         new.connect()
         list_link.append(new)
+    time.sleep(5)
     for i in list_link:
         i.disconnect()
 
