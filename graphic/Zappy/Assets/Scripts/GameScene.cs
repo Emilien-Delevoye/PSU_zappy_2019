@@ -12,17 +12,15 @@ public class GameScene : MonoBehaviour
     public Client client;
     public GameObject plane;
 
+    public GameObject food;
     public GameObject linemate;
     public GameObject deraumere;
     public GameObject sibur;
     public GameObject mendiane;
     public GameObject phiras;
     public GameObject thystame;
-    public GameObject food;
-
 
     public GameObject character;
-    //private Animator animator;
 
     private Vector3 spawnPos;
 
@@ -135,6 +133,92 @@ public class GameScene : MonoBehaviour
     };
     private Dictionary<int, Character> characters;
 
+    public class Tile
+    {
+        public Tile(int posX, int posY, int numberFood, int numberLinemate, int numberDeraumere, int numberSibur, int numberMendiane, int numberPhiras, int numberThystame,
+            Vector3 mapPos, GameObject food, GameObject linemate, GameObject deraumere, GameObject sibur, GameObject mendiane, GameObject phiras, GameObject thystame)
+        {
+            _foodList = new LinkedList<GameObject>();
+            _linemateList = new LinkedList<GameObject>();
+            _deraumereList = new LinkedList<GameObject>();
+            _siburList = new LinkedList<GameObject>();
+            _mendianeList = new LinkedList<GameObject>();
+            _phirasList = new LinkedList<GameObject>();
+            _thystameList = new LinkedList<GameObject>();
+
+            for (int i = 0; i < numberFood; i++)
+            {
+                _spawnPos.x = UnityEngine.Random.Range(mapPos.x - 0.5f, mapPos.x + 0.5f);
+                _spawnPos.z = UnityEngine.Random.Range(mapPos.z - 0.5f, mapPos.z + 0.5f);
+                _spawnPos.y = 0.1f;
+                _foodList.AddLast(Instantiate(food, _spawnPos, _rotation));
+            }
+
+            for (int i = 0; i < numberLinemate; i++)
+            {
+                _spawnPos.x = UnityEngine.Random.Range(mapPos.x - 0.5f, mapPos.x + 0.5f);
+                _spawnPos.z = UnityEngine.Random.Range(mapPos.z - 0.5f, mapPos.z + 0.5f);
+                _spawnPos.y = 0.050f;
+                _linemateList.AddLast(Instantiate(linemate, _spawnPos, _rotation));
+            }
+
+            for (int i = 0; i < numberDeraumere; i++)
+            {
+                _spawnPos.x = UnityEngine.Random.Range(mapPos.x - 0.5f, mapPos.x + 0.5f);
+                _spawnPos.z = UnityEngine.Random.Range(mapPos.z - 0.5f, mapPos.z + 0.5f);
+                _spawnPos.y = 0.050f;
+                _deraumereList.AddLast(Instantiate(deraumere, _spawnPos, _rotation));
+            }
+
+            for (int i = 0; i < numberSibur; i++)
+            {
+                _spawnPos.x = UnityEngine.Random.Range(mapPos.x - 0.5f, mapPos.x + 0.5f);
+                _spawnPos.z = UnityEngine.Random.Range(mapPos.z - 0.5f, mapPos.z + 0.5f);
+                _spawnPos.y = 0.050f;
+                _siburList.AddLast(Instantiate(sibur, _spawnPos, _rotation));
+            }
+
+            for (int i = 0; i < numberMendiane; i++)
+            {
+                _spawnPos.x = UnityEngine.Random.Range(mapPos.x - 0.5f, mapPos.x + 0.5f);
+                _spawnPos.z = UnityEngine.Random.Range(mapPos.z - 0.5f, mapPos.z + 0.5f);
+                _spawnPos.y = 0.050f;
+               _mendianeList.AddLast(Instantiate(mendiane, _spawnPos, _rotation));
+            }
+
+            for (int i = 0; i < numberPhiras; i++)
+            {
+                _spawnPos.x = UnityEngine.Random.Range(mapPos.x - 0.5f, mapPos.x + 0.5f);
+                _spawnPos.z = UnityEngine.Random.Range(mapPos.z - 0.5f, mapPos.z + 0.5f);
+                _spawnPos.y = 0.050f;
+                _phirasList.AddLast(Instantiate(phiras, _spawnPos, _rotation));
+            }
+
+            for (int i = 0; i < numberThystame; i++)
+            {
+                _spawnPos.x = UnityEngine.Random.Range(mapPos.x - 0.5f, mapPos.x + 0.5f);
+                _spawnPos.z = UnityEngine.Random.Range(mapPos.z - 0.5f, mapPos.z + 0.5f);
+                _spawnPos.y = 0.050f;
+
+               _thystameList.AddLast(Instantiate(thystame, _spawnPos, _rotation));
+            }
+        }
+
+        private LinkedList<GameObject> _foodList;
+        private LinkedList<GameObject> _linemateList;
+        private LinkedList<GameObject> _deraumereList;
+        private LinkedList<GameObject> _siburList;
+        private LinkedList<GameObject> _mendianeList;
+        private LinkedList<GameObject> _phirasList;
+        private LinkedList<GameObject> _thystameList;
+        private int _posX;
+        private int _posY;
+        private Vector3 _spawnPos;
+        private Quaternion _rotation;
+
+    }
+    private LinkedList<Tile> map;
+
     static int tmp = 0;
 
     // Start is called before the first frame update
@@ -147,7 +231,7 @@ public class GameScene : MonoBehaviour
         mapPos.z = startPointZ;
 
         characters = new Dictionary<int, Character>();
-        //animator = character.gameObject.GetComponent<Animator>();
+        map = new LinkedList<Tile>();
 
         SetUpAssetsSize();
         SetUpSizeMap();
@@ -184,7 +268,6 @@ public class GameScene : MonoBehaviour
             receiveMessage = "ppo 0 0 0 4\n";
         else
             receiveMessage = null;
-        Debug.Log(tmp);
         ++tmp;
         if (receiveMessage != null)
         {
@@ -217,14 +300,11 @@ public class GameScene : MonoBehaviour
     {
         if (arguments.Length >= 7)
         {
-            spawnPos.x = UnityEngine.Random.Range(int.Parse(arguments[2]) + 0.2f, int.Parse(arguments[2]) + 0.8f);
-            spawnPos.z = UnityEngine.Random.Range(int.Parse(arguments[3]) + 0.2f, int.Parse(arguments[3]) + 0.8f);
             characters.Add(int.Parse(arguments[1]), new Character(Instantiate(character), int.Parse(arguments[1]), int.Parse(arguments[2]), int.Parse(arguments[3]), int.Parse(arguments[4]), int.Parse(arguments[5]), arguments[6]));
         } else
         {
             Debug.Log("pnw: Reply missing argument.");
         }
-
     }
 
 
@@ -288,7 +368,7 @@ public class GameScene : MonoBehaviour
                 {
                     client.SendMessageToServer("bct " + x + " " + y + "\n");
                     Instantiate(plane, mapPos, rotation);
-                    SetUpTile();
+                    SetUpTile(x, y);
                     mapPos.x += 1f;
                 }
                 mapPos.z += 1f;
@@ -303,7 +383,7 @@ public class GameScene : MonoBehaviour
                 {
                     client.SendMessageToServer("bct " + x + " " + y + "\n");
                     Instantiate(plane, mapPos, rotation);
-                    SetUpTile();
+                    SetUpTile(x, y);
                     mapPos.z += 1f;
                 }
                 mapPos.x += 1f;
@@ -312,7 +392,7 @@ public class GameScene : MonoBehaviour
         }
     }
 
-    private void SetUpTile()
+    private void SetUpTile(int x, int y)
     {
         Array.Clear(arguments, 0, arguments.Length);
         receiveMessage = client.WaitMessageFromServer();
@@ -329,91 +409,10 @@ public class GameScene : MonoBehaviour
                 }
                 else
                 {
-                    GenerateLinemate();
-                    GenerateDeraumere();
-                    GenerateSibur();
-                    GenerateMendiane();
-                    GeneratePhiras();
-                    GenerateThystame();
+                    map.AddLast(new Tile(x, y, int.Parse(arguments[3]), int.Parse(arguments[4]), int.Parse(arguments[5]), int.Parse(arguments[6]), int.Parse(arguments[7]), int.Parse(arguments[8]),
+                        int.Parse(arguments[9]), mapPos, food, linemate, deraumere, sibur, mendiane, phiras, thystame));
                 }
             }
-        }
-    }
-
-    public void GenerateFood()
-    {
-        for (int i = 0; i < int.Parse(arguments[3]); i++)
-        {
-            spawnPos.x = UnityEngine.Random.Range(mapPos.x - 0.5f, mapPos.x + 0.5f);
-            spawnPos.z = UnityEngine.Random.Range(mapPos.z - 0.5f, mapPos.z + 0.5f);
-            spawnPos.y = 0.1f;
-            Instantiate(food, spawnPos, rotation);
-        }
-    }
-
-    private void GenerateLinemate()
-    {
-        for (int i = 0; i < int.Parse(arguments[4]); i++)
-        {
-            spawnPos.x = UnityEngine.Random.Range(mapPos.x - 0.5f, mapPos.x + 0.5f);
-            spawnPos.z = UnityEngine.Random.Range(mapPos.z - 0.5f, mapPos.z + 0.5f);
-            spawnPos.y = 0.050f;
-            Instantiate(linemate, spawnPos, rotation);
-        }
-    }
-
-    private void GenerateDeraumere()
-    {
-        for (int i = 0; i < int.Parse(arguments[5]); i++)
-        {
-            spawnPos.x = UnityEngine.Random.Range(mapPos.x - 0.5f, mapPos.x + 0.5f);
-            spawnPos.z = UnityEngine.Random.Range(mapPos.z - 0.5f, mapPos.z + 0.5f);
-            spawnPos.y = 0.050f;
-            Instantiate(deraumere, spawnPos, rotation);
-        }
-    }
-
-    private void GenerateSibur()
-    {
-        for (int i = 0; i < int.Parse(arguments[6]); i++)
-        {
-            spawnPos.x = UnityEngine.Random.Range(mapPos.x - 0.5f, mapPos.x + 0.5f);
-            spawnPos.z = UnityEngine.Random.Range(mapPos.z - 0.5f, mapPos.z + 0.5f);
-            spawnPos.y = 0.050f;
-            Instantiate(sibur, spawnPos, rotation);
-        }
-    }
-
-    private void GenerateMendiane()
-    {
-        for (int i = 0; i < int.Parse(arguments[7]); i++)
-        {
-            spawnPos.x = UnityEngine.Random.Range(mapPos.x - 0.5f, mapPos.x + 0.5f);
-            spawnPos.z = UnityEngine.Random.Range(mapPos.z - 0.5f, mapPos.z + 0.5f);
-            spawnPos.y = 0.050f;
-            Instantiate(mendiane, spawnPos, rotation);
-        }
-    }
-
-    private void GeneratePhiras()
-    {
-        for (int i = 0; i < int.Parse(arguments[8]); i++)
-        {
-            spawnPos.x = UnityEngine.Random.Range(mapPos.x - 0.5f, mapPos.x + 0.5f);
-            spawnPos.z = UnityEngine.Random.Range(mapPos.z - 0.5f, mapPos.z + 0.5f);
-            spawnPos.y = 0.050f;
-            Instantiate(phiras, spawnPos, rotation);
-        }
-    }
-
-    private void GenerateThystame()
-    {
-        for (int i = 0; i < int.Parse(arguments[9]); i++)
-        {
-            spawnPos.x = UnityEngine.Random.Range(mapPos.x - 0.5f, mapPos.x + 0.5f);
-            spawnPos.z = UnityEngine.Random.Range(mapPos.z - 0.5f, mapPos.z + 0.5f);
-            spawnPos.y = 0.050f;
-            Instantiate(thystame, spawnPos, rotation);
         }
     }
 }
