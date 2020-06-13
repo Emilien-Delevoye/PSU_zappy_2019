@@ -145,6 +145,18 @@ public class GameScene : MonoBehaviour
             _mendianeList = new LinkedList<GameObject>();
             _phirasList = new LinkedList<GameObject>();
             _thystameList = new LinkedList<GameObject>();
+            _rotation = new Quaternion(0f, 0f, 0f, 0f);
+
+            _posX = posX;
+            _posY = posY;
+
+             _food = food;
+            _linemate = linemate;
+            _deraumere = deraumere;
+            _sibur = sibur;
+            _mendiane = mendiane;
+            _phiras = phiras;
+            _thystame = thystame;
 
             for (int i = 0; i < numberFood; i++)
             {
@@ -204,6 +216,120 @@ public class GameScene : MonoBehaviour
             }
         }
 
+        public bool GoodTileSelected(int x, int y)
+        {
+            if (_posX == x && _posY == y)
+                return true;
+            return false;
+        }
+
+        public void UpdateTile(int numberFood, int numberLinemate, int numberDeraumere, int numberSibur, int numberMendiane, int numberPhiras, int numberThystame)
+        {
+            int diff = 0;
+            if (_foodList.Count < numberFood)
+            {
+
+            }
+            else if (_foodList.Count > numberFood)
+            {
+                diff = _foodList.Count - numberFood;
+
+                for (int i = 0; i < diff; i++)
+                {
+                    Destroy(_foodList.Last.Value);
+                    _foodList.RemoveLast();
+                    Debug.Log("Food Deleted");
+                }
+            }
+            if (_linemateList.Count < numberLinemate)
+            {
+
+            } else if (_linemateList.Count > numberLinemate) 
+            {
+                diff = _linemateList.Count - numberLinemate;
+
+                for (int i = 0; i < diff; i++)
+                {
+                    Destroy(_linemateList.Last.Value);
+                    _linemateList.RemoveLast();
+                    Debug.Log("Linemate Deleted");
+                }
+            }
+            if (_deraumereList.Count < numberDeraumere)
+            {
+
+            } else if (_deraumereList.Count > numberDeraumere)
+            {
+                diff = _deraumereList.Count - numberDeraumere;
+
+                for (int i = 0; i < diff; i++)
+                {
+                    Destroy(_deraumereList.Last.Value);
+                    _deraumereList.RemoveLast();
+                    Debug.Log("Deraumere Deleted");
+                }
+            }
+            if (_siburList.Count < numberSibur)
+            {
+
+            } else if (_siburList.Count > numberSibur)
+            {
+                diff = _siburList.Count - numberSibur;
+
+                for (int i = 0; i < diff; i++)
+                {
+                    Destroy(_siburList.Last.Value);
+                    _siburList.RemoveLast();
+                    Debug.Log("Sibur Deleted");
+                }
+            }
+            if (_mendianeList.Count < numberMendiane)
+            {
+
+            }
+            else if (_mendianeList.Count > numberMendiane)
+            {
+                diff = _mendianeList.Count - numberMendiane;
+
+                for (int i = 0; i < diff; i++)
+                {
+                    Destroy(_mendianeList.Last.Value);
+                    _mendianeList.RemoveLast();
+                    Debug.Log("Mendiane Deleted");
+                }
+            }
+            if (_phirasList.Count < numberPhiras)
+            {
+
+            }
+            else if (_phirasList.Count > numberPhiras)
+            {
+                diff = _phirasList.Count - numberPhiras;
+
+                for (int i = 0; i < diff; i++)
+                {
+                    Destroy(_phirasList.Last.Value);
+                    _phirasList.RemoveLast();
+                    Debug.Log("Phiras Deleted");
+                }
+            }
+            if (_thystameList.Count < numberThystame)
+            {
+
+            }
+            else if (_thystameList.Count > numberThystame)
+            {
+                diff = _thystameList.Count - numberThystame;
+
+                for (int i = 0; i < diff; i++)
+                {
+                    Destroy(_thystameList.Last.Value);
+                    _thystameList.RemoveLast();
+                    Debug.Log("Thystame Deleted");
+                }
+            }
+        }
+
         private LinkedList<GameObject> _foodList;
         private LinkedList<GameObject> _linemateList;
         private LinkedList<GameObject> _deraumereList;
@@ -216,6 +342,13 @@ public class GameScene : MonoBehaviour
         private Vector3 _spawnPos;
         private Quaternion _rotation;
 
+        public GameObject _food;
+        public GameObject _linemate;
+        public GameObject _deraumere;
+        public GameObject _sibur;
+        public GameObject _mendiane;
+        public GameObject _phiras;
+        public GameObject _thystame;
     }
     private LinkedList<Tile> map;
 
@@ -266,6 +399,8 @@ public class GameScene : MonoBehaviour
             receiveMessage = "ppo 0 5 0 2\n";
         else if (tmp == 300)
             receiveMessage = "ppo 0 0 0 4\n";
+        else if (tmp == 500)
+            receiveMessage = "bct 0 0 0 0 0 0 0 0 0\n";
         else
             receiveMessage = null;
         ++tmp;
@@ -279,9 +414,32 @@ public class GameScene : MonoBehaviour
             } else if (arguments[0] == "ppo")
             {
                 SetPointToMovePlayer();
+            } else if (arguments[0] == "bct")
+            {
+                UpdateContentOfTile();
             }
 
         }
+    }
+
+    public void UpdateContentOfTile()
+    {
+        //-Server Reply: "bct X Y q0 q1 q2 q3 q4 q5 q6\n"
+        if (arguments.Length >= 10)
+        {
+            foreach (Tile tile in map)
+            {
+                if (tile.GoodTileSelected(int.Parse(arguments[1]), int.Parse(arguments[2])))
+                {
+                    tile.UpdateTile(int.Parse(arguments[3]), int.Parse(arguments[4]), int.Parse(arguments[5]), int.Parse(arguments[6]),
+                        int.Parse(arguments[7]), int.Parse(arguments[8]), int.Parse(arguments[9]));
+                }    
+            }
+        } else
+        {
+            Debug.Log("bct: Reply missing argument.");
+        }
+
     }
 
     public void SetPointToMovePlayer()
