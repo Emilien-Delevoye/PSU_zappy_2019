@@ -1,0 +1,20 @@
+/*
+** EPITECH PROJECT, 2020
+** zappy_server
+** File description:
+** File for the generation of a new drone
+*/
+
+#include "server.h"
+#include <stdlib.h>
+
+drone_t *initialise_new_drone()
+{
+    drone_t *new = malloc(sizeof(drone_t));
+
+    new->lvl = 0;
+    new->orientation = (rand() % 4 + 1);
+    for (int i = 0; i < 7; ++i)
+        new->inventory[i] = 0;
+    return new;
+}

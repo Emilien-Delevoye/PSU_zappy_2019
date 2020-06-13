@@ -41,6 +41,12 @@ typedef struct command_queue_s {
     struct command_queue_s *next;
 } command_queue_t;
 
+typedef struct drone_s {
+    unsigned int inventory[7];
+    int lvl;
+    int orientation;
+} drone_t;
+
 typedef struct client_s {
     int fd;
     bool to_close;
@@ -48,6 +54,7 @@ typedef struct client_s {
     unsigned short team_id;
     command_queue_t *cmd_queue;
     write_cli_t *list_msg;
+    drone_t *drone;
     struct client_s *prev;
     struct client_s *next;
 } client_t;
