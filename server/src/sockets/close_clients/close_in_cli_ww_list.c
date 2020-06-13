@@ -13,6 +13,7 @@ static void remove_node(list_actions_t **list, list_actions_t *prev,
 {
     if (cur == *list || !prev) {
         (*list) = cur->next;
+        free(cur);
         return;
     }
     prev->next = cur->next;
