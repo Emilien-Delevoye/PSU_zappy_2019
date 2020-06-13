@@ -16,7 +16,9 @@
 
 static bool add_drone(client_t *new)
 {
-    new->drone = initialise_new_drone(0);
+    static int id_cli = -1;
+
+    new->drone = initialise_new_drone(id_cli++);
     if (!new->drone) {
         free(new);
         close(new->fd);
