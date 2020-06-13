@@ -10,7 +10,7 @@
 
 TEST(new_client_to_ww_list, new_list)
 {
-    list_actions_t *actions;
+    list_actions_t *actions = nullptr;
     auto *cli1 = new client_t;
     auto *cli2 = new client_t;
     auto *cli3 = new client_t;
