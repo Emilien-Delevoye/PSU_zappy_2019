@@ -33,9 +33,16 @@ static void update_waiting_cli(data_server_t *data, struct timeval cur_time,
 
 static void update_time(struct timeval tv[2])
 {
+    static int performance = 0;
+
     tv[0].tv_sec = tv[1].tv_sec;
     tv[0].tv_usec = tv[1].tv_usec;
     gettimeofday(&tv[1], NULL);
+    performance++;
+    if (tv[0].tv_sec != tv[1].tv_sec) {
+        printf("Perf : %d\n", performance);
+        performance = 0;
+    }
 }
 
 void ai_interaction(data_server_t *data)
