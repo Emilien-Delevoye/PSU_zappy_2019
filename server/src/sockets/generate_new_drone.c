@@ -8,7 +8,7 @@
 #include "server.h"
 #include <stdlib.h>
 
-drone_t *initialise_new_drone()
+drone_t *initialise_new_drone(void)
 {
     drone_t *new = malloc(sizeof(drone_t));
 
