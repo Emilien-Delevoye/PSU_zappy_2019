@@ -10,8 +10,6 @@
 
 static void update_work_cli(data_server_t *data)
 {
-    /*TODO: Parcourir en fonction du temps et exécuter les commandes qui ont
-        besoin de l'être*/
     (void)data;
 }
 
