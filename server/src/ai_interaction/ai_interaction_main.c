@@ -11,7 +11,9 @@
 static void update_work_cli(data_server_t *d)
 {
     while (d->cli_work) {
-        if (d->cli_work->tv.tv_sec > d->tv.tv_sec || (d->cli_work->tv.tv_sec == d->tv.tv_sec && d->cli_work->tv.tv_usec > d->tv.tv_usec))
+        if (d->cli_work->tv.tv_sec > d->tv.tv_sec ||
+            (d->cli_work->tv.tv_sec == d->tv.tv_sec &&
+            d->cli_work->tv.tv_usec > d->tv.tv_usec))
             return;
         move_to_wait_list(d);
     }
