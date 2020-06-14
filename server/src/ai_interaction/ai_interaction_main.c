@@ -8,9 +8,13 @@
 #include "server.h"
 #include <sys/time.h>
 
-static void update_work_cli(data_server_t *data)
+static void update_work_cli(data_server_t *d)
 {
-    (void)data;
+    while (d->cli_work) {
+        if (d->cli_work->tv.tv_sec > d->tv.tv_sec || (d->cli_work->tv.tv_sec == d->tv.tv_sec && d->cli_work->tv.tv_usec > d->tv.tv_usec))
+            return;
+        move_to_wait_list(d);
+    }
 }
 
 static void update_waiting_cli(data_server_t *data, struct timeval cur_time,

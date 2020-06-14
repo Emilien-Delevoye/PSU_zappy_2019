@@ -137,5 +137,6 @@ void move_wait_to_work_list(data_server_t *data, client_t *cli,
 void new_client_to_ww_list(client_t *cli, list_actions_t **cli_work);
 void loop_tmp_check_every_buffer(data_server_t *data);
 void close_in_cli_ww_list(data_server_t *data, client_t *cli);
+void move_to_wait_list(data_server_t *data);
 
 #endif //SERVER_SERVER_H
