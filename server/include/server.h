@@ -67,6 +67,7 @@ struct list_client_s {
 
 typedef struct list_actions_s {
     client_t *cli;
+    short cmd_nb;
     struct timeval tv;
     struct list_actions_s *next;
 } list_actions_t;
@@ -138,5 +139,8 @@ void new_client_to_ww_list(client_t *cli, list_actions_t **cli_work);
 void loop_tmp_check_every_buffer(data_server_t *data);
 void close_in_cli_ww_list(data_server_t *data, client_t *cli);
 void move_to_wait_list(data_server_t *data);
+void forward(data_server_t *data);
+void right(data_server_t *data);
+void left(data_server_t *data);
 
 #endif //SERVER_SERVER_H

@@ -40,10 +40,10 @@ static void move_to_work_list(list_actions_t *cur, data_server_t *data,
     }
 }
 
-static void calc_cu_time(data_server_t *data, struct timeval *tv, int duration,
+static void calc_cu_time(data_server_t *data, struct timeval *tv, int cmd_nb,
     list_actions_t *cur)
 {
-    double time = (double)cmd[duration].duration / data->params.freq;
+    double time = (double)cmd[cmd_nb].duration / data->params.freq;
     int seconds = (int)time;
     double microseconds = ((time - (int)time) * 1000000);
 
@@ -53,6 +53,7 @@ static void calc_cu_time(data_server_t *data, struct timeval *tv, int duration,
     if (cur->tv.tv_usec > 1000000)
         seconds += (int)(microseconds / 1000000);
     cur->tv.tv_sec += seconds;
+    cur->cmd_nb = (short)cmd_nb;
 }
 
 void move_wait_to_work_list(data_server_t *data, client_t *cli,
