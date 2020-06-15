@@ -36,12 +36,6 @@ static void close_graphical(data_server_t *data, client_t *first)
     data->l_graphical.last = NULL;
 }
 
-static void free_drone_struct(client_t *cli)
-{
-    if (cli->drone)
-        free(cli->drone);
-}
-
 void close_clients(data_server_t *data)
 {
     for (client_t *cli = data->l_waiting.first; cli; cli = cli->next) {
@@ -56,7 +50,6 @@ void close_clients(data_server_t *data)
         if (cli->to_close == false)
             continue;
         free_command_queue(cli);
-        free_drone_struct(cli);
         remove_a_client_connected(data, cli);
         close_in_cli_ww_list(data, cli);
         close_clients(data);
