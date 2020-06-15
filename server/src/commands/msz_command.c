@@ -13,13 +13,8 @@
 void msz_command(client_t *cli, data_server_t *data,
     __attribute__((unused))char **arg)
 {
-    char *str;
+    char str[29];
 
-    str = malloc(sizeof(char) * 29);
-    if (str == NULL) {
-        remove_a_client(data, cli);
-        return;
-    }
     memset(str, 0, 29);
     sprintf(str, "msz %d %d\n", data->params.width, data->params.height);
     add_to_write_list(cli, str);

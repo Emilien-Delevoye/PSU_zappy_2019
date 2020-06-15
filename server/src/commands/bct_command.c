@@ -12,12 +12,8 @@
 
 void send_bct_info(data_server_t *data, client_t *cli, char **arg, map_t *map)
 {
-    char *str = malloc(sizeof(char) * 113);
+    char str[113];
 
-    if (str == NULL) {
-        remove_a_client(data, cli);
-        return;
-    }
     memset(str, 0, 113);
     sprintf(str, "bct %s %s %d %d %d %d %d %d %d\n", arg[1], arg[2], map->items[0], map->items[1], map->items[2], map->items[3], map->items[4], map->items[5], map->items[6]);
     add_to_write_list(cli, str);
