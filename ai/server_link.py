@@ -110,3 +110,39 @@ class ServerLink:
             self.buffers["write"] += bytes(str_commands[command] + "\n", 'utf-8')
         else:
             self.buffers["write"] += bytes(str_commands[command] + " " + argument + "\n", 'utf-8')
+
+    def forward(self):
+        self.buffers["write"] += bytes("Forward\n", 'utf-8')
+
+    def right(self):
+        self.buffers["write"] += bytes("Right\n", 'utf-8')
+
+    def left(self):
+        self.buffers["write"] += bytes("Left\n", 'utf-8')
+
+    def look(self):
+        self.buffers["write"] += bytes("Look\n", 'utf-8')
+
+    def inventory(self):
+        self.buffers["write"] += bytes("Inventory\n", 'utf-8')
+
+    def broadcast(self, input_str):
+        self.buffers["write"] += bytes("Broadcast " + input_str + "\n", 'utf-8')
+
+    def connect_nbr(self):
+        self.buffers["write"] += bytes("Connect_nbr\n", 'utf-8')
+
+    def fork(self):
+        self.buffers["write"] += bytes("Fork\n", 'utf-8')
+
+    def eject(self):
+        self.buffers["write"] += bytes("Eject\n", 'utf-8')
+
+    def take(self):
+        self.buffers["write"] += bytes("Take\n", 'utf-8')
+
+    def set(self, input_str):
+        self.buffers["write"] += bytes("Set " + input_str + "\n", 'utf-8')
+
+    def incantation(self):
+        self.buffers["write"] += bytes("Incantation\n", 'utf-8')
