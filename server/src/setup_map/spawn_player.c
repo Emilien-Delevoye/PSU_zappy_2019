@@ -35,7 +35,7 @@ static void add_to_tile(map_t *tile, client_t *cli)
     cli->drone.orientation = (rand() % 4) + 1;
 }
 
-void spwan_player_graph(data_server_t *data, client_t *cli)
+void spawn_player_graph(data_server_t *data, client_t *cli)
 {
     char str[100] = {0};
 
@@ -64,5 +64,5 @@ void spawn_player(data_server_t *data, client_t *cli)
     while (obj_tile->coord[HEIGHT] != coord[HEIGHT])
         obj_tile = obj_tile->top;
     add_to_tile(obj_tile, cli);
-    spawn_player(data, cli);
+    spawn_player_graph(data, cli);
 }
