@@ -45,7 +45,7 @@ static void remove_from_first_list(data_server_t *data, client_t *cli)
 
 void client_validation(data_server_t *data, client_t *cli, int team_id)
 {
-    char team_nb[20] = {0};
+    char team_nb[62] = {0};
 
     if (cli->next != NULL && cli->prev != NULL) {
         cli->next->prev = cli->prev;
@@ -59,7 +59,8 @@ void client_validation(data_server_t *data, client_t *cli, int team_id)
         sprintf(team_nb, "ko\n");
          cli->to_close = true;
     } else {
-        sprintf(team_nb, "%d\n", --data->params.r_cli[cli->team_id]);
+        sprintf(team_nb, "%d\n%d %d\n", --data->params.r_cli[cli->team_id],
+            data->params.width, data->params.height);
     }
     add_to_write_list(cli, team_nb);
     new_client_to_ww_list(cli, &data->cli_wait);

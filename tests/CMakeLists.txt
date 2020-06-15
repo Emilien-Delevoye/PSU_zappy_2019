@@ -50,11 +50,14 @@ add_executable(server_tests
         ../server/src/ai_interaction/ai_interaction_main.c
         ../server/src/ai_interaction/ai_commands_main.c
         ../server/src/utils/list_actions/move_waiting_to_working_list.c
+        ../server/src/commands/pnw_command.c
         ../server/src/sockets/generate_new_drone.c
+        ../server/src/commands/ppo_command.c
+        ../server/src/commands/tna_command.c
         ../server/src/sockets/close_clients/close_in_cli_ww_list.c
-        ../server/src/setup_map/spawn_player.c
-        ../server/src/ai_interaction/movement.c
         ../server/src/ai_interaction/work_actions.c
+        ../server/src/ai_interaction/movement.c
+        ../server/src/setup_map/spawn_player.c
         include/tests.h
         src/main.cpp
         src/get_parameters.cpp
