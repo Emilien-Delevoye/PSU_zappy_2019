@@ -13,6 +13,11 @@ static data_server_t generate_data()
     data_server_t data;
 
     memset(&data, 0, sizeof(data));
+    data.params.r_cli = new unsigned short[4];
+    data.params.r_cli[0] = 10;
+    data.params.r_cli[1] = 10;
+    data.params.r_cli[2] = 10;
+    data.params.r_cli[2] = -1;
     data.params.team_names = new char*[4];
     data.params.team_names[0] = strdup("Team1");
     data.params.team_names[1] = strdup("Team2");

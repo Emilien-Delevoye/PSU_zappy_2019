@@ -34,6 +34,8 @@ static void add_to_list(client_t *cli, char *buffer)
 
 void add_to_write_list(client_t *cli, char *buffer)
 {
+    if (!cli)
+        return;
     if (!cli->list_msg)
         cli->list_msg = create_write_list(buffer);
     else
