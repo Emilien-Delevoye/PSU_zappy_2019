@@ -32,6 +32,17 @@ static void add_to_tile(map_t *tile, client_t *cli)
         cur->next = new;
     }
     cli->drone.tile = tile;
+    cli->drone.orientation = (rand() % 4) + 1;
+}
+
+void spwan_player_graph(data_server_t *data, client_t *cli)
+{
+    char str[100] = {0};
+
+    sprintf(str, "ppo %d %d %d %d", cli->drone.id,
+        cli->drone.tile->coord[WIDTH], cli->drone.tile->coord[HEIGHT],
+        cli->drone.orientation);
+    add_to_write_list(data->l_graphical.first, str);
 }
 
 void spawn_player(data_server_t *data, client_t *cli)
@@ -42,15 +53,16 @@ void spawn_player(data_server_t *data, client_t *cli)
     if (!obj_tile)
         return;
     if (!data->params.width || data->params.height) {
-        coord[0] = 0;
-        coord[1] = 0;
+        coord[WIDTH] = 0;
+        coord[HEIGHT] = 0;
     } else {
-        coord[0] = rand() % data->params.width;
-        coord[1] = rand() % data->params.height;
+        coord[WIDTH] = rand() % data->params.width;
+        coord[HEIGHT] = rand() % data->params.height;
     }
-    while (obj_tile->coord[0] != coord[0])
+    while (obj_tile->coord[WIDTH] != coord[WIDTH])
         obj_tile = obj_tile->right;
-    while (obj_tile->coord[1] != coord[1])
+    while (obj_tile->coord[HEIGHT] != coord[HEIGHT])
         obj_tile = obj_tile->top;
     add_to_tile(obj_tile, cli);
+    spawn_player(data, cli);
 }

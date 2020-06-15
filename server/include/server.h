@@ -12,6 +12,9 @@
 #include <sys/select.h>
 #include <stdio.h>
 
+#define WIDTH 0
+#define HEIGHT 1
+
 enum items_type {
     FOOD,
     LINEMATE,
