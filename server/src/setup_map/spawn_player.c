@@ -47,7 +47,7 @@ void spawn_player_graph(data_server_t *data, client_t *cli)
 
 void spawn_player(data_server_t *data, client_t *cli)
 {
-    int coord[2];
+    unsigned int coord[2];
     map_t *obj_tile = data->bottom_left;
 
     if (!obj_tile)
