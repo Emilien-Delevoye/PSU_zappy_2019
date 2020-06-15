@@ -49,4 +49,4 @@ add_executable(zappy_server
         src/ai_interaction/ai_commands_main.c
         src/utils/list_actions/move_waiting_to_working_list.c
         src/commands/pnw_command.c src/sockets/generate_new_drone.c
-        src/sockets/close_clients/close_in_cli_ww_list.c src/ai_interaction/work_actions.c src/ai_interaction/movement.c)
+        src/sockets/close_clients/close_in_cli_ww_list.c src/ai_interaction/work_actions.c src/ai_interaction/movement.c src/commands/ppo_command.c src/commands/tna_command.c)
