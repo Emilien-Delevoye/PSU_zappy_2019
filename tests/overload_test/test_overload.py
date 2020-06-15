@@ -15,8 +15,11 @@ def main():
     print(port, ip, nb)
     for i in range(nb):
         new = ServerLink(ip, port, "Team1")
-        new.connect()
-        list_link.append(new)
+        try:
+            new.connect()
+            list_link.append(new)
+        except ConnectionRefusedError:
+            print("ConnectionRefusedError")
     time.sleep(5)
     for i in list_link:
         i.disconnect()
