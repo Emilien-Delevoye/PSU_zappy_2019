@@ -22,12 +22,20 @@ enum items_type {
     THYSTAME
 };
 
+typedef struct client_s client_t;
+
+typedef struct tile_players_s {
+    client_t *cli;
+    struct tile_players_s *next;
+} tile_players_t;
+
 typedef struct map_s {
     unsigned int coord[2];
     struct map_s *right;
     struct map_s *left;
     struct map_s *top;
     struct map_s *bottom;
+    tile_players_t *list_players;
     unsigned int items[7];
 } map_t;
 
@@ -46,6 +54,7 @@ typedef struct drone_s {
     int lvl;
     int orientation;
     int id;
+    map_t *tile;
 } drone_t;
 
 typedef struct client_s {

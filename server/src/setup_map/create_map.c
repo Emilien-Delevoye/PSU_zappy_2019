@@ -8,6 +8,7 @@
 #include "server.h"
 #include "map/setup_map.h"
 #include <stdlib.h>
+#include <string.h>
 
 map_t *create_node(unsigned int x, unsigned int y)
 {
@@ -15,12 +16,9 @@ map_t *create_node(unsigned int x, unsigned int y)
 
     if (!new)
         return (NULL);
+    memset(new, 0, sizeof(map_t));
     new->coord[0] = x;
     new->coord[1] = y;
-    new->right = NULL;
-    new->left = NULL;
-    new->bottom = NULL;
-    new->top = NULL;
     return (new);
 }
 
