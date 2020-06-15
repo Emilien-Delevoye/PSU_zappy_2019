@@ -7,7 +7,7 @@
 
 #include "server.h"
 
-void do_action(data_server_t *data)
+void do_action(data_server_t *data __attribute__((unused)))
 {
 
 }
