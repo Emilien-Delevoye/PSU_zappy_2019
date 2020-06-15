@@ -9,7 +9,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-void tna_command(client_t *cli, data_server_t *data, char **arg)
+void tna_command(client_t *cli, data_server_t *data,
+    __attribute__((unused))char **arg)
 {
     char *str;
     size_t size = 5;
@@ -22,13 +23,12 @@ void tna_command(client_t *cli, data_server_t *data, char **arg)
         remove_a_client(data, cli);
         return;
     }
-    memset(str, 0, 53);
-    str = "tna\0";
+    memset(str, 0, size + i);
+    strcpy(str, "tna");
     for (i = 0; data->params.team_names[i]; ++i) {
         strcat(str, " ");
         strcat(str, data->params.team_names[i]);
     }
     strcat(str, "\n");
-    printf("%s\n", str);
     add_to_write_list(cli, str);
 }

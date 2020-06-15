@@ -11,14 +11,14 @@
 #include <string.h>
 #include <stdio.h>
 
-static void (*array[2])(client_t *, data_server_t *, char **) = {msz_command,
-    bct_command};
+static void (*array[3])(client_t *, data_server_t *, char **) = {msz_command,
+    bct_command, tna_command};
 
 void call_command_function(data_server_t *data, client_t *cli, char **arg)
 {
-    const char *corresponding[2] = {"msz", "bct"};
+    const char *corresponding[3] = {"msz", "bct", "tna"};
 
-    for (int i = 0; i < 2; ++i) {
+    for (int i = 0; i < 3; ++i) {
         if (strcmp(arg[0], corresponding[i]) == 0) {
             array[i](cli, data, arg);
             return;

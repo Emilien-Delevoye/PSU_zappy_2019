@@ -13,5 +13,6 @@
 void msz_command(client_t *cli, data_server_t *data,
     __attribute__((unused))char **arg);
 void bct_command(client_t *cli, data_server_t *data, char **arg);
+void tna_command(client_t *cli, data_server_t *data, char **arg);
 
 #endif //PSU_ZAPPY_2019_COMMANDS_H
