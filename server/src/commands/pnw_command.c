@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-void pnw_command(data_server_t *data, client_t *cli,
+void pnw_command(client_t *cli, data_server_t *data,
     __attribute__((unused))char **arg)
 {
     int n = cli->drone.id;

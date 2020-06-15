@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-void ppo_command(data_server_t *data, client_t *cli,
+void ppo_command(client_t *cli, data_server_t *data,
     __attribute__((unused))char **arg)
 {
     int n = cli->drone.id;

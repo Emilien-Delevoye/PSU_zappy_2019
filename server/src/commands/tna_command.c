@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-void tna_command(data_server_t *data, client_t *cli, char **arg)
+void tna_command(client_t *cli, data_server_t *data, char **arg)
 {
     char *str;
     size_t size = 5;
