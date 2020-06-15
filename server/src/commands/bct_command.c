@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-void send_bct_info(data_server_t *data, client_t *cli, char **arg, map_t *map)
+void send_bct_info(client_t *cli, char **arg, map_t *map)
 {
     char str[113];
 
@@ -29,5 +29,5 @@ void bct_command(client_t *cli, data_server_t *data, char **arg)
         cur = cur->right;
     for (int j = 0; j < atoi(arg[2]); ++j)
         cur = cur->top;
-    send_bct_info(data, cli, arg, cur);
+    send_bct_info(cli, arg, cur);
 }
