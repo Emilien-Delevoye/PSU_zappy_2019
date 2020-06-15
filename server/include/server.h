@@ -56,6 +56,7 @@ typedef struct client_s {
     command_queue_t *cmd_queue;
     write_cli_t *list_msg;
     drone_t *drone;
+    map_t *map;
     struct client_s *prev;
     struct client_s *next;
 } client_t;

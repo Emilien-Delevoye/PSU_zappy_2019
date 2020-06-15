@@ -12,6 +12,8 @@ drone_t *initialise_new_drone(int previous_id)
 {
     drone_t *new = malloc(sizeof(drone_t));
 
+    if (new == NULL)
+        return NULL;
     new->lvl = 0;
     new->orientation = (rand() % 4 + 1);
     for (int i = 0; i < 7; ++i)
