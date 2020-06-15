@@ -21,8 +21,6 @@ extern "C" {
     char **my_str_to_word_array(char *str);
     void client_validation(data_server_t *data, client_t *cli, int team_id);
     int setup_socket(data_server_t *data);
-    void timer(data_server_t *data);
-    void setup_timer(data_server_t *data);
     void close_server(data_server_t data);
     void graphical_validation(data_server_t *data, client_t *cli);
 }
