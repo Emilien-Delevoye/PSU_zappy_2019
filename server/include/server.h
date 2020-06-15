@@ -65,7 +65,6 @@ typedef struct client_s {
     command_queue_t *cmd_queue;
     write_cli_t *list_msg;
     drone_t drone;
-    map_t *map;
     struct client_s *prev;
     struct client_s *next;
 } client_t;
@@ -152,5 +151,6 @@ void move_to_wait_list(data_server_t *data);
 void forward(data_server_t *data);
 void right(data_server_t *data);
 void left(data_server_t *data);
+void spawn_player(data_server_t *data, client_t *cli);
 
 #endif //SERVER_SERVER_H

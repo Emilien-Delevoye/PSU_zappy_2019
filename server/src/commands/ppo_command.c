@@ -13,8 +13,8 @@ void ppo_command(data_server_t *data, client_t *cli,
     __attribute__((unused))char **arg)
 {
     int n = cli->drone.id;
-    unsigned int x = cli->map->coord[0];
-    unsigned int y = cli->map->coord[1];
+    unsigned int x = cli->drone.tile->coord[0];
+    unsigned int y = cli->drone.tile->coord[1];
     unsigned int o = cli->drone.orientation;
     char *str = malloc(sizeof(char) * 53);
 
