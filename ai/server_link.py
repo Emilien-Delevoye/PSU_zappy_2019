@@ -22,7 +22,6 @@ class Command(Enum):
 
 class ServerLink:
     def __init__(self, hostname, port, team_name):
-        print("This is the initialisation for %s and %d" % (hostname, port))
         self.hostname = hostname
         self.port = port
         self.teamName = team_name
@@ -60,9 +59,7 @@ class ServerLink:
         coReturn = str(self.socket.recv(1024), 'utf-8')
         if coReturn == "ko\n":
             print("Wrong Team name", file=sys.stderr)
-            exit(84)
-        else:
-            print(coReturn)
+            raise ConnectionRefusedError("Wrong team name")
         self.activeConnection = True
         self.thread_running = True
         self.thread = Thread(target=self.read_write)
