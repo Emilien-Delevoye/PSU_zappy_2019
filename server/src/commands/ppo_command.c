@@ -6,7 +6,6 @@
 */
 
 #include "server.h"
-#include <stdlib.h>
 #include <string.h>
 
 void ppo_command(data_server_t *data, client_t *cli,
