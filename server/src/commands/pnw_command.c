@@ -18,12 +18,8 @@ void pnw_command(data_server_t *data, client_t *cli,
     unsigned int o = cli->drone.orientation;
     unsigned int l = cli->drone.lvl = 0;
     char *name = data->params.team_names[cli->team_id];
-    char *str = malloc(sizeof(char) * 66 + strlen(name));
+    char str[66 + strlen(name)];
 
-    if (str == NULL) {
-        remove_a_client(data, cli);
-        return;
-    }
     memset(str, 0, 66 + strlen(name));
     sprintf(str, "pnw %d %d %d %d %d %s\n", n, x, y, o, l, name);
     add_to_write_list(cli, str);

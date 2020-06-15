@@ -16,12 +16,8 @@ void ppo_command(data_server_t *data, client_t *cli,
     unsigned int x = cli->drone.tile->coord[0];
     unsigned int y = cli->drone.tile->coord[1];
     unsigned int o = cli->drone.orientation;
-    char *str = malloc(sizeof(char) * 53);
+    char str[53];
 
-    if (str == NULL) {
-        remove_a_client(data, cli);
-        return;
-    }
     memset(str, 0, 53);
     sprintf(str, "ppo %d %d %d %d\n", n, x, y, o);
     add_to_write_list(cli, str);
