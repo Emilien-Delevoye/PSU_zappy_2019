@@ -155,6 +155,11 @@ public class GameScene : MonoBehaviour
                 _gameObject.transform.eulerAngles = new Vector3(0f, 270f, 0f);
         }
 
+        public void DestroyPlayer()
+        {
+            Destroy(_gameObject);
+        }
+
         private GameObject _gameObject;
         private Animator _animator;
         private int _number;
@@ -522,6 +527,8 @@ public class GameScene : MonoBehaviour
             receiveMessage = "pic 5 5 8 0\n";
         else if (tmp == 700)
             receiveMessage = "pie 0 0 S\n";
+        else if (tmp == 800)
+            receiveMessage = "pdi 0\n";
         //else if (tmp == 200)
         //    receiveMessage = "ppo 0 14 0 4\n";
         //else if (tmp == 400)
@@ -554,7 +561,23 @@ public class GameScene : MonoBehaviour
             } else if (arguments[0] == "pie")
             {
                 EndIncantation();
+            } else if (arguments[0] == "pdi")
+            {
+                DieOfPlayer();
             }
+        }
+    }
+
+    public void DieOfPlayer()
+    {
+        if (arguments.Length >= 2)
+        {
+            characters[int.Parse(arguments[1])].DestroyPlayer();
+            characters.Remove(int.Parse(arguments[1]));
+        }
+        else
+        {
+            Debug.Log("pdi: Reply missing argument.");
         }
     }
 
@@ -575,7 +598,6 @@ public class GameScene : MonoBehaviour
         {
             Debug.Log("pie: Reply missing argument.");
         }
-
     }
 
     public void StartIncantation()
