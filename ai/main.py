@@ -1,6 +1,9 @@
-from server_link import ServerLink, Command
+#!/usr/bin/python3.7
+
+from serverLink import ServerLink, Command
 import argparse
 from sys import stderr
+import time
 
 
 def take_args():
@@ -32,6 +35,10 @@ def main():
     except ConnectionRefusedError:
         print("Connection failed", file=stderr)
         exit(84)
+    while newClient.isAlive():
+        print("AI is Alive", flush=True)
+        time.sleep(2)
+
     newClient.disconnect()
 
 

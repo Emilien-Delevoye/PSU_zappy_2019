@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import sys
-from server_link import ServerLink
+from serverLink import ServerLink
 import time
 
 def main():

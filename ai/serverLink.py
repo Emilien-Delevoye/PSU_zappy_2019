@@ -1,3 +1,5 @@
+#!/usr/bin/python3.7
+
 import socket
 from threading import Thread
 import select
@@ -32,7 +34,7 @@ class ServerLink:
         self.activeConnection = False
         self.buffers = {"read": str(), "write": bytes()}
 
-    def read_write(self):
+    def readWrite(self):
         while self.thread_running is True:
             read_sckt = [self.socket]
             write_sckt = []
@@ -62,7 +64,7 @@ class ServerLink:
             raise ConnectionRefusedError("Wrong team name")
         self.activeConnection = True
         self.thread_running = True
-        self.thread = Thread(target=self.read_write)
+        self.thread = Thread(target=self.readWrite)
         self.thread.start()
 
     def write(self, string):
@@ -90,16 +92,16 @@ class ServerLink:
         self.thread.join()
         self.socket.close()
 
-    def is_alive(self):
+    def isAlive(self):
         return self.activeConnection
 
-    def ready_to_read(self):
+    def readyToRead(self):
         if len(self.buffers["read"]) > 0:
             return True
         else:
             return False
 
-    def send_action(self, command, argument=""):
+    def sendAction(self, command, argument=""):
         str_commands = {Command.Forward: "Forward", Command.Right: "Right", Command.Left: "Left", Command.Look: "Look",
                         Command.Inventory: "Inventory", Command.Broadcast: "Broadcast",
                         Command.Connect_nbr: "Connect_nbr", Command.Fork: "Fork", Command.Eject: "Eject",
@@ -129,7 +131,7 @@ class ServerLink:
     def broadcast(self, input_str):
         self.buffers["write"] += bytes("Broadcast " + input_str + "\n", 'utf-8')
 
-    def connect_nbr(self):
+    def connectNbr(self):
         self.buffers["write"] += bytes("Connect_nbr\n", 'utf-8')
 
     def fork(self):
