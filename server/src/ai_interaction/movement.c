@@ -7,11 +7,6 @@
 
 #include "server.h"
 
-void forward(data_server_t *data)
-{
-    (void)data;
-}
-
 void right(data_server_t *data)
 {
     ++data->cli_work->cli->drone.orientation;

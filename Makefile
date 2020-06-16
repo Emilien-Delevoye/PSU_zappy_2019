@@ -49,7 +49,8 @@ SRC_SERVER	=	server/src/utils/parameters/get_parameters.c	\
 			server/src/sockets/close_clients/close_in_cli_ww_list.c	\
 			server/src/ai_interaction/work_actions.c	\
 			server/src/ai_interaction/movement.c	\
-			server/src/setup_map/spawn_player.c
+			server/src/setup_map/spawn_player.c	\
+			server/src/ai_interaction/forward.c
 
 SRC_TEST	=	tests/src/bct_command.cpp	\
                         tests/src/close_server.cpp	\

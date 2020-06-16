@@ -58,6 +58,7 @@ add_executable(server_tests
         ../server/src/ai_interaction/work_actions.c
         ../server/src/ai_interaction/movement.c
         ../server/src/setup_map/spawn_player.c
+        ../server/src/ai_interaction/forward.c
         include/tests.h
         src/main.cpp
         src/get_parameters.cpp
