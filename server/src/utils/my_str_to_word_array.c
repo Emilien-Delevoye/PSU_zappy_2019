@@ -6,6 +6,7 @@
 */
 
 #include <stdlib.h>
+#include <string.h>
 
 int spaces(const char *str)
 {
@@ -28,7 +29,7 @@ char **check_null()
 
     if (all == NULL)
         return NULL;
-    all[0] = "\0";
+    all[0] = strdup("\0");
     all[1] = NULL;
     return (all);
 }
@@ -62,10 +63,8 @@ char **my_str_to_word_array(char *str)
     if (all == NULL)
         return NULL;
     if (str && spaces(str) == 0 &&
-        (str[0] == ' ' || str[0] == '\0' || str[0] == '\t')) {
-        all = check_null();
-        return (all);
-    }
+        (str[0] == ' ' || str[0] == '\0' || str[0] == '\t'))
+        return (check_null());
     for (int i = 0; str && str[i] != '\0'; i++) {
         dup = get_dup(str, &i, dup);
         if (dup && dup[0] != '\0') {
