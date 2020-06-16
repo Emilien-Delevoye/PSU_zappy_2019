@@ -22,6 +22,14 @@ public class GameScene : MonoBehaviour
 
     public GameObject character;
 
+    public GameObject elevation2;
+    public GameObject elevation3;
+    public GameObject elevation4;
+    public GameObject elevation5;
+    public GameObject elevation6;
+    public GameObject elevation7;
+    public GameObject elevation8;
+
     private Vector3 spawnPos;
 
     private Vector3 mapPos;
@@ -100,7 +108,6 @@ public class GameScene : MonoBehaviour
                 _posY = _posToMoveY;
             }
 
-
             if (_posToMoveX > _posX && _posToMoveX == _mapX - 1) /// Gauche de la map TP droite
             {
                 _gameObject.transform.Translate(-1f * Time.deltaTime, 0, 0, Space.World);
@@ -134,8 +141,6 @@ public class GameScene : MonoBehaviour
                 if (_posToMoveY < _posY)
                     _gameObject.transform.Translate(0, 0, -1f * Time.deltaTime, Space.World);
             }
-            
-
         }
 
         public void SetOrientation(int orientation)
@@ -432,6 +437,41 @@ public class GameScene : MonoBehaviour
     }
     private LinkedList<Tile> map;
 
+    private class Elevation
+    {
+        public Elevation(GameObject elev, int mapX, int mapY)
+        {
+            _elev = elev;
+            _posX = mapX;
+            _posY = mapY;
+            _rotation = new Quaternion(0f, 0f, 0f, 0f);
+            _spawnPos.x = mapX + 0.5f;
+            _spawnPos.z = mapY + 0.5f;
+            _spawnPos.y = 0.1f;
+            _elev = Instantiate(elev, _spawnPos, _rotation);
+        }
+
+        public bool GoodElevationSelected(int mapX, int mapY)
+        {
+            if (_posX == mapX && _posY == mapY)
+                return true;
+            return false;
+        }
+
+        public void DestroyElevation()
+        {
+            Destroy(_elev, 1f);
+        }
+
+        private int _posX;
+        private int _posY;
+
+        private Vector3 _spawnPos;
+        private Quaternion _rotation;
+        private GameObject _elev;
+    }
+    private LinkedList<Elevation> elevations;
+
     static int tmp = 0;
 
     // Start is called before the first frame update
@@ -445,6 +485,7 @@ public class GameScene : MonoBehaviour
 
         characters = new Dictionary<int, Character>();
         map = new LinkedList<Tile>();
+        elevations = new LinkedList<Elevation>();
 
         SetUpAssetsSize();
         SetUpSizeMap();
@@ -475,16 +516,22 @@ public class GameScene : MonoBehaviour
         receiveMessage = client.ReceiveMesageFromServer();
         if (tmp == 0)
             receiveMessage = "pnw 0 0 0 2 3 Team1\n";
-        else if (tmp == 200)
-            receiveMessage = "ppo 0 14 0 4\n";
-        else if (tmp == 400)
-            receiveMessage = "ppo 0 14 14 3\n";
-        else if (tmp == 600)
-            receiveMessage = "ppo 0 0 14 2\n";
-        else if (tmp == 800)
-            receiveMessage = "ppo 0 0 0 1\n";
-        else if (tmp == 510)
-            receiveMessage = "bct 0 0 1 1 1 1 1 1 1\n";
+        else if (tmp == 300)
+            receiveMessage = "pic 0 0 8 0\n";
+        else if (tmp == 500)
+            receiveMessage = "pic 5 5 8 0\n";
+        else if (tmp == 700)
+            receiveMessage = "pie 0 0 S\n";
+        //else if (tmp == 200)
+        //    receiveMessage = "ppo 0 14 0 4\n";
+        //else if (tmp == 400)
+        //    receiveMessage = "ppo 0 14 14 3\n";
+        //else if (tmp == 600)
+        //    receiveMessage = "ppo 0 0 14 2\n";
+        //else if (tmp == 800)
+        //    receiveMessage = "ppo 0 0 0 1\n";
+        //else if (tmp == 1000)
+        //    receiveMessage = "bct 0 0 1 1 1 1 1 1 1\n";
         else
             receiveMessage = null;
         ++tmp;
@@ -501,14 +548,62 @@ public class GameScene : MonoBehaviour
             } else if (arguments[0] == "bct")
             {
                 UpdateContentOfTile();
+            } else if (arguments[0] == "pic")
+            {
+                StartIncantation();
+            } else if (arguments[0] == "pie")
+            {
+                EndIncantation();
             }
+        }
+    }
 
+    public void EndIncantation()
+    {
+        if (arguments.Length >= 4) {
+            foreach (Elevation elev in elevations)
+            {
+                if (elev.GoodElevationSelected(int.Parse(arguments[1]), int.Parse(arguments[2])))
+                {
+                    elev.DestroyElevation();
+                    elevations.Remove(elev);
+                    break;
+                }
+            }
+        }
+        else
+        {
+            Debug.Log("pie: Reply missing argument.");
+        }
+
+    }
+
+    public void StartIncantation()
+    {
+        if (arguments.Length >= 5) {
+            if (arguments[3] == "2")
+                elevations.AddLast(new Elevation(elevation2, int.Parse(arguments[1]), int.Parse(arguments[2])));
+            else if (arguments[3] == "3")
+                elevations.AddLast(new Elevation(elevation3, int.Parse(arguments[1]), int.Parse(arguments[2])));
+            else if (arguments[3] == "4")
+                elevations.AddLast(new Elevation(elevation4, int.Parse(arguments[1]), int.Parse(arguments[2])));
+            else if (arguments[3] == "5")
+                elevations.AddLast(new Elevation(elevation5, int.Parse(arguments[1]), int.Parse(arguments[2])));
+            else if (arguments[3] == "6")
+                elevations.AddLast(new Elevation(elevation6, int.Parse(arguments[1]), int.Parse(arguments[2])));
+            else if (arguments[3] == "7")
+                elevations.AddLast(new Elevation(elevation7, int.Parse(arguments[1]), int.Parse(arguments[2])));
+            else if (arguments[3] == "8")
+                elevations.AddLast(new Elevation(elevation8, int.Parse(arguments[1]), int.Parse(arguments[2])));
+        }
+        else
+        {
+            Debug.Log("pic: Reply missing argument.");
         }
     }
 
     public void UpdateContentOfTile()
     {
-        //-Server Reply: "bct X Y q0 q1 q2 q3 q4 q5 q6\n"
         if (arguments.Length >= 10)
         {
             foreach (Tile tile in map)
@@ -554,8 +649,7 @@ public class GameScene : MonoBehaviour
     {
         teams = new LinkedList<string>();
         client.SendMessageToServer("tna\n");
-        //receiveMessage = client.WaitMessageFromServer();
-        receiveMessage = "tna Team1 Team2 Team3 Team4 Team5";
+        receiveMessage = client.WaitMessageFromServer();
 
         if (receiveMessage != null)
         {
