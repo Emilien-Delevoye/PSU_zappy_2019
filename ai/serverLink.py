@@ -1,10 +1,10 @@
-#!/usr/bin/python3.7
 
 import socket
 from threading import Thread
 import select
 import sys
 from enum import Enum
+from utils import dPrint
 
 
 class Command(Enum):
@@ -33,6 +33,8 @@ class ServerLink:
         self.thread = Thread()
         self.activeConnection = False
         self.buffers = {"read": str(), "write": bytes()}
+        self.serverMsg = None
+        self.debug_ = True
 
     def readWrite(self):
         while self.thread_running is True:
@@ -72,20 +74,10 @@ class ServerLink:
         self.buffers["write"] += data
 
     def read(self):
-        if len(self.buffers["read"]) > 0:
-            output = ""
-            for i in self.buffers["read"]:
-                if i == '\n':
-                    output += i
-                    break
-                output += i
-            for i in output:
-                if i == '\n':
-                    self.buffers["read"] = self.buffers["read"][len(output):]
-                    return output
+        if not len(self.buffers["read"]) > 0:
             return None
-        else:
-            return None
+        out, self.buffers["read"] = self.buffers["read"][:self.buffers["read"].find('\n')], self.buffers["read"][self.buffers["read"].find('\n') + 1:]
+        return out
 
     def disconnect(self):
         self.thread_running = False
@@ -148,3 +140,34 @@ class ServerLink:
 
     def incantation(self):
         self.buffers["write"] += bytes("Incantation\n", 'utf-8')
+
+    def msgReceived(self):
+        self.serverMsg = self.read()
+        if self.serverMsg is None:
+            return False
+        dPrint(self.debug_, "Message Received: ", self.serverMsg)
+        return True
+
+    def isOk(self):
+        assert self.serverMsg is not None, "isOk: No message received"
+        if self.serverMsg == 'ok':
+            return True
+        return False
+
+    def isKo(self):
+        assert self.serverMsg is not None, "isKo: No message received"
+        if self.serverMsg == 'ko':
+            return True
+        return False
+
+    def getServerMsg(self):
+        return self.serverMsg
+
+    def clearServerMsg(self):
+        assert self.serverMsg is not None, "clear: No message to clear"
+        self.serverMsg = None
+
+    def isDead(self):
+        if self.serverMsg == "dead":
+            return True
+        return False

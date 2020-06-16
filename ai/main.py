@@ -1,5 +1,6 @@
 #!/usr/bin/python3.7
 
+from IA import IA
 from serverLink import ServerLink, Command
 import argparse
 from sys import stderr
@@ -23,23 +24,26 @@ def main():
     port = int()
     name = str()
     hostname = str()
+
     try:
         port, name, hostname = take_args()
         if port is None or name is None or hostname is None:
             exit(84)
     except (ValueError, TypeError):
         exit(84)
-    newClient = ServerLink(hostname, port, name)
+    CSLink = ServerLink(hostname, port, name)
     try:
-        newClient.connect()
+        CSLink.connect()
     except ConnectionRefusedError:
         print("Connection failed", file=stderr)
         exit(84)
-    while newClient.isAlive():
-        print("AI is Alive", flush=True)
-        time.sleep(2)
 
-    newClient.disconnect()
+    ia = IA(CSLink)
+    while CSLink.isAlive() and ia.run():
+        print("AI is Alive", flush=True)
+
+    print("Exit.", flush=True)
+    CSLink.disconnect()
 
 
 if __name__ == "__main__":
