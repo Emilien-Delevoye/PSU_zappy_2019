@@ -4,7 +4,14 @@ import numpy as np
 from enum import Enum
 from serverLink import ServerLink, Command
 from termcolor import colored
+from random import randrange
 
+
+# TODO gérer les ejects
+# TODO gérer les deaths
+# TODO sécuriser les communications
+# TODO Organiser les incantations
+# TODO Faire en sorte de se reproduire dans certains cas
 
 class GameObj(Enum):
     Empty = 1 << 0,
@@ -30,12 +37,14 @@ links = {
     'thystame': GameObj.Thystame
 }
 
+linksR = {v: k for k, v in links.items()}
+
 
 class IA:
     def __init__(self, CSLink):
         self.level_ = 1
         self.around_ = None
-        self.current_ = 0
+        self.currentPos_ = 0
         self.currentDir_ = Command.Forward
         self.CSLink_ = CSLink
         self.debug_ = True
@@ -89,7 +98,7 @@ class IA:
         """
         dPrint(self.debug_, Colors.HEADER + "Look Around" + Colors.ENDC, msg, self.around_)
         self.around_ = [[links[e] for e in list(filter(lambda x: True if x.replace(' ', '') is not None and x.replace(' ', '') != '' else False, i.split(' ')))] for i in msg.replace('[', '').replace(']', '').split(',')]
-        self.current_ = 0
+        self.currentPos_ = 0
         self.currentDir_ = Command.Forward
 
     def updateInv(self, msg, _):
@@ -116,27 +125,32 @@ class IA:
         dPrint(self.debug_, colored("Need Inventory", "blue"))
 
     def lookAround(self):
+        if self.currentDir_ == Command.Forward and self.currentPos_ == 0 and self.around_ is not None:
+            return
         self.waitForPlace()
         self.CSLink_.look()
         self.pendingRqt_ += [(Command.Look, None)]
         dPrint(self.debug_, colored("Need Look", "blue"))
+        self.updateDataFromServBlock((Command.Look, None))
+
+    def take(self, obj):
+        self.CSLink_.take(linksR[obj])
+        self.pendingRqt_ += [(Command.Take, obj)]
+        dPrint(self.debug_, colored("Need " + linksR[obj], "blue"))
+        self.around_[self.currentPos_].remove(obj)
 
     def eat(self):
         if len(self.pendingRqt_) < self.maxServCommands_:
-            self.CSLink_.eat()
-            self.pendingRqt_ += [(Command.Take, GameObj.Food)]
-            dPrint(self.debug_, colored("Need Eat", "blue"))
+            self.take(GameObj.Food)
 
     def eatNow(self):
         self.waitForPlace()
-        self.CSLink_.eat()
-        self.pendingRqt_ += [(Command.Take, GameObj.Food)]
-        dPrint(self.debug_, colored("Need Eat", "blue"))
+        self.take(GameObj.Food)
 
     def forward(self):
         self.waitForPlace()
         self.CSLink_.forward()
-        self.current_ = self.getPosForward(self.current_)
+        self.currentPos_ = self.getPosForward(self.currentPos_)
         self.pendingRqt_ += [(Command.Forward, None)]
         dPrint(self.debug_, colored("Go forward", "blue"))
 
@@ -172,17 +186,17 @@ class IA:
         return pos - self.maxLineRow[row]
 
     def getDistToCrossForward(self, dest):
-        return self.getPosRow(dest) - self.getPosRow(self.current_)
+        return self.getPosRow(dest) - self.getPosRow(self.currentPos_)
 
     def getDistToCrossSide(self, dest, row):
-        return self.getPosCol(dest, row) - self.getPosCol(self.current_, row)
+        return self.getPosCol(dest, row) - self.getPosCol(self.currentPos_, row)
 
     def goTo(self, dest):
         steps = self.getDistToCrossForward(dest)
         assert steps >= 0, "Go to: Can't go back"
         for i in range(steps):
             self.forward()
-        assert self.getPosRow(dest) == self.getPosRow(self.current_), "Go to: Invalid pos Y"
+        assert self.getPosRow(dest) == self.getPosRow(self.currentPos_), "Go to: Invalid pos Y"
         steps = self.getDistToCrossSide(dest, self.getPosRow(dest))
         if steps > 0:
             self.right()
@@ -208,23 +222,26 @@ class IA:
         else:
             # FIXME If the object is not found in scope then turn right and go forward
             self.right()
-            self.forward()
+            r = randrange(1, self.maxServCommands_)
+            for i in range(r):
+                self.forward()
+            self.lookAround()
+            self.updateDataFromServBlock((Command.Look, None))
 
     def goFastEat(self):
-        for i in range(self.around_[self.current_].count(GameObj.Food)):
+        for i in range(self.around_[self.currentPos_].count(GameObj.Food)):
             self.eatNow()
         self.searchAndGoFor(GameObj.Food)
-        for i in range(self.around_[self.current_].count(GameObj.Food)):
+        for i in range(self.around_[self.currentPos_].count(GameObj.Food)):
             self.eatNow()
 
     def goSlowEat(self):
-        for i in range(self.around_[self.current_].count(GameObj.Food)):
+        for i in range(self.around_[self.currentPos_].count(GameObj.Food)):
             self.eat()
 
     def run(self):
         self.inventory()
         self.updateDataFromServ()
         self.lookAround()
-        self.updateDataFromServBlock((Command.Look, None))
         self.goFastEat()
         return True

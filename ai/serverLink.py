@@ -137,9 +137,6 @@ class ServerLink:
     def eject(self):
         self.buffers["write"] += bytes("Eject\n", 'utf-8')
 
-    def eat(self):
-        self.take("food")
-
     def take(self, obj):
         self.buffers["write"] += bytes("Take " + obj + "\n", 'utf-8')
 
