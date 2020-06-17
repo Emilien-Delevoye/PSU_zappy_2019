@@ -56,9 +56,10 @@ class IA:
                            GameObj.Mendiane: 0,
                            GameObj.Phiras: 0,
                            GameObj.Thystame: 0}
-        self.foodStage_ = {50: "goHalfEat",
-                           30: "goSlowEat",
-                           10: "goFastEat"}
+        self.maxFoodStage = 120
+        self.foodStage_ = {self.maxFoodStage: "goHalfEat",
+                           80: "goSlowEat",
+                           50: "goFastEat"}
         self.pendingRqt_ = []
         self.updateFcts = {Command.Take: "updateTake",
                            Command.Inventory: "updateInv",
@@ -239,9 +240,13 @@ class IA:
         for i in range(self.around_[self.currentPos_].count(GameObj.Food)):
             self.eat()
 
+    def goHalfEat(self):
+        for i in range(self.around_[self.currentPos_].count(GameObj.Food) / 2):
+            self.eat()
+
     def run(self):
         self.inventory()
         self.updateDataFromServ()
         self.lookAround()
-        self.goFastEat()
+        getattr(self, self.foodStage_[min([va if self.inventory_[GameObj.Food] < va else self.maxFoodStage for va, v in self.foodStage_.items()])])()
         return True
