@@ -52,7 +52,7 @@ void spawn_player(data_server_t *data, client_t *cli)
 
     if (!obj_tile)
         return;
-    if (!data->params.width || data->params.height) {
+    if (!data->params.width || !data->params.height) {
         coord[WIDTH] = 0;
         coord[HEIGHT] = 0;
     } else {
