@@ -57,4 +57,6 @@ add_executable(zappy_server
         src/ai_interaction/movement.c
         src/setup_map/spawn_player.c
         src/ai_interaction/forward.c
-        src/ai_interaction/broadcast.c)
+        src/ai_interaction/broadcast.c
+        src/ai_interaction/inventory.c
+        src/ai_interaction/look.c)

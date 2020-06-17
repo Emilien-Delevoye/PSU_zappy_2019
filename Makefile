@@ -51,7 +51,9 @@ SRC_SERVER	=	server/src/utils/parameters/get_parameters.c	\
 			server/src/ai_interaction/movement.c	\
 			server/src/setup_map/spawn_player.c	\
 			server/src/ai_interaction/forward.c	\
-			server/src/ai_interaction/broadcast.c
+			server/src/ai_interaction/broadcast.c	\
+			server/src/ai_interaction/look.c	\
+			server/src/ai_interaction/inventory.c
 
 SRC_TEST	=	tests/src/bct_command.cpp	\
                         tests/src/close_server.cpp	\

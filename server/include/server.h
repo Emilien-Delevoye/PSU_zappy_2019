@@ -161,5 +161,7 @@ void right(data_server_t *data);
 void left(data_server_t *data);
 void broadcast(data_server_t *data);
 void spawn_player(data_server_t *data, client_t *cli);
+void inventory(data_server_t *data);
+void look(data_server_t *data);
 
 #endif //SERVER_SERVER_H

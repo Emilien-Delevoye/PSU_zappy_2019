@@ -11,7 +11,7 @@
 
 static void (*fct[])(data_server_t *) =
 {
-    forward, right, left, NULL, NULL, broadcast, NULL
+    forward, right, left, look, inventory, broadcast, NULL
 };
 
 static void update_work_cli(data_server_t *d)

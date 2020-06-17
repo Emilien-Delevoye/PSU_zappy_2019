@@ -59,11 +59,15 @@ add_executable(server_tests
         ../server/src/ai_interaction/movement.c
         ../server/src/setup_map/spawn_player.c
         ../server/src/ai_interaction/forward.c
+        ../server/src/ai_interaction/inventory.c
+        ../server/src/ai_interaction/look.c
         include/tests.h
         src/main.cpp
         src/get_parameters.cpp
         src/setup_map.cpp
-        src/bct_command.cpp src/msz_command.cpp src/str_to_word_array.cpp
+        src/bct_command.cpp
+        src/msz_command.cpp
+        src/str_to_word_array.cpp
         src/valid_client.cpp
         src/write_list.cpp
         src/write_socket.cpp
