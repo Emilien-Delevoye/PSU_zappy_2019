@@ -12,8 +12,8 @@
 #include <sys/select.h>
 #include <stdio.h>
 
-#define WIDTH 0
-#define HEIGHT 1
+#define WIDTH 1
+#define HEIGHT 0
 
 enum items_type {
     FOOD,
