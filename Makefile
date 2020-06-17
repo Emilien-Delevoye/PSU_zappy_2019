@@ -74,7 +74,7 @@ OBJ_SRC_MAIN	=	$(SRC_MAIN_SERVER:.c=.o)
 
 OBJ_SRC_TEST	=	$(SRC_TEST:.cpp=.o)
 
-CFLAGS	=	-W -Wall -Wextra -I server/include
+CFLAGS	=	-W -Wall -Wextra -I server/include -Ofast
 CPPFLAGS	=	-W -Wall -Wextra -I server/include -I tests/include
 
 all:	$(NAME_SERVER)
