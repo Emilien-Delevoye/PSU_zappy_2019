@@ -1,7 +1,9 @@
 
-from utils import dPrint
+from utils import dPrint, Colors
 import numpy as np
 from enum import Enum
+from serverLink import ServerLink, Command
+from termcolor import colored
 
 
 class GameObj(Enum):
@@ -32,9 +34,12 @@ links = {
 class IA:
     def __init__(self, CSLink):
         self.level_ = 1
-        self.around_ = np.array([np.nan])
+        self.around_ = None
+        self.current_ = 0
+        self.currentDir_ = Command.Forward
         self.CSLink_ = CSLink
         self.debug_ = True
+        self.maxServCommands_ = 10
         self.inventory_ = {GameObj.Food: 10,
                            GameObj.Linemate: 0,
                            GameObj.Deraumere: 0,
@@ -42,29 +47,184 @@ class IA:
                            GameObj.Mendiane: 0,
                            GameObj.Phiras: 0,
                            GameObj.Thystame: 0}
+        self.foodStage_ = {50: "goHalfEat",
+                           30: "goSlowEat",
+                           10: "goFastEat"}
+        self.pendingRqt_ = []
+        self.updateFcts = {Command.Take: "updateTake",
+                           Command.Inventory: "updateInv",
+                           Command.Look: "updateLookAround",
+                           Command.Forward: "noUpdateNeeded",
+                           Command.Right: "noUpdateNeeded",
+                           Command.Left: "noUpdateNeeded",
+                           }
+        self.maxLineRow = [int(sum([e for e in range(0, i * 2 + 1, 2)][:i]) + ([e for e in range(0, i * 2 + 1, 2)][i] / 2)) for i in range(0, 15, 1)]
 
-    def lookAround(self):
-        self.CSLink_.look()
-        while self.CSLink_.msgReceived() is False:
-            pass
-        msg = self.CSLink_.getServerMsg()
-        self.CSLink_.clearServerMsg()
-        # Parse Look Around
+    """
+        UPDATE FROM SERVER 
+    """
+
+    def updateDataFromServ(self):
+        while self.CSLink_.msgReceived() is True:
+            getattr(self, self.updateFcts[self.pendingRqt_[0][0]])(self.CSLink_.getServerMsg(), self.pendingRqt_[0][1])
+            self.pendingRqt_ = self.pendingRqt_[1:]
+            self.CSLink_.clearServerMsg()
+
+    def updateDataFromServBlock(self, com):
+        while com in self.pendingRqt_:
+            if self.CSLink_.msgReceived() is True:
+                getattr(self, self.updateFcts[self.pendingRqt_[0][0]])(self.CSLink_.getServerMsg(), self.pendingRqt_[0][1])
+                self.pendingRqt_ = self.pendingRqt_[1:]
+                self.CSLink_.clearServerMsg()
+
+    def updateTake(self, msg, obj):
+        """ Update inv from taken objects
+        """
+        dPrint(self.debug_, Colors.HEADER + "Update Take" + Colors.ENDC, msg, obj, self.inventory_[obj])
+        if msg != 'ko':
+            self.inventory_[obj] += 1
+
+    def updateLookAround(self, msg, _):
+        """ Parse Look Around
+        """
+        dPrint(self.debug_, Colors.HEADER + "Look Around" + Colors.ENDC, msg, self.around_)
         self.around_ = [[links[e] for e in list(filter(lambda x: True if x.replace(' ', '') is not None and x.replace(' ', '') != '' else False, i.split(' ')))] for i in msg.replace('[', '').replace(']', '').split(',')]
-        dPrint(self.debug_, self.around_)
+        self.current_ = 0
+        self.currentDir_ = Command.Forward
 
-    def updateInv(self):
-        self.CSLink_.inventory()
-        while self.CSLink_.msgReceived() is False:
-            pass
-        msg = self.CSLink_.getServerMsg()
-        self.CSLink_.clearServerMsg()
-        # Parse Inventory
+    def updateInv(self, msg, _):
+        """ Parse Inventory
+        """
+        dPrint(self.debug_, Colors.HEADER + "Update Inventory" + Colors.ENDC, msg, self.inventory_)
         self.inventory_ = {links[v[0]]: int(v[1]) for v in [list(filter(lambda x: True if x != '' and x != ' ' else False, i.split(' '))) for i in msg.replace('[', '').replace(']', '').split(',')]}
 
-        dPrint(self.debug_, msg)
-        dPrint(self.inventory_, self.inventory_)
+    def noUpdateNeeded(self, msg, _):
+        pass
+
+    """
+        COMMANDS
+    """
+
+    def waitForPlace(self):
+        while not len(self.pendingRqt_) < self.maxServCommands_:
+            self.updateDataFromServ()
+
+    def inventory(self):
+        self.waitForPlace()
+        self.CSLink_.inventory()
+        self.pendingRqt_ += [(Command.Inventory, None)]
+        dPrint(self.debug_, colored("Need Inventory", "blue"))
+
+    def lookAround(self):
+        self.waitForPlace()
+        self.CSLink_.look()
+        self.pendingRqt_ += [(Command.Look, None)]
+        dPrint(self.debug_, colored("Need Look", "blue"))
+
+    def eat(self):
+        if len(self.pendingRqt_) < self.maxServCommands_:
+            self.CSLink_.eat()
+            self.pendingRqt_ += [(Command.Take, GameObj.Food)]
+            dPrint(self.debug_, colored("Need Eat", "blue"))
+
+    def eatNow(self):
+        self.waitForPlace()
+        self.CSLink_.eat()
+        self.pendingRqt_ += [(Command.Take, GameObj.Food)]
+        dPrint(self.debug_, colored("Need Eat", "blue"))
+
+    def forward(self):
+        self.waitForPlace()
+        self.CSLink_.forward()
+        self.current_ = self.getPosForward(self.current_)
+        self.pendingRqt_ += [(Command.Forward, None)]
+        dPrint(self.debug_, colored("Go forward", "blue"))
+
+    def right(self):
+        self.waitForPlace()
+        self.CSLink_.right()
+        self.currentDir_ = Command.Right
+        self.pendingRqt_ += [(Command.Right, None)]
+        dPrint(self.debug_, colored("Turn Right", "blue"))
+
+    def left(self):
+        self.waitForPlace()
+        self.CSLink_.left()
+        self.currentDir_ = Command.Left
+        self.pendingRqt_ += [(Command.Left, None)]
+        dPrint(self.debug_, colored("Turn Left", "blue"))
+
+    """
+        IA
+    """
+
+    def getPosForward(self, pos):
+        if self.currentDir_ == Command.Forward:
+            return (max(([i if self.maxLineRow[int(i)] <= pos < self.maxLineRow[int(i + 1)] else -1 for i in range(len(self.maxLineRow))])) + 1) * 2 + pos
+        if self.currentDir_ == Command.Right:
+            return pos + 1
+        return pos - 1
+
+    def getPosRow(self, pos):
+        return max(([i if self.maxLineRow[int(i)] <= pos < self.maxLineRow[int(i + 1)] else -1 for i in range(len(self.maxLineRow))]))
+
+    def getPosCol(self, pos, row):
+        return pos - self.maxLineRow[row]
+
+    def getDistToCrossForward(self, dest):
+        return self.getPosRow(dest) - self.getPosRow(self.current_)
+
+    def getDistToCrossSide(self, dest, row):
+        return self.getPosCol(dest, row) - self.getPosCol(self.current_, row)
+
+    def goTo(self, dest):
+        steps = self.getDistToCrossForward(dest)
+        assert steps >= 0, "Go to: Can't go back"
+        for i in range(steps):
+            self.forward()
+        assert self.getPosRow(dest) == self.getPosRow(self.current_), "Go to: Invalid pos Y"
+        steps = self.getDistToCrossSide(dest, self.getPosRow(dest))
+        if steps > 0:
+            self.right()
+        elif steps < 0:
+            self.left()
+        for i in range(steps):
+            self.forward()
+
+    def getPosesInScope(self, obj):
+        # FIXME poses returned are not sorted by proximity neitheir by amount of object present on it
+        poses = []
+        self.lookAround()
+        self.updateDataFromServBlock((Command.Look, None))
+        for i in range(0, len(self.around_)):
+            if self.around_[i].count(obj) > 0:
+                poses += [i]
+        return poses
+
+    def searchAndGoFor(self, obj):
+        poses = self.getPosesInScope(obj)
+        if len(poses) != 0:
+            self.goTo(poses[0])
+        else:
+            # FIXME If the object is not found in scope then turn right and go forward
+            self.right()
+            self.forward()
+
+    def goFastEat(self):
+        for i in range(self.around_[self.current_].count(GameObj.Food)):
+            self.eatNow()
+        self.searchAndGoFor(GameObj.Food)
+        for i in range(self.around_[self.current_].count(GameObj.Food)):
+            self.eatNow()
+
+    def goSlowEat(self):
+        for i in range(self.around_[self.current_].count(GameObj.Food)):
+            self.eat()
 
     def run(self):
-        self.updateInv()
+        self.inventory()
+        self.updateDataFromServ()
+        self.lookAround()
+        self.updateDataFromServBlock((Command.Look, None))
+        self.goFastEat()
         return True

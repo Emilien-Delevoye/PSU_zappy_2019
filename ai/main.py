@@ -40,7 +40,8 @@ def main():
 
     ia = IA(CSLink)
     while CSLink.isAlive() and ia.run():
-        print("AI is Alive", flush=True)
+        # print("AI is Alive", flush=True)
+        pass
 
     print("Exit.", flush=True)
     CSLink.disconnect()

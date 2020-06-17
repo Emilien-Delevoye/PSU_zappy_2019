@@ -5,6 +5,7 @@ import select
 import sys
 from enum import Enum
 from utils import dPrint
+from termcolor import colored
 
 
 class Command(Enum):
@@ -34,7 +35,7 @@ class ServerLink:
         self.activeConnection = False
         self.buffers = {"read": str(), "write": bytes()}
         self.serverMsg = None
-        self.debug_ = True
+        self.debug_ = False
 
     def readWrite(self):
         while self.thread_running is True:
@@ -50,8 +51,10 @@ class ServerLink:
                     exit(0)
                 self.buffers["read"] += buf
             if len(writable) != 0 and len(self.buffers["write"]) != 0:
-                writable[0].send(bytes(self.buffers["write"]))
-                self.buffers["write"] = bytes()
+                dPrint(self.debug_, colored("send \"" + str(self.buffers["write"]) + "\" to server", "green"))
+                tmp = self.buffers["write"]
+                writable[0].send(bytes(tmp))
+                self.buffers["write"] = self.buffers["write"][len(tmp):]
 
     def connect(self):
         self.socket.connect((self.hostname, self.port))
@@ -76,8 +79,10 @@ class ServerLink:
     def read(self):
         if not len(self.buffers["read"]) > 0:
             return None
+        if self.buffers["read"].find('\n') == -1:
+            return None
         out, self.buffers["read"] = self.buffers["read"][:self.buffers["read"].find('\n')], self.buffers["read"][self.buffers["read"].find('\n') + 1:]
-        return out
+        return out if out != "" else None
 
     def disconnect(self):
         self.thread_running = False
@@ -132,11 +137,14 @@ class ServerLink:
     def eject(self):
         self.buffers["write"] += bytes("Eject\n", 'utf-8')
 
-    def take(self):
-        self.buffers["write"] += bytes("Take\n", 'utf-8')
+    def eat(self):
+        self.take("food")
 
-    def set(self, input_str):
-        self.buffers["write"] += bytes("Set " + input_str + "\n", 'utf-8')
+    def take(self, obj):
+        self.buffers["write"] += bytes("Take " + obj + "\n", 'utf-8')
+
+    def set(self, obj):
+        self.buffers["write"] += bytes("Set " + obj + "\n", 'utf-8')
 
     def incantation(self):
         self.buffers["write"] += bytes("Incantation\n", 'utf-8')
@@ -145,7 +153,7 @@ class ServerLink:
         self.serverMsg = self.read()
         if self.serverMsg is None:
             return False
-        dPrint(self.debug_, "Message Received: ", self.serverMsg)
+        dPrint(self.debug_, colored("Message Received: " + self.serverMsg, "red"))
         return True
 
     def isOk(self):
