@@ -10,7 +10,9 @@ from random import randrange
 # TODO gérer les ejects
 # TODO gérer les deaths
 # TODO sécuriser les communications
+
 # TODO Organiser les incantations
+# TODO Faire attention à ce que la quantité d'objects sur l'incantation reste inchangé
 
 # TODO Faire en sorte de se reproduire dans certains cas
 # TODO Get info pour savoir combien il y a d'ia de quel niveau (pour se reproduire)
@@ -28,8 +30,10 @@ class GameObj(Enum):
     Thystame = 1 << 8,
 
 
+elevPlayers = {1: 1, 2: 2, 3: 2, 4: 4, 5: 4, 6: 6, 7: 6}
+
 elevRqrmts = {
-    1: {GameObj.Linemate: 10000, GameObj.Deraumere: 0, GameObj.Sibur: 0, GameObj.Mendiane: 0, GameObj.Phiras: 0, GameObj.Thystame: 0},  # FIXME
+    1: {GameObj.Linemate: 1, GameObj.Deraumere: 0, GameObj.Sibur: 0, GameObj.Mendiane: 0, GameObj.Phiras: 0, GameObj.Thystame: 0},  # FIXME
     2: {GameObj.Linemate: 1, GameObj.Deraumere: 1, GameObj.Sibur: 1, GameObj.Mendiane: 0, GameObj.Phiras: 0, GameObj.Thystame: 0},
     3: {GameObj.Linemate: 2, GameObj.Deraumere: 0, GameObj.Sibur: 1, GameObj.Mendiane: 0, GameObj.Phiras: 2, GameObj.Thystame: 0},
     4: {GameObj.Linemate: 1, GameObj.Deraumere: 1, GameObj.Sibur: 2, GameObj.Mendiane: 0, GameObj.Phiras: 1, GameObj.Thystame: 0},
@@ -37,6 +41,10 @@ elevRqrmts = {
     6: {GameObj.Linemate: 1, GameObj.Deraumere: 2, GameObj.Sibur: 3, GameObj.Mendiane: 0, GameObj.Phiras: 1, GameObj.Thystame: 0},
     7: {GameObj.Linemate: 2, GameObj.Deraumere: 2, GameObj.Sibur: 2, GameObj.Mendiane: 2, GameObj.Phiras: 2, GameObj.Thystame: 1}
 }
+
+keys = [i for i in range(1, 8)]
+values = [sum([i for v, i in elevRqrmts[e].items()]) for e in keys]
+elevTotalStones = dict(zip(keys, values))
 
 links = {
     'empty': GameObj.Empty,
@@ -55,6 +63,7 @@ linksR = {v: k for k, v in links.items()}
 
 class IA:
     def __init__(self, CSLink):
+        self.id_ = randrange(0, 1000000)
         self.level_ = 1
         self.around_ = None
         self.currentPos_ = 0
@@ -83,6 +92,22 @@ class IA:
                            }
         self.maxLineRow = [int(sum([e for e in range(0, i * 2 + 1, 2)][:i]) + ([e for e in range(0, i * 2 + 1, 2)][i] / 2)) for i in range(0, 15, 1)]
 
+        dPrint(self.debug_, "Random Id: {0}".format(self.id_))
+
+        # ELEVATION
+        self.lead_ = False
+        self.elevation_ = False
+        self.situation_ = "normalLife"
+
+        """ LEAD """
+        self.commingIDs_ = []
+        self.itersBeforeCancel = 20  # FIXME ça doit dépendre d'autre chose comme la vitesse de réponse de la première IA (ou bien y'en a pas besoin et tout est reset quand on recommence)
+        self.totalStones = {GameObj.Food: 0, GameObj.Linemate: 0, GameObj.Deraumere: 0, GameObj.Sibur: 0, GameObj.Mendiane: 0, GameObj.Phiras: 0, GameObj.Thystame: 0}
+
+        """ NOT LEAD """
+        self.elevDir = 0
+        self.nbMoves = 10  # FIXME la quantité de mouvements pour se rapprocher doit dépendre de la taille de la map (Il réduit au fil du temps)
+
     """
         UPDATE FROM SERVER 
     """
@@ -90,6 +115,7 @@ class IA:
     def rcvDead(self):
         if self.CSLink_.isDead() is True:
             dPrint(self.debug_, Colors.WARNING + "Dead." + Colors.ENDC)
+            self.CSLink_.disconnect()
             exit(0)
 
     def rcvBroadCast(self):
@@ -121,14 +147,16 @@ class IA:
             self.updateDataFromServ()
 
     def updateTake(self, msg, obj):
-        """ Update inv from taken objects
+        """
+        Update inv from taken objects
         """
         dPrint(self.debug_, Colors.HEADER + "Update Take" + Colors.ENDC, msg, obj, self.inventory_[obj])
         if msg != 'ko':
             self.inventory_[obj] += 1
 
     def updateLookAround(self, msg, _):
-        """ Parse Look Around
+        """
+        Parse Look Around
         """
         dPrint(self.debug_, Colors.HEADER + "Look Around" + Colors.ENDC, msg, self.around_)
         self.around_ = [[links[e] for e in list(filter(lambda x: True if x.replace(' ', '') is not None and x.replace(' ', '') != '' else False, i.split(' ')))] for i in msg.replace('[', '').replace(']', '').split(',')]
@@ -136,7 +164,8 @@ class IA:
         self.currentDir_ = Command.Forward
 
     def updateInv(self, msg, _):
-        """ Parse Inventory
+        """
+        Parse Inventory
         """
         dPrint(self.debug_, Colors.HEADER + "Update Inventory" + Colors.ENDC, msg, self.inventory_)
         self.inventory_ = {links[v[0]]: int(v[1]) for v in [list(filter(lambda x: True if x != '' and x != ' ' else False, i.split(' '))) for i in msg.replace('[', '').replace(']', '').split(',')]}
@@ -301,8 +330,15 @@ class IA:
 
     """ ELEVATION """
 
-    def setUpElevation(self):
-        pass
+    def haveGoodAmountOfStones(self):
+        missing = 0
+
+        for s in elevRqrmts[self.level_]:
+            if self.inventory_[s] < elevRqrmts[self.level_][s]:
+                missing += elevRqrmts[self.level_][s] - self.inventory_[s]
+        if missing == 0 or missing < elevTotalStones[self.level_] / elevPlayers[self.level_]:
+            return True
+        return False
 
     """ COMMUNICATION """
 
@@ -311,18 +347,92 @@ class IA:
 
     """ IA MAIN RUN """
 
+    # TODO vérifier l'utilité des variables d'elevation
+
+    def normalLife(self):
+        getattr(self, self.foodStage_[min([va if self.inventory_[GameObj.Food] < va else self.maxFoodStage for va, v in self.foodStage_.items()])])()
+        self.getStones()
+
+        # TODO Mettre le bordel dans les incantations des autres
+
+        if self.haveGoodAmountOfStones():
+            # FIXME SEND MESSAGE IF LEVEL > 1
+            self.situation_ = "waitForAnswersLead"
+
+    def waitForGoNoLead(self):
+        """
+        On attend de savoir si on doit se diriger vers une incantation ou si c'est cancel
+        """
+        getattr(self, self.foodStage_[min([va if self.inventory_[GameObj.Food] < va else self.maxFoodStage for va, v in self.foodStage_.items()])])()
+        self.getStones()
+
+    def goToIncantationNoLead(self):
+        """
+        On se dirige vers l'incantation (en faisant en sorte d'avoir de la nourriture)
+        """
+
+        # Si je suis arrivé, je préviens. puis j'attend les instructions
+        pass  # FIXME
+
+    def waitForInstructions(self):
+        """
+        J'attend de savoir ce que je dois poser par terre
+        / Je ne fais rien s'il n'y pas d'instructions (incantation en cours)
+        """
+        pass  # FIXME
+
+    def waitForAnswersLead(self):
+        """
+        On attend que les autres répondent à notre requête
+        Si trop de temps est écoulé on retourne au cas 1
+        """
+        getattr(self, self.foodStage_[min([va if self.inventory_[GameObj.Food] < va else self.maxFoodStage for va, v in self.foodStage_.items()])])()
+        self.getStones()
+
+        if len(self.commingIDs_) == elevPlayers[self.level_] - 1 and self.totalStones == elevRqrmts:  # FIXME en regardant s'il y a assez de stones
+            # FIXME Communique quelles IAs viennent (attention à faire la sélection) IF LEVEL > 1
+            self.situation_ = "waitForOthersCmgLead"
+            pass
+
+        # FIXME Si trop de temps est passé et que rien n'est concluant on envoie le cancel et on retourne au cas 1
+
+    def waitForOthersCmgLead(self):
+        """
+        On attend que les autres viennent. Quand ils sont là, ils envoient un msg et leeur status passe à True dans comingsIDs_
+        On envoie la position régulièrement
+        """
+        # FIXME Envoyer ma position régulièrement SI LEVEL > 1
+
+        for i, j in self.commingIDs_:
+            if j is False:
+                return
+        self.situation_ = "setOrganizationLead"
+        pass
+
+    def setOrganizationLead(self):
+        """
+        On communique à tout le monde que poser par terre,
+        Dés qu'il y a la bonne quantité d'élément on incante.
+        Puis on passe à la situation suivante
+        """
+        # FIXME
+
+        # FIXME Si tout est posé on passe à la sécurisation
+        self.situation_ = "serurizeElevationLead"
+
+    def serurizeElevationLead(self):
+        """
+        On vérifie le bon fonctionnement de l'incantation
+        """
+        # Si un truc pop, on le prend, si un joueur est en trop on dégage tout
+        # Si c'est fini on revient au cas 1
+        pass
+
     def run(self):
         self.inventory()
         self.lookAround()
         self.updateDataFromServ()
-        getattr(self, self.foodStage_[min([va if self.inventory_[GameObj.Food] < va else self.maxFoodStage for va, v in self.foodStage_.items()])])()
-        self.getStones()
-        # Si j'ai déjà pas mal de pierres
-        # Je communique aux autres pour savoir ce que ça donne
-        # Si tout le monde n'est pas prêt ou si je suis pas prêt
-        # Je cherche une des pierres qu'il me manque
+        getattr(self, self.situation_)()
 
-        # Si tout est prêt
-        # Je setup la rencontre
         return True
 
