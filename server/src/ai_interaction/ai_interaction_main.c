@@ -11,17 +11,19 @@
 
 static void (*fct[])(data_server_t *) =
 {
-    forward, right, left, broadcast, NULL
+    forward, right, left, NULL, NULL, broadcast, NULL
 };
 
 static void update_work_cli(data_server_t *d)
 {
     while (d->cli_work) {
+//        printf("test\n");
         if (d->cli_work->tv.tv_sec > d->tv.tv_sec ||
             (d->cli_work->tv.tv_sec == d->tv.tv_sec &&
             d->cli_work->tv.tv_usec > d->tv.tv_usec))
             return;
-        if (d->cli_work->cmd_nb < 4)
+//        printf("%d\n", d->cli_work->cmd_nb);
+        if (d->cli_work->cmd_nb < 6)
             fct[d->cli_work->cmd_nb](d);
         if (d->cli_work->cmd_str)
             free(d->cli_work->cmd_str);
