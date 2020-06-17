@@ -74,6 +74,7 @@ void ai_interaction(data_server_t *data)
     static struct timeval tv[2];
 
     update_time(tv, data->params.freq);
+    data->tv = tv[1];
     update_work_cli(data);
     update_waiting_cli(data, tv[0], data->cli_wait);
 }
