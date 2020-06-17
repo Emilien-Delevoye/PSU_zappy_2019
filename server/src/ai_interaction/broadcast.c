@@ -12,6 +12,7 @@ void write_for_broadcast(client_t *client, char *text, int tile)
 {
     char str[13 + strlen(text)];
 
+    (void)client;
     memset(str, 0, sizeof(str));
     sprintf(str, "message %d, %s\n", tile, text);
 }
@@ -19,6 +20,8 @@ void write_for_broadcast(client_t *client, char *text, int tile)
 void exception_handlings(data_server_t *data, client_t *client,
     unsigned int x, unsigned int y)
 {
+    (void)data;
+    (void)client;
     if (x == 0) {
         if (y == 0) {
 
@@ -30,10 +33,12 @@ unsigned int get_fastest_way(data_server_t *data, client_t *tmp, int value)
 {
     unsigned int x = data->cli_work->cli->drone.tile->coord[value] -
         tmp->drone.tile->coord[value];
-    if (x > data->params.width / 2) {
-        if (data->cli_work->cli->drone.tile->coord[value] < data->params.width / 2)
-            x = data->cli_work->cli->drone.tile->coord[value] + data->params.width
-                - tmp->drone.tile->coord[value] - 1;
+
+    if (x > (unsigned)data->params.width / 2) {
+        if (data->cli_work->cli->drone.tile->coord[value] <
+            (unsigned)(data->params.width / 2))
+            x = data->cli_work->cli->drone.tile->coord[value] +
+                data->params.width - tmp->drone.tile->coord[value] - 1;
         else
             x = tmp->drone.tile->coord[value] + data->params.width -
                 data->cli_work->cli->drone.tile->coord[value] - 1;
