@@ -59,7 +59,7 @@ static void create_boarders(map_t *first)
 static void setup_link_1_width(map_t *cur)
 {
     map_t *save_first = cur;
-    map_t *save_second;
+    map_t *save_second = cur;
 
     while (cur) {
         generate_stone_on_one_case(cur);

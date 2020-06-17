@@ -14,6 +14,10 @@
 
 #define WIDTH 1
 #define HEIGHT 0
+#define NORTH 1
+#define EAST 2
+#define SOUTH 3
+#define WEST 4
 
 enum items_type {
     FOOD,
