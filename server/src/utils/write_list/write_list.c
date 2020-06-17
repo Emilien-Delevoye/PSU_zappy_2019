@@ -13,7 +13,7 @@ static write_cli_t *create_write_list(char *buffer)
 {
     write_cli_t *new = malloc(sizeof(write_cli_t));
 
-    if (!new)
+    if (!new || !buffer)
         return (NULL);
     new->to_write = strdup(buffer);
     if (!new->to_write)
