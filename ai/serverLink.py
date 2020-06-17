@@ -35,7 +35,7 @@ class ServerLink:
         self.activeConnection = False
         self.buffers = {"read": str(), "write": bytes()}
         self.serverMsg = None
-        self.debug_ = False
+        self.debug_ = True
 
     def readWrite(self):
         while self.thread_running is True:
@@ -95,8 +95,7 @@ class ServerLink:
     def readyToRead(self):
         if len(self.buffers["read"]) > 0:
             return True
-        else:
-            return False
+        return False
 
     def sendAction(self, command, argument=""):
         str_commands = {Command.Forward: "Forward", Command.Right: "Right", Command.Left: "Left", Command.Look: "Look",
