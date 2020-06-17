@@ -4,6 +4,7 @@ using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Threading.Tasks;
+using TMPro;
 
 public class GameScene : MonoBehaviour
 {
@@ -29,6 +30,12 @@ public class GameScene : MonoBehaviour
     public GameObject elevation6;
     public GameObject elevation7;
     public GameObject elevation8;
+
+    public GameObject rocket;
+    public GameObject fire;
+
+    public GameObject endScreen;
+    public TextMeshProUGUI winTeamName;
 
     private Vector3 spawnPos;
 
@@ -477,6 +484,8 @@ public class GameScene : MonoBehaviour
     }
     private LinkedList<Elevation> elevations;
 
+    private bool end;
+
     static int tmp = 0;
 
     // Start is called before the first frame update
@@ -491,6 +500,7 @@ public class GameScene : MonoBehaviour
         characters = new Dictionary<int, Character>();
         map = new LinkedList<Tile>();
         elevations = new LinkedList<Elevation>();
+        end = false;
 
         SetUpAssetsSize();
         SetUpSizeMap();
@@ -508,6 +518,12 @@ public class GameScene : MonoBehaviour
             {
                 characters[kvp.Key].Move();
             }
+        }
+
+        if (end == true)
+        {
+            rocket.transform.Translate(0f, 5f * Time.deltaTime, 0f, Space.World);
+            fire.transform.Translate(0f, 5f * Time.deltaTime, 0f, Space.World);
         }
 
         if (Input.GetKey(KeyCode.Escape))
@@ -529,6 +545,8 @@ public class GameScene : MonoBehaviour
             receiveMessage = "pie 0 0 S\n";
         else if (tmp == 800)
             receiveMessage = "pdi 0\n";
+        else if (tmp == 1000)
+            receiveMessage = "seg Team1\n";
         //else if (tmp == 200)
         //    receiveMessage = "ppo 0 14 0 4\n";
         //else if (tmp == 400)
@@ -564,7 +582,29 @@ public class GameScene : MonoBehaviour
             } else if (arguments[0] == "pdi")
             {
                 DieOfPlayer();
+            } else if (arguments[0] == "seg")
+            {
+                EndOfTheGame();
             }
+        }
+    }
+
+    public void EndOfTheGame()
+    {
+        if (arguments.Length >= 2)
+        {
+            spawnPos = new Vector3(mapSizeX / 2, 2.35f, mapSizeY / 2);
+            rotation = new Quaternion(0f, 0f, 0f, 0f);
+            rocket = Instantiate(rocket, spawnPos, rotation);
+            spawnPos = new Vector3(mapSizeX / 2, -0.25f, mapSizeY / 2);
+            rotation = new Quaternion(0f, 0f, 180f, 0f);
+            fire = Instantiate(fire, spawnPos, rotation);
+            endScreen.SetActive(true);
+            winTeamName.text = arguments[1] + "WIN !";
+            end = true;
+        } else
+        {
+            Debug.Log("seg: Reply missing argument.");
         }
     }
 
