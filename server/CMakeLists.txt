@@ -65,4 +65,5 @@ add_executable(zappy_server
         src/ai_interaction/search_left_broadcast.c
         src/commands/seg_command.c
         src/commands/pic_command.c
-        src/commands/pie_command.c)
+        src/commands/pie_command.c
+        src/commands/pdi_command.c)

@@ -58,7 +58,8 @@ SRC_SERVER	=	server/src/utils/parameters/get_parameters.c	\
 			server/src/ai_interaction/inventory.c	\
 			server/src/commands/seg_command.c	\
 			server/src/commands/pic_command.c	\
-			server/src/commands/pie_command.c
+			server/src/commands/pie_command.c	\
+			server/src/commands/pdi_command.c
 
 SRC_TEST	=	tests/src/bct_command.cpp	\
                         tests/src/close_server.cpp	\
