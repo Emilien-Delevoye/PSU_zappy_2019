@@ -560,21 +560,20 @@ public class GameScene : MonoBehaviour
         receiveMessage = client.ReceiveMesageFromServer();
         if (tmp == 0)
             receiveMessage = "pnw 0 0 0 2 3 Team1\n";
+        //else if (tmp == 200)
+        //    receiveMessage = "enw 1 5 5\n";
+        //else if (tmp == 400)
+        //    receiveMessage = "eht 1\n";
         else if (tmp == 200)
-            receiveMessage = "enw 1 5 5\n";
-        else if (tmp == 400)
-            receiveMessage = "eht 1\n";
-
-        //else if (tmp == 300)
-        //    receiveMessage = "pic 0 0 8 0\n";
+            receiveMessage = "pic 0 0 8 0\n";
         //else if (tmp == 500)
         //    receiveMessage = "pic 5 5 8 0\n";
-        //else if (tmp == 700)
-        //    receiveMessage = "pie 0 0 S\n";
+        else if (tmp == 400)
+            receiveMessage = "pie 0 0 S\n";
         //else if (tmp == 800)
         //    receiveMessage = "pdi 0\n";
-        //else if (tmp == 1000)
-        //    receiveMessage = "seg Team1\n";
+        else if (tmp == 600)
+            receiveMessage = "seg Team1\n";
 
         //else if (tmp == 200)
         //    receiveMessage = "ppo 0 14 0 4\n";
@@ -807,13 +806,40 @@ public class GameScene : MonoBehaviour
 
     private void SetUpMap()
     {
-        if (mapSizeX < mapSizeY)
+        float maxDiffX = mapSizeX / 2;
+        float diffX = 0f;
+        float pourcX = 0f;
+
+        float maxDiffY = mapSizeY / 2;
+        float diffY = 0f;
+        float pourcY = 0f;
+
+        float maxSize;
+
+        if (mapSizeX <= mapSizeY)
         {
             for (int y = 0; y < mapSizeY; y++)
             {
                 for (int x = 0; x < mapSizeX; x++)
                 {
+                    diffX = x - mapSizeX / 2;
+                    if (diffX < 0)
+                        diffX = -diffX;
+                    pourcX = diffX * 100 / maxDiffX;
+                    pourcX = 100 - pourcX;
+
+                    diffY = y - mapSizeY / 2;
+                    if (diffY < 0)
+                        diffY = -diffY;
+                    pourcY = diffY * 100 / maxDiffY;
+                    pourcY = 100 - pourcY;
+
+                    maxSize = UnityEngine.Random.Range(1f, pourcX / 11 + pourcY / 11);
+                    if (maxSize < 1f)
+                        maxSize = 1f;
                     client.SendMessageToServer("bct " + x + " " + y + "\n");
+                    plane.transform.localScale = new Vector3(1f, maxSize, 1f);
+                    mapPos.y = -plane.transform.localScale.y / 2;
                     Instantiate(plane, mapPos, rotation);
                     SetUpTile(x, y);
                     mapPos.x += 1f;
@@ -828,7 +854,6 @@ public class GameScene : MonoBehaviour
             {
                 for (int y = 0; y < mapSizeY; y++)
                 {
-                    client.SendMessageToServer("bct " + x + " " + y + "\n");
                     Instantiate(plane, mapPos, rotation);
                     SetUpTile(x, y);
                     mapPos.z += 1f;
