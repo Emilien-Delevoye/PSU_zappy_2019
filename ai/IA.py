@@ -18,6 +18,8 @@ import collections, functools, operator
 # TODO aller chercher de la nourriture pour faire des réserves en attendant que les autres viennent
 # TODO faire en sorte que les IAs aient le temps d'aller chercher de la nourriture entre 2 incantations
 
+# FIXME retirer les assert à la fin
+
 class GameObj(Enum):
     Empty = 1 << 0,
     Player = 1 << 1,
@@ -73,6 +75,14 @@ dirs = {
 }
 
 
+def setRequestToStr(invs):
+    return '|'.join([str(i) + ':' + invToStr(j) for i, j in invs.items()])
+
+
+def strToSetRequest(invs):
+    return {int(i.split[':'][0]): strToinv(i.split[':'][1]) for i in invs.split('|')}
+
+
 def invToStr(inv):
     return ' '.join([str(v)[len('GameObj.'):]+'='+str(val) for v, val in inv.items()])
 
@@ -113,6 +123,8 @@ class IA:
                            Command.Right: "noUpdateNeeded",
                            Command.Left: "noUpdateNeeded",
                            Command.Broadcast: "noUpdateNeeded",
+                           Command.Set: "updateSet",
+                           Command.Incantation: "updateIncantation",
                            }
         self.maxLineRow = [int(sum([e for e in range(0, i * 2 + 1, 2)][:i]) + ([e for e in range(0, i * 2 + 1, 2)][i] / 2)) for i in range(0, 15, 1)]
 
@@ -124,6 +136,7 @@ class IA:
         """ LEAD """
         self.sameLvlIDs_ = {}  # On stocke l'id (int), s'il est là (bool), son inventaire (dict)
         self.itersBeforeCancel = 100  # FIXME ça doit dépendre d'autre chose comme la vitesse de réponse de la première IA (ou bien y'en a pas besoin et tout est reset quand on recommence)
+        self.countItersBeforeCancel = self.itersBeforeCancel
 
         """ NOT LEAD """
         self.elevDir = 0
@@ -142,6 +155,7 @@ class IA:
     def rcvBroadCast(self):
         msg = self.CSLink_.getServerMsg()
         if 'message' in msg:
+            dPrint(self.debug_, "Broadcast Received: " + msg)
             pass  # FIXME
             return True
         return False
@@ -167,13 +181,28 @@ class IA:
         while com in self.pendingRqt_:
             self.updateDataFromServ()
 
+    def updateIncantation(self, msg, moment):
+        dPrint(self.debug_, Colors.FAIL + "Update Incantation " + moment + " \"" + msg + "\"" + Colors.ENDC)
+        if 'Current level' in msg:
+            self.level_ += 1
+        self.situation_ = "normalLife"
+
+    def updateSet(self, msg, obj):
+        """
+        check
+        """
+        dPrint(self.debug_, Colors.HEADER + "Update Set" + Colors.ENDC, msg, obj, self.inventory_[obj])
+        assert msg == 'ok', "Set can't fail " + obj
+
     def updateTake(self, msg, obj):
         """
         Update inv from taken objects
         """
         dPrint(self.debug_, Colors.HEADER + "Update Take" + Colors.ENDC, msg, obj, self.inventory_[obj])
-        if msg != 'ko':
-            self.inventory_[obj] += 1
+        try:
+            assert msg == 'ok', "Take failed " + obj
+        except AssertionError:
+            dPrint("Take ko " + obj)
 
     def updateLookAround(self, msg, _):
         """
@@ -206,36 +235,48 @@ class IA:
         self.waitForPlace()
         self.CSLink_.broadcast(msg)
         self.pendingRqt_ += [(Command.Broadcast, None)]
-        dPrint(self.debug_, Colors.BOLD + "Broadcast" + msg)
+        dPrint(self.debug_, Colors.BOLD + "Broadcast " + Colors.ENDC + msg)
 
     def inventory(self):
         self.waitForPlace()
         self.CSLink_.inventory()
         self.pendingRqt_ += [(Command.Inventory, None)]
-        dPrint(self.debug_, colored("Need Inventory", "blue"))
+        dPrint(self.debug_, colored("Inventory", "blue"))
+
+    def lookAroundNow(self):
+        self.waitForPlace()
+        self.CSLink_.look()
+        self.pendingRqt_ += [(Command.Look, None)]
+        dPrint(self.debug_, colored("Look", "blue"))
+        self.updateDataFromServBlock((Command.Look, None))
 
     def lookAround(self):
         if self.currentDir_ == Command.Forward and self.currentPos_ == 0 and self.around_ is not None:
             return
-        self.waitForPlace()
-        self.CSLink_.look()
-        self.pendingRqt_ += [(Command.Look, None)]
-        dPrint(self.debug_, colored("Need Look", "blue"))
-        self.updateDataFromServBlock((Command.Look, None))
+        self.lookAroundNow()
 
     def takeNow(self, obj):
+        if obj == GameObj.Player:
+            return
         self.waitForPlace()
         self.CSLink_.take(linksR[obj])
         self.pendingRqt_ += [(Command.Take, obj)]
-        dPrint(self.debug_, colored("Need " + linksR[obj], "blue"))
-        self.around_[self.currentPos_].remove(obj)
+        dPrint(self.debug_, colored("Take " + linksR[obj], "blue"))
 
     def take(self, obj):
+        if obj == GameObj.Player:
+            return
         if len(self.pendingRqt_) < self.maxServCommands_:
             self.CSLink_.take(linksR[obj])
             self.pendingRqt_ += [(Command.Take, obj)]
-            dPrint(self.debug_, colored("Need " + linksR[obj], "blue"))
-            self.around_[self.currentPos_].remove(obj)
+            dPrint(self.debug_, colored("Take " + linksR[obj], "blue"))
+
+    def set(self, obj):
+        self.waitForPlace()
+        self.CSLink_.set(linksR[obj])
+        self.pendingRqt_ += [(Command.Set, obj)]
+        dPrint(self.debug_, colored("Set " + linksR[obj], "blue"))
+        assert self.inventory_[obj] >= 0, "Invalid set"
 
     def eat(self):
         self.take(GameObj.Food)
@@ -263,6 +304,13 @@ class IA:
         self.currentDir_ = Command.Left
         self.pendingRqt_ += [(Command.Left, None)]
         dPrint(self.debug_, colored("Turn Left", "blue"))
+
+    def incantation(self):
+        self.waitForPlace()
+        self.CSLink_.incantation()
+        self.pendingRqt_ += [(Command.Incantation, "Start")]
+        self.pendingRqt_ += [(Command.Incantation, "End")]
+        dPrint(self.debug_, Colors.UNDERLINE + "ELEVATION" + Colors.ENDC)
 
     """
         IA
@@ -313,7 +361,7 @@ class IA:
     def getPosesInScope(self, obj):
         # FIXME poses returned are not sorted by proximity neitheir by amount of object present on it
         poses = []
-        self.lookAround()
+        self.lookAroundNow()
         self.updateDataFromServBlock((Command.Look, None))
         for i in range(0, len(self.around_)):
             if self.around_[i].count(obj) > 0:
@@ -362,6 +410,47 @@ class IA:
 
     """ ELEVATION """
 
+    def setUpElevLead(self):
+        missing = elevRqrmts[self.level_].copy()
+        msg = {}
+
+        dPrint(self.debug_, Colors.UNDERLINE + "Setup Elevation" + Colors.ENDC)
+        self.inventory()
+        self.lookAroundNow()
+        for i in self.around_[self.currentPos_]:  # Make elevation place empty
+            self.takeNow(i)
+        dPrint(self.debug_, Colors.UNDERLINE + "SET WHAT S NEEDED" + Colors.ENDC)
+        for i, j in missing.items():  # Pour chaque item
+            for e in range(min(self.inventory_[i], j)):  # On en set le nombre min entre l'inventaire et ce qu'il manque
+                self.set(i)
+                missing[i] -= 1
+            assert missing[i] >= 0
+            if missing[i] == 0:
+                continue
+            for p, _ in self.sameLvlIDs_.items():  # Pour chaque player
+                if p not in msg.keys():
+                    msg[p] = {i: 0 for i, _ in self.inventory_.items()}
+                msg[p][i] = min(self.inventory_[i], j)
+        dPrint(self.debug_, Colors.UNDERLINE + "END SETUP ELEVATION" + Colors.ENDC)
+        # Envoyer le dictionnaire s'il n'est pas vide
+
+    def placeIsReadyToElevLead(self):
+        self.lookAroundNow()
+        for i, j in elevRqrmts[self.level_].items():
+            if self.around_[self.currentPos_].count(i) != j:
+                return False
+        if self.around_[self.currentPos_].count(GameObj.Food) != 0:
+            return False
+        return True
+
+    def removeItemThatShouldntBeThereSecondLead(self):
+        self.lookAroundNow()
+        for i, j in elevRqrmts[self.level_].items():
+            for _ in range(0, self.around_[self.currentPos_].count(i) - j):
+                self.takeNow(i)
+        for _ in range(0, self.around_[self.currentPos_].count(GameObj.Food)):
+            self.takeNow(GameObj.Food)
+
     def idsTohaveEnoughStones(self):
         possibilities = list(itertools.combinations([i for i, j in self.sameLvlIDs_.items()], elevPlayers[self.level_]))
 
@@ -389,6 +478,7 @@ class IA:
     """ IA MAIN RUN """
 
     def normalLife(self):
+        dPrint(self.debug_, Colors.SMALL + "Normal Life" + Colors.ENDC)
         getattr(self, self.foodStage_[min([va if self.inventory_[GameObj.Food] < va else self.maxFoodStage for va, v in self.foodStage_.items()])])()
         self.getStones()
 
@@ -399,12 +489,15 @@ class IA:
                 self.broadcast(' '.join(['LEAD', str(self.level_), str(self.id_)]))  # TODO gérer la réception du message
                 self.situation_ = "waitForAnswersLead"
             else:
+                self.setUpElevLead()
                 self.situation_ = "setOrganizationLead"
 
     def waitForGoNoLead(self):
         """
         On attend de savoir si on doit se diriger vers une incantation ou si c'est cancel
         """
+        dPrint(self.debug_, Colors.SMALL + "waitForGoNoLead" + Colors.ENDC)
+
         getattr(self, self.foodStage_[min([va if self.inventory_[GameObj.Food] < va else self.maxFoodStage for va, v in self.foodStage_.items()])])()
         self.getStones()
 
@@ -412,6 +505,8 @@ class IA:
         """
         On se dirige vers l'incantation (en faisant en sorte d'avoir de la nourriture)
         """
+        dPrint(self.debug_, Colors.SMALL + "goToIncantationNoLead" + Colors.ENDC)
+
         getattr(self, self.foodStageForElev_[min([va if self.inventory_[GameObj.Food] < va else self.maxFoodStage for va, v in self.foodStageForElev_.items()])])()
 
         if self.elevDir is not None:
@@ -425,6 +520,8 @@ class IA:
         J'attend de savoir ce que je dois poser par terre
         / Je ne fais rien s'il n'y pas d'instructions (incantation en cours)
         """
+        dPrint(self.debug_, Colors.SMALL + "waitForInstructions" + Colors.ENDC)
+
         pass  # FIXME
 
     def waitForAnswersLead(self):
@@ -432,18 +529,21 @@ class IA:
         On attend que les autres répondent à notre requête
         Si trop de temps est écoulé on retourne au cas 1
         """
+        dPrint(self.debug_, Colors.SMALL + "waitForAnswersLead" + Colors.ENDC)
+
         getattr(self, self.foodStage_[min([va if self.inventory_[GameObj.Food] < va else self.maxFoodStage for va, v in self.foodStage_.items()])])()
 
         if len(self.sameLvlIDs_) >= elevPlayers[self.level_] - 1:
             ids = self.idsTohaveEnoughStones()
             if ids is not None:
+                self.sameLvlIDs_ = {i: self.sameLvlIDs_[i] for i in ids}
                 # FIXME Donne le go aux IAs ids
-                pass
             self.situation_ = "waitForOthersCmgLead"
             pass
 
-        self.itersBeforeCancel -= 1
-        if self.itersBeforeCancel <= 0:
+        self.countItersBeforeCancel -= 1
+        if self.countItersBeforeCancel <= 0:
+            self.countItersBeforeCancel = self.itersBeforeCancel
             # FIXME Envoyer le cancel à tout le monde
             self.situation_ = "normalLife"
 
@@ -452,37 +552,49 @@ class IA:
         On attend que les autres viennent. Quand ils sont là, ils envoient un msg et leur status passe à True dans comingsIDs_
         On envoie la position régulièrement
         """
+        dPrint(self.debug_, Colors.SMALL + "waitForOthersCmgLead" + Colors.ENDC)
+
         # FIXME Envoyer ma position régulièrement
 
         for i, j in self.sameLvlIDs_:
             if j is False:
                 return
+        self.setUpElevLead()
         self.situation_ = "setOrganizationLead"
 
     def setOrganizationLead(self):
         """
-        On communique à tout le monde que poser par terre,
         Dés qu'il y a la bonne quantité d'élément on incante.
         Puis on passe à la situation suivante
         """
-        # FIXME
+        dPrint(self.debug_, Colors.SMALL + "setOrganizationLead" + Colors.ENDC)
 
-        # FIXME Si tout est posé on passe à la sécurisation
-        self.situation_ = "serurizeElevationLead"
+        if self.placeIsReadyToElevLead() is False:
+            dPrint(self.debug_, "Place is not ready")
+            self.removeItemThatShouldntBeThereSecondLead()
+            return
 
-    def secureElevationLead(self):
+        if self.level_ > 1:
+            pass  # Définir un second leader
+        self.lookAroundNow()
+        dPrint(self.debug_, "INCANTATION PLACE", self.around_[self.currentPos_])
+        self.incantation()
+        self.updateDataFromServBlock((Command.Incantation, "End"))
+
+    def secureElevationSecondLead(self):
         """
         On vérifie le bon fonctionnement de l'incantation
         """
+        dPrint(self.debug_, Colors.SMALL + "secureElevationSecondLead" + Colors.ENDC)
+
         # Si un truc pop, on le prend, si un joueur est en trop on dégage tout
         # Si c'est fini on revient au cas 1
         pass
 
     def run(self):
         self.inventory()
-        self.lookAround()
+        self.lookAroundNow()
         self.updateDataFromServ()
         getattr(self, self.situation_)()
 
         return True
-

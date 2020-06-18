@@ -51,8 +51,8 @@ class ServerLink:
                     exit(0)
                 self.buffers["read"] += buf
             if len(writable) != 0 and len(self.buffers["write"]) != 0:
-                dPrint(self.debug_, colored("send \"" + str(self.buffers["write"]) + "\" to server", "green"))
                 tmp = self.buffers["write"]
+                dPrint(self.debug_, colored("send \"" + str(tmp) + "\" to server", "green"))
                 writable[0].send(bytes(tmp))
                 self.buffers["write"] = self.buffers["write"][len(tmp):]
 
