@@ -5,18 +5,18 @@ from enum import Enum
 from serverLink import ServerLink, Command
 from termcolor import colored
 from random import randrange
+import itertools
+import collections, functools, operator
 
 
 # TODO gérer les ejects
-# TODO gérer les deaths
 # TODO sécuriser les communications
-
-# TODO Organiser les incantations
-# TODO Faire attention à ce que la quantité d'objects sur l'incantation reste inchangé
 
 # TODO Faire en sorte de se reproduire dans certains cas
 # TODO Get info pour savoir combien il y a d'ia de quel niveau (pour se reproduire)
 
+# TODO aller chercher de la nourriture pour faire des réserves en attendant que les autres viennent
+# TODO faire en sorte que les IAs aient le temps d'aller chercher de la nourriture entre 2 incantations
 
 class GameObj(Enum):
     Empty = 1 << 0,
@@ -61,6 +61,26 @@ links = {
 linksR = {v: k for k, v in links.items()}
 
 
+dirs = {
+    1: [],
+    2: [],
+    8: [],
+    3: ["left"],
+    4: ["left"],
+    7: ["right"],
+    6: ["right"],
+    5: ["right", "right"]
+}
+
+
+def invToStr(inv):
+    return ' '.join([str(v)[len('GameObj.'):]+'='+str(val) for v, val in inv.items()])
+
+
+def strToinv(inv):
+    return {links[v.split('=')[0].lower()]: int(v.split('=')[1]) for v in inv.split(' ')}
+
+
 class IA:
     def __init__(self, CSLink):
         self.id_ = randrange(0, 1000000)
@@ -79,9 +99,12 @@ class IA:
                            GameObj.Phiras: 0,
                            GameObj.Thystame: 0}
         self.maxFoodStage = 120
-        self.foodStage_ = {self.maxFoodStage: "goHalfEat",
-                           80: "goSlowEat",
-                           50: "goFastEat"}
+        self.foodStage_ = {self.maxFoodStage: "goHalfEat",  # FIXME ça doit dépendre de la durée d'un tour ou un truc comme ça ...
+                           100: "goSlowEat",
+                           80: "goFastEat"}
+        self.foodStageForElev_ = {self.maxFoodStage: "goHalfEat",
+                                  80: "goSlowEat",
+                                  20: "goFastEat"}
         self.pendingRqt_ = []
         self.updateFcts = {Command.Take: "updateTake",
                            Command.Inventory: "updateInv",
@@ -89,24 +112,22 @@ class IA:
                            Command.Forward: "noUpdateNeeded",
                            Command.Right: "noUpdateNeeded",
                            Command.Left: "noUpdateNeeded",
+                           Command.Broadcast: "noUpdateNeeded",
                            }
         self.maxLineRow = [int(sum([e for e in range(0, i * 2 + 1, 2)][:i]) + ([e for e in range(0, i * 2 + 1, 2)][i] / 2)) for i in range(0, 15, 1)]
 
         dPrint(self.debug_, "Random Id: {0}".format(self.id_))
 
         # ELEVATION
-        self.lead_ = False
-        self.elevation_ = False
         self.situation_ = "normalLife"
 
         """ LEAD """
-        self.commingIDs_ = []
-        self.itersBeforeCancel = 20  # FIXME ça doit dépendre d'autre chose comme la vitesse de réponse de la première IA (ou bien y'en a pas besoin et tout est reset quand on recommence)
-        self.totalStones = {GameObj.Food: 0, GameObj.Linemate: 0, GameObj.Deraumere: 0, GameObj.Sibur: 0, GameObj.Mendiane: 0, GameObj.Phiras: 0, GameObj.Thystame: 0}
+        self.sameLvlIDs_ = {}  # On stocke l'id (int), s'il est là (bool), son inventaire (dict)
+        self.itersBeforeCancel = 100  # FIXME ça doit dépendre d'autre chose comme la vitesse de réponse de la première IA (ou bien y'en a pas besoin et tout est reset quand on recommence)
 
         """ NOT LEAD """
         self.elevDir = 0
-        self.nbMoves = 10  # FIXME la quantité de mouvements pour se rapprocher doit dépendre de la taille de la map (Il réduit au fil du temps)
+        self.nbMoves = 5  # FIXME la quantité de mouvements pour se rapprocher doit dépendre de la taille de la map (Il réduit au fil du temps)
 
     """
         UPDATE FROM SERVER 
@@ -180,6 +201,12 @@ class IA:
     def waitForPlace(self):
         while not len(self.pendingRqt_) < self.maxServCommands_:
             self.updateDataFromServ()
+
+    def broadcast(self, msg):
+        self.waitForPlace()
+        self.CSLink_.broadcast(msg)
+        self.pendingRqt_ += [(Command.Broadcast, None)]
+        dPrint(self.debug_, Colors.BOLD + "Broadcast" + msg)
 
     def inventory(self):
         self.waitForPlace()
@@ -277,6 +304,12 @@ class IA:
         for i in range(steps):
             self.forward()
 
+    def goToDir(self, d, moves):
+        for i in dirs[d]:
+            getattr(self, i)()
+        for i in range(moves):
+            self.forward()
+
     def getPosesInScope(self, obj):
         # FIXME poses returned are not sorted by proximity neitheir by amount of object present on it
         poses = []
@@ -322,13 +355,26 @@ class IA:
     """ STONES """
 
     def getStones(self):
-        for s in elevRqrmts[self.level_]:
-            if self.inventory_[s] < elevRqrmts[self.level_][s]:
-                if self.searchAndGoFor(s) is True:
-                    self.takeNow(s)
+        for s in elevRqrmts[self.level_]:  # FIXME changer l'ordre
+            if self.inventory_[s] < elevRqrmts[self.level_][s] and self.searchAndGoFor(s) is True:
+                self.takeNow(s)
                 break
 
     """ ELEVATION """
+
+    def idsTohaveEnoughStones(self):
+        possibilities = list(itertools.combinations([i for i, j in self.sameLvlIDs_.items()], elevPlayers[self.level_]))
+
+        for p in possibilities:
+            others = [self.sameLvlIDs_[i][1] for i in p]
+            others = dict(functools.reduce(operator.add, map(collections.Counter, others)))
+            for s in elevRqrmts[self.level_]:
+                if self.inventory_[s] + others[s] < elevRqrmts[self.level_][s]:
+                    others = None
+                    break
+            if others is not None:
+                return p
+        return None
 
     def haveGoodAmountOfStones(self):
         missing = 0
@@ -336,18 +382,11 @@ class IA:
         for s in elevRqrmts[self.level_]:
             if self.inventory_[s] < elevRqrmts[self.level_][s]:
                 missing += elevRqrmts[self.level_][s] - self.inventory_[s]
-        if missing == 0 or missing < elevTotalStones[self.level_] / elevPlayers[self.level_]:
+        if missing == 0 or int(elevTotalStones[self.level_] - (elevTotalStones[self.level_] / elevPlayers[self.level_])) - missing >= 0:
             return True
         return False
 
-    """ COMMUNICATION """
-
-    def lead(self):
-        pass
-
     """ IA MAIN RUN """
-
-    # TODO vérifier l'utilité des variables d'elevation
 
     def normalLife(self):
         getattr(self, self.foodStage_[min([va if self.inventory_[GameObj.Food] < va else self.maxFoodStage for va, v in self.foodStage_.items()])])()
@@ -356,8 +395,11 @@ class IA:
         # TODO Mettre le bordel dans les incantations des autres
 
         if self.haveGoodAmountOfStones():
-            # FIXME SEND MESSAGE IF LEVEL > 1
-            self.situation_ = "waitForAnswersLead"
+            if self.level_ > 1:
+                self.broadcast(' '.join(['LEAD', str(self.level_), str(self.id_)]))  # TODO gérer la réception du message
+                self.situation_ = "waitForAnswersLead"
+            else:
+                self.situation_ = "setOrganizationLead"
 
     def waitForGoNoLead(self):
         """
@@ -370,9 +412,13 @@ class IA:
         """
         On se dirige vers l'incantation (en faisant en sorte d'avoir de la nourriture)
         """
+        getattr(self, self.foodStageForElev_[min([va if self.inventory_[GameObj.Food] < va else self.maxFoodStage for va, v in self.foodStageForElev_.items()])])()
 
-        # Si je suis arrivé, je préviens. puis j'attend les instructions
-        pass  # FIXME
+        if self.elevDir is not None:
+            self.goToDir(self.elevDir, self.nbMoves)
+            self.nbMoves -= 1
+            self.elevDir = None
+        # FIXME Si je suis arrivé, je préviens. puis j'attend les instructions
 
     def waitForInstructions(self):
         """
@@ -387,27 +433,31 @@ class IA:
         Si trop de temps est écoulé on retourne au cas 1
         """
         getattr(self, self.foodStage_[min([va if self.inventory_[GameObj.Food] < va else self.maxFoodStage for va, v in self.foodStage_.items()])])()
-        self.getStones()
 
-        if len(self.commingIDs_) == elevPlayers[self.level_] - 1 and self.totalStones == elevRqrmts:  # FIXME en regardant s'il y a assez de stones
-            # FIXME Communique quelles IAs viennent (attention à faire la sélection) IF LEVEL > 1
+        if len(self.sameLvlIDs_) >= elevPlayers[self.level_] - 1:
+            ids = self.idsTohaveEnoughStones()
+            if ids is not None:
+                # FIXME Donne le go aux IAs ids
+                pass
             self.situation_ = "waitForOthersCmgLead"
             pass
 
-        # FIXME Si trop de temps est passé et que rien n'est concluant on envoie le cancel et on retourne au cas 1
+        self.itersBeforeCancel -= 1
+        if self.itersBeforeCancel <= 0:
+            # FIXME Envoyer le cancel à tout le monde
+            self.situation_ = "normalLife"
 
     def waitForOthersCmgLead(self):
         """
-        On attend que les autres viennent. Quand ils sont là, ils envoient un msg et leeur status passe à True dans comingsIDs_
+        On attend que les autres viennent. Quand ils sont là, ils envoient un msg et leur status passe à True dans comingsIDs_
         On envoie la position régulièrement
         """
-        # FIXME Envoyer ma position régulièrement SI LEVEL > 1
+        # FIXME Envoyer ma position régulièrement
 
-        for i, j in self.commingIDs_:
+        for i, j in self.sameLvlIDs_:
             if j is False:
                 return
         self.situation_ = "setOrganizationLead"
-        pass
 
     def setOrganizationLead(self):
         """
@@ -420,7 +470,7 @@ class IA:
         # FIXME Si tout est posé on passe à la sécurisation
         self.situation_ = "serurizeElevationLead"
 
-    def serurizeElevationLead(self):
+    def secureElevationLead(self):
         """
         On vérifie le bon fonctionnement de l'incantation
         """
