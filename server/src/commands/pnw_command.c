@@ -15,7 +15,7 @@ void pnw_command(client_t *cli, data_server_t *data,
     unsigned int x = cli->drone.tile->coord[0];
     unsigned int y = cli->drone.tile->coord[1];
     unsigned int o = cli->drone.orientation;
-    unsigned int l = cli->drone.lvl = 0;
+    unsigned int l = cli->drone.lvl;
     char *name = data->params.team_names[cli->team_id];
     char str[66 + strlen(name)];
 

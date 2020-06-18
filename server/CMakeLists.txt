@@ -63,4 +63,5 @@ add_executable(zappy_server
         src/ai_interaction/search_right_broadcast.c
         include/commands/broadcast.h
         src/ai_interaction/search_left_broadcast.c
-        src/commands/seg_command.c)
+        src/commands/seg_command.c
+        src/commands/pic_command.c)
