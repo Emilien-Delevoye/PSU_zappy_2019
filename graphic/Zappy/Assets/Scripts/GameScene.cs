@@ -36,6 +36,8 @@ public class GameScene : MonoBehaviour
     public GameObject rocket;
     public GameObject fire;
 
+    public GameObject shockWave;
+
     public GameObject endScreen;
     public TextMeshProUGUI winTeamName;
 
@@ -57,9 +59,10 @@ public class GameScene : MonoBehaviour
 
     public class Character
     {
-        public Character(GameObject gameObject, int number, int posX, int posY, int orientation, int level, string teamName, int mapX, int mapY)
+        public Character(GameObject gameObject, GameObject shockWave, int number, int posX, int posY, int orientation, int level, string teamName, int mapX, int mapY)
         {
             _gameObject = gameObject;
+            _shockWave = shockWave;
             _number = number;
             _posX = posX;
             _posY = posY;
@@ -164,6 +167,31 @@ public class GameScene : MonoBehaviour
                 _gameObject.transform.eulerAngles = new Vector3(0f, 270f, 0f);
         }
 
+        public void StartBroadcast()
+        {
+            _shockWave = Instantiate(_shockWave, new Vector3(_posX + 0.5f, 0f, _posY + 0.5f), new Quaternion(0f, 0f, 0f, 0f));
+            _shockWave.SetActive(true);
+            _timeBroadcast = Time.time;
+        }
+
+        public void CheckEndBroadcast()
+        {
+            if (Time.time - _timeBroadcast >= 0.80)
+            {
+                _shockWave.SetActive(false); ;
+            }
+        }
+
+        public float GetXPos()
+        {
+            return _posX;
+        }
+
+        public float GetYPos()
+        {
+            return _posY;
+        }
+
         public void DestroyPlayer()
         {
             Destroy(_gameObject);
@@ -171,6 +199,8 @@ public class GameScene : MonoBehaviour
 
         private GameObject _gameObject;
         private Animator _animator;
+        private GameObject _shockWave;
+        private float _timeBroadcast;
         private int _number;
         private int _posX;
         private int _posY;
@@ -541,6 +571,7 @@ public class GameScene : MonoBehaviour
             {
                 characters[kvp.Key].Move();
             }
+            characters[kvp.Key].CheckEndBroadcast();
         }
 
         if (end == true)
@@ -560,20 +591,28 @@ public class GameScene : MonoBehaviour
         receiveMessage = client.ReceiveMesageFromServer();
         if (tmp == 0)
             receiveMessage = "pnw 0 0 0 2 3 Team1\n";
+        else if (tmp == 200)
+            receiveMessage = "pbc 0\n";
+        else if (tmp == 400)
+            receiveMessage = "pnw 1 1 1 2 3 Team1\n";
+        else if (tmp == 600)
+            receiveMessage = "pbc 1\n";
+        else if (tmp == 800)
+            receiveMessage = "pbc 0\n";
         //else if (tmp == 200)
         //    receiveMessage = "enw 1 5 5\n";
         //else if (tmp == 400)
         //    receiveMessage = "eht 1\n";
-        else if (tmp == 200)
-            receiveMessage = "pic 0 0 8 0\n";
+        //else if (tmp == 200)
+        //    receiveMessage = "pic 0 0 8 0\n";
         //else if (tmp == 500)
         //    receiveMessage = "pic 5 5 8 0\n";
-        else if (tmp == 400)
-            receiveMessage = "pie 0 0 S\n";
+        //else if (tmp == 400)
+        //    receiveMessage = "pie 0 0 S\n";
         //else if (tmp == 800)
         //    receiveMessage = "pdi 0\n";
-        else if (tmp == 600)
-            receiveMessage = "seg Team1\n";
+        //else if (tmp == 600)
+        //    receiveMessage = "seg Team1\n";
 
         //else if (tmp == 200)
         //    receiveMessage = "ppo 0 14 0 4\n";
@@ -588,6 +627,7 @@ public class GameScene : MonoBehaviour
         else
             receiveMessage = null;
         ++tmp;
+
         if (receiveMessage != null)
         {
             Array.Clear(arguments, 0, arguments.Length);
@@ -610,9 +650,23 @@ public class GameScene : MonoBehaviour
                 CreateEgg();
             else if (arguments[0] == "eht")
                 DeleteEgg();
+            else if (arguments[0] == "pbc")
+                StartBroadcast();
         }
     }
     
+    public void StartBroadcast()
+    {
+        if (arguments.Length >= 2)
+        {
+            characters[int.Parse(arguments[1])].StartBroadcast();
+        }
+        else
+        {
+            Debug.Log("pbc: Reply missing argument.");
+        }
+    }
+
     public void DeleteEgg()
     {
         if (arguments.Length >= 2)
@@ -747,7 +801,7 @@ public class GameScene : MonoBehaviour
     {
         if (arguments.Length >= 7)
         {
-            characters.Add(int.Parse(arguments[1]), new Character(Instantiate(character), int.Parse(arguments[1]), int.Parse(arguments[2]), int.Parse(arguments[3]), int.Parse(arguments[4]), int.Parse(arguments[5]), arguments[6], mapSizeX, mapSizeY));
+            characters.Add(int.Parse(arguments[1]), new Character(Instantiate(character), shockWave, int.Parse(arguments[1]), int.Parse(arguments[2]), int.Parse(arguments[3]), int.Parse(arguments[4]), int.Parse(arguments[5]), arguments[6], mapSizeX, mapSizeY));
         } else
         {
             Debug.Log("pnw: Reply missing argument.");
