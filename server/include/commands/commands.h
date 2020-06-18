@@ -14,5 +14,9 @@ void msz_command(client_t *cli, data_server_t *data,
     __attribute__((unused))char **arg);
 void bct_command(client_t *cli, data_server_t *data, char **arg);
 void tna_command(client_t *cli, data_server_t *data, char **arg);
+void ppo_command(client_t *cli, __attribute__((unused))data_server_t *data,
+    __attribute__((unused))char **arg);
+void pnw_command(client_t *cli, data_server_t *data,
+    __attribute__((unused))char **arg);
 
 #endif //PSU_ZAPPY_2019_COMMANDS_H
