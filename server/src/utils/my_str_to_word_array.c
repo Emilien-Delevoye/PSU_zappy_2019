@@ -57,7 +57,7 @@ char *get_dup(const char *str, int *i, char *dup)
 char **my_str_to_word_array(char *str)
 {
     int counter_str = 0;
-    char *dup;
+    char *dup = NULL;
     char **all = malloc(sizeof(char *) * (spaces(str) + 2));
 
     if (all == NULL)
