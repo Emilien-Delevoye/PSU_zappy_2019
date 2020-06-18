@@ -52,6 +52,8 @@ SRC_SERVER	=	server/src/utils/parameters/get_parameters.c	\
 			server/src/setup_map/spawn_player.c	\
 			server/src/ai_interaction/forward.c	\
 			server/src/ai_interaction/broadcast.c	\
+			server/src/ai_interaction/search_left_broadcast.c	\
+            server/src/ai_interaction/search_right_broadcast.c	\
 			server/src/ai_interaction/look.c	\
 			server/src/ai_interaction/inventory.c
 
