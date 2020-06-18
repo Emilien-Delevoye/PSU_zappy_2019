@@ -12,8 +12,12 @@
 #include <sys/select.h>
 #include <stdio.h>
 
-#define WIDTH 0
-#define HEIGHT 1
+#define WIDTH 1
+#define HEIGHT 0
+#define NORTH 1
+#define EAST 2
+#define SOUTH 3
+#define WEST 4
 
 enum items_type {
     FOOD,
@@ -80,6 +84,7 @@ struct list_client_s {
 typedef struct list_actions_s {
     client_t *cli;
     short cmd_nb;
+    char *cmd_str;
     struct timeval tv;
     struct list_actions_s *next;
 } list_actions_t;
@@ -154,6 +159,9 @@ void move_to_wait_list(data_server_t *data);
 void forward(data_server_t *data);
 void right(data_server_t *data);
 void left(data_server_t *data);
+void broadcast(data_server_t *data);
 void spawn_player(data_server_t *data, client_t *cli);
+void inventory(data_server_t *data);
+void look(data_server_t *data);
 
 #endif //SERVER_SERVER_H

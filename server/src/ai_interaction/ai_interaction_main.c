@@ -7,10 +7,11 @@
 
 #include "server.h"
 #include <sys/time.h>
+#include <stdlib.h>
 
 static void (*fct[])(data_server_t *) =
 {
-    forward, right, left, NULL
+    forward, right, left, look, inventory, broadcast, NULL
 };
 
 static void update_work_cli(data_server_t *d)
@@ -20,8 +21,11 @@ static void update_work_cli(data_server_t *d)
             (d->cli_work->tv.tv_sec == d->tv.tv_sec &&
             d->cli_work->tv.tv_usec > d->tv.tv_usec))
             return;
-        if (d->cli_work->cmd_nb < 3)
+        if (d->cli_work->cmd_nb < 6)
             fct[d->cli_work->cmd_nb](d);
+        if (d->cli_work->cmd_str)
+            free(d->cli_work->cmd_str);
+        d->cli_work->cmd_str = NULL;
         move_to_wait_list(d);
     }
 }
@@ -70,6 +74,7 @@ void ai_interaction(data_server_t *data)
     static struct timeval tv[2];
 
     update_time(tv, data->params.freq);
+    data->tv = tv[1];
     update_work_cli(data);
     update_waiting_cli(data, tv[0], data->cli_wait);
 }

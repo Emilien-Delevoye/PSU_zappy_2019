@@ -12,10 +12,8 @@ void free_team_names(data_server_t data)
 {
     if (!data.params.team_names)
         return;
-    for (int a = 0; data.params.team_names[a]; ++a) {
-        printf("%s\n", data.params.team_names[a]);
+    for (int a = 0; data.params.team_names[a]; ++a)
         free(data.params.team_names[a]);
-    }
     if (data.params.r_cli)
         free(data.params.r_cli);
     free(data.params.team_names);

@@ -15,6 +15,5 @@ void remove_first_cmd_queue(client_t *current)
     if (!first)
         return;
     current->cmd_queue = current->cmd_queue->next;
-    free(first->command);
     free(first);
 }
