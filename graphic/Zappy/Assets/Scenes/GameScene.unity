@@ -3379,7 +3379,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2144528907}
-  - component: {fileID: 2144528914}
   - component: {fileID: 2144528915}
   m_Layer: 0
   m_Name: Scene
@@ -3404,20 +3403,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2144528914
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2144528906}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c2f3bb9403aa094cbc2e108f1e6a6f1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  character: {fileID: 1147752367711628, guid: 2abf19653d633114faedf3b60dc6c39f, type: 3}
-  runtimeAnimator: {fileID: 9100000, guid: 9e22852b9da8d834bab164ef1034a932, type: 2}
 --- !u!114 &2144528915
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3448,6 +3433,7 @@ MonoBehaviour:
   elevation6: {fileID: 1725317912486240, guid: e55149ba6f4d00741984987e258c3378, type: 3}
   elevation7: {fileID: 1975959190090480, guid: eca000ab44c908d4dab395f654753038, type: 3}
   elevation8: {fileID: 1434627103891488, guid: 52d340ed9c2714c4f8aabf1f82df1b58, type: 3}
+  egg: {fileID: 100000, guid: 214315961896cb246a09ddccf67044d7, type: 3}
   rocket: {fileID: 1799022065362878, guid: da17a613b68ae05468351a2c3f7d7530, type: 3}
   fire: {fileID: 1725317912486240, guid: 389f1cf7d2a0c9f44bdc59efe75a96a5, type: 3}
   endScreen: {fileID: 223409680}

@@ -31,6 +31,8 @@ public class GameScene : MonoBehaviour
     public GameObject elevation7;
     public GameObject elevation8;
 
+    public GameObject egg;
+
     public GameObject rocket;
     public GameObject fire;
 
@@ -484,6 +486,26 @@ public class GameScene : MonoBehaviour
     }
     private LinkedList<Elevation> elevations;
 
+    private class Egg
+    {
+        public Egg(GameObject egg, int posX, int posY)
+        {
+            _posX = posX;
+            _posY = posY;
+           _egg = Instantiate(egg, new Vector3(UnityEngine.Random.Range(posX + 0.1f, posX + 0.9f), 0.160f, UnityEngine.Random.Range(posY + 0.1f, posY + 0.9f)), new Quaternion(0f, 0f, 0f, 0f));
+        }
+
+        public void DeleteEgg()
+        {
+            Destroy(_egg);
+        }
+
+        GameObject _egg;
+        int _posX;
+        int _posY;
+    }
+    private Dictionary<int, Egg> eggs;
+
     private bool end;
 
     static int tmp = 0;
@@ -500,6 +522,7 @@ public class GameScene : MonoBehaviour
         characters = new Dictionary<int, Character>();
         map = new LinkedList<Tile>();
         elevations = new LinkedList<Elevation>();
+        eggs = new Dictionary<int, Egg>();
         end = false;
 
         SetUpAssetsSize();
@@ -537,16 +560,22 @@ public class GameScene : MonoBehaviour
         receiveMessage = client.ReceiveMesageFromServer();
         if (tmp == 0)
             receiveMessage = "pnw 0 0 0 2 3 Team1\n";
-        else if (tmp == 300)
-            receiveMessage = "pic 0 0 8 0\n";
-        else if (tmp == 500)
-            receiveMessage = "pic 5 5 8 0\n";
-        else if (tmp == 700)
-            receiveMessage = "pie 0 0 S\n";
-        else if (tmp == 800)
-            receiveMessage = "pdi 0\n";
-        else if (tmp == 1000)
-            receiveMessage = "seg Team1\n";
+        else if (tmp == 200)
+            receiveMessage = "enw 1 5 5\n";
+        else if (tmp == 400)
+            receiveMessage = "eht 1\n";
+
+        //else if (tmp == 300)
+        //    receiveMessage = "pic 0 0 8 0\n";
+        //else if (tmp == 500)
+        //    receiveMessage = "pic 5 5 8 0\n";
+        //else if (tmp == 700)
+        //    receiveMessage = "pie 0 0 S\n";
+        //else if (tmp == 800)
+        //    receiveMessage = "pdi 0\n";
+        //else if (tmp == 1000)
+        //    receiveMessage = "seg Team1\n";
+
         //else if (tmp == 200)
         //    receiveMessage = "ppo 0 14 0 4\n";
         //else if (tmp == 400)
@@ -565,27 +594,47 @@ public class GameScene : MonoBehaviour
             Array.Clear(arguments, 0, arguments.Length);
             arguments = receiveMessage.Split(' ');
             if (arguments[0] == "pnw")
-            {
                 InstantiateNewPlayer();
-            } else if (arguments[0] == "ppo")
-            {
+            else if (arguments[0] == "ppo")
                 SetPointToMovePlayer();
-            } else if (arguments[0] == "bct")
-            {
+            else if (arguments[0] == "bct")
                 UpdateContentOfTile();
-            } else if (arguments[0] == "pic")
-            {
+            else if (arguments[0] == "pic")
                 StartIncantation();
-            } else if (arguments[0] == "pie")
-            {
+            else if (arguments[0] == "pie")
                 EndIncantation();
-            } else if (arguments[0] == "pdi")
-            {
+            else if (arguments[0] == "pdi")
                 DieOfPlayer();
-            } else if (arguments[0] == "seg")
-            {
+            else if (arguments[0] == "seg")
                 EndOfTheGame();
-            }
+            else if (arguments[0] == "enw")
+                CreateEgg();
+            else if (arguments[0] == "eht")
+                DeleteEgg();
+        }
+    }
+    
+    public void DeleteEgg()
+    {
+        if (arguments.Length >= 2)
+        {
+            eggs[int.Parse(arguments[1])].DeleteEgg();
+            eggs.Remove(int.Parse(arguments[1]));
+        }
+        else
+        {
+            Debug.Log("seg: Reply missing argument.");
+        }
+    }
+
+    public void CreateEgg()
+    {
+        if (arguments.Length >= 4)
+        {
+            eggs.Add(int.Parse(arguments[1]), new Egg(egg, int.Parse(arguments[2]), int.Parse(arguments[3])));
+        } else
+        {
+            Debug.Log("seg: Reply missing argument.");
         }
     }
 
