@@ -52,6 +52,8 @@ SRC_SERVER	=	server/src/utils/parameters/get_parameters.c	\
 			server/src/setup_map/spawn_player.c	\
 			server/src/ai_interaction/forward.c	\
 			server/src/ai_interaction/broadcast.c	\
+			server/src/ai_interaction/search_left_broadcast.c	\
+            		server/src/ai_interaction/search_right_broadcast.c	\
 			server/src/ai_interaction/look.c	\
 			server/src/ai_interaction/inventory.c	\
 			server/src/ai_interaction/connect_nbr.c	\
@@ -59,7 +61,12 @@ SRC_SERVER	=	server/src/utils/parameters/get_parameters.c	\
 			server/src/ai_interaction/fork.c	\
 			server/src/ai_interaction/take.c	\
 			server/src/ai_interaction/set.c		\
-			server/src/ai_interaction/incantation.c
+			server/src/ai_interaction/incantation.c	\
+			server/src/commands/seg_command.c	\
+			server/src/commands/pic_command.c	\
+			server/src/commands/pie_command.c	\
+			server/src/commands/pdi_command.c	\
+			server/src/commands/pbc_command.c
 
 SRC_TEST	=	tests/src/bct_command.cpp	\
                         tests/src/close_server.cpp	\
