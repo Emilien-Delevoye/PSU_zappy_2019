@@ -58,7 +58,8 @@ SRC_SERVER	=	server/src/utils/parameters/get_parameters.c	\
 			server/src/ai_interaction/eject.c	\
 			server/src/ai_interaction/fork.c	\
 			server/src/ai_interaction/take.c	\
-			server/src/ai_interaction/set.c
+			server/src/ai_interaction/set.c		\
+			server/src/ai_interaction/incantation.c
 
 SRC_TEST	=	tests/src/bct_command.cpp	\
                         tests/src/close_server.cpp	\
