@@ -11,7 +11,8 @@
 
 static void (*fct[])(data_server_t *) =
 {
-    forward, right, left, look, inventory, broadcast, connect_nbr, NULL
+    forward, right, left, look, inventory, broadcast, connect_nbr, NULL, eject,
+    NULL
 };
 
 static void update_work_cli(data_server_t *d)
@@ -21,7 +22,7 @@ static void update_work_cli(data_server_t *d)
             (d->cli_work->tv.tv_sec == d->tv.tv_sec &&
             d->cli_work->tv.tv_usec > d->tv.tv_usec))
             return;
-        if (d->cli_work->cmd_nb < 7)
+        if (d->cli_work->cmd_nb < 9)
             fct[d->cli_work->cmd_nb](d);
         if (d->cli_work->cmd_str)
             free(d->cli_work->cmd_str);

@@ -54,7 +54,8 @@ SRC_SERVER	=	server/src/utils/parameters/get_parameters.c	\
 			server/src/ai_interaction/broadcast.c	\
 			server/src/ai_interaction/look.c	\
 			server/src/ai_interaction/inventory.c	\
-			server/src/ai_interaction/connect_nbr.c
+			server/src/ai_interaction/connect_nbr.c	\
+			server/src/ai_interaction/eject.c
 
 SRC_TEST	=	tests/src/bct_command.cpp	\
                         tests/src/close_server.cpp	\
