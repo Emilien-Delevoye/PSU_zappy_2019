@@ -8,7 +8,6 @@
 #include "utils/write_list.h"
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
 
 void msz_command(client_t *cli, data_server_t *data,
     __attribute__((unused))char **arg)

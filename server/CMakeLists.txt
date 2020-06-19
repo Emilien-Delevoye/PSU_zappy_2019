@@ -60,4 +60,15 @@ add_executable(zappy_server
         src/ai_interaction/broadcast.c
         src/ai_interaction/inventory.c
         src/ai_interaction/look.c
-        src/ai_interaction/broadcast.c)
+        src/ai_interaction/broadcast.c
+        src/ai_interaction/connect_nbr.c
+        src/ai_interaction/eject.c
+        src/ai_interaction/fork.c src/ai_interaction/take.c src/ai_interaction/set.c src/ai_interaction/incantation.c
+        src/ai_interaction/search_right_broadcast.c
+        include/commands/broadcast.h
+        src/ai_interaction/search_left_broadcast.c
+        src/commands/seg_command.c
+        src/commands/pic_command.c
+        src/commands/pie_command.c
+        src/commands/pdi_command.c
+        src/commands/pbc_command.c)

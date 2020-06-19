@@ -61,6 +61,8 @@ add_executable(server_tests
         ../server/src/ai_interaction/forward.c
         ../server/src/ai_interaction/inventory.c
         ../server/src/ai_interaction/look.c
+        ../server/src/ai_interaction/connect_nbr.c
+        ../server/src/ai_interaction/eject.c
         include/tests.h
         src/main.cpp
         src/get_parameters.cpp

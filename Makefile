@@ -7,6 +7,8 @@
 
 NAME_SERVER	=	zappy_server
 
+NAME_AI		=	zappy_ai
+
 SRC_MAIN_SERVER	=	server/src/main.c
 
 SRC_SERVER	=	server/src/utils/parameters/get_parameters.c	\
@@ -52,8 +54,21 @@ SRC_SERVER	=	server/src/utils/parameters/get_parameters.c	\
 			server/src/setup_map/spawn_player.c	\
 			server/src/ai_interaction/forward.c	\
 			server/src/ai_interaction/broadcast.c	\
+			server/src/ai_interaction/search_left_broadcast.c	\
+            		server/src/ai_interaction/search_right_broadcast.c	\
 			server/src/ai_interaction/look.c	\
-			server/src/ai_interaction/inventory.c
+			server/src/ai_interaction/inventory.c	\
+			server/src/ai_interaction/connect_nbr.c	\
+			server/src/ai_interaction/eject.c	\
+			server/src/ai_interaction/fork.c	\
+			server/src/ai_interaction/take.c	\
+			server/src/ai_interaction/set.c		\
+			server/src/ai_interaction/incantation.c	\
+			server/src/commands/seg_command.c	\
+			server/src/commands/pic_command.c	\
+			server/src/commands/pie_command.c	\
+			server/src/commands/pdi_command.c	\
+			server/src/commands/pbc_command.c
 
 SRC_TEST	=	tests/src/bct_command.cpp	\
                         tests/src/close_server.cpp	\
@@ -79,13 +94,16 @@ OBJ_SRC_TEST	=	$(SRC_TEST:.cpp=.o)
 CFLAGS	=	-W -Wall -Wextra -I server/include -Ofast
 CPPFLAGS	=	-W -Wall -Wextra -I server/include -I tests/include
 
-all:	$(NAME_SERVER)
+all:	$(NAME_SERVER) $(NAME_AI)
 
 debug:	CFLAGS += -g
 debug:	all
 
 debugre:	CFLAGS += -g
 debugre:	re
+
+$(NAME_AI):
+	cp ai/main.py $(NAME_AI)
 
 $(NAME_SERVER):	$(OBJ) $(OBJ_SRC_MAIN)
 	gcc -o $(NAME_SERVER) $(OBJ) $(OBJ_SRC_MAIN) -I server/include
@@ -96,7 +114,7 @@ clean:
 	find . -name "*.gcno" -exec /bin/rm '{}' \;
 
 fclean:	clean
-	rm -f $(NAME_SERVER)
+	rm -f $(NAME_SERVER) $(NAME_AI)
 
 tests_run: CFLAGS += --coverage
 tests_run: clean $(OBJ) $(OBJ_SRC_TEST)

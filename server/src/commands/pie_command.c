@@ -2,20 +2,20 @@
 ** EPITECH PROJECT, 2020
 ** zappy_server
 ** File description:
-** File for the ppo command
+** File for the pie command
 */
 
 #include "server.h"
 #include <string.h>
 
-void ppo_command(client_t *cli, data_server_t *data)
+void pie_command(client_t *cli, data_server_t *data)
 {
-    int n = cli->drone.id;
+    char str[35];
     unsigned int x = cli->drone.tile->coord[0];
     unsigned int y = cli->drone.tile->coord[1];
-    unsigned int o = cli->drone.orientation;
-    char str[53] = {0};
+    char c = 'S';
 
-    sprintf(str, "ppo %d %d %d %d\n", n, x, y, o);
+    memset(str, 0, sizeof(str));
+    sprintf(str, "pie %d %d %c\n", x, y, c);
     add_to_write_list(data->l_graphical.first, str);
 }
