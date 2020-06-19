@@ -32,6 +32,7 @@ void set(data_server_t *data)
     for (int i = 0; i < 7; ++i) {
         if (strcmp(equi[i], str) == 0 && cli->drone.inventory[i] > 0) {
             cur->items[i] += 1;
+            cli->drone.inventory[i] -= 1;
             add_to_write_list(cli, "ok\n");
             return;
         }
