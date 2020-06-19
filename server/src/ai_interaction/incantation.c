@@ -37,7 +37,6 @@ void incantation_ok(client_t *cli, int choice)
 
 void incantation_after(data_server_t *data)
 {
-    printf("incantation after\n");
     unsigned int nb_player = 0;
     client_t *cli = data->cli_work->cli;
 
@@ -58,11 +57,9 @@ void incantation_after(data_server_t *data)
         add_to_write_list(cli, "ko\n");
 }
 
-void incantation_before(data_server_t *data)
+void incantation_before(data_server_t *data, client_t *cli)
 {
-    printf("incantation before\n");
     unsigned int nb_player = 0;
-    client_t *cli = data->cli_work->cli;
 
     for (tile_players_t *tmp =
         cli->drone.tile->list_players; tmp; tmp = tmp->next) {
