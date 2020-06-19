@@ -195,6 +195,11 @@ public class GameScene : MonoBehaviour
             return _posY;
         }
 
+        public GameObject GetGameObject()
+        {
+            return _gameObject;
+        }
+
         public void DestroyPlayer()
         {
             Destroy(_gameObject);
@@ -242,6 +247,14 @@ public class GameScene : MonoBehaviour
             _mendiane = mendiane;
             _phiras = phiras;
             _thystame = thystame;
+
+            _foodNumber = numberFood;
+            _linemateNumber = numberLinemate;
+            _deraumereNumber = numberDeraumere;
+            _siburNumber = numberSibur;
+            _mendianeNumber = numberMendiane;
+            _phirasNumber = numberPhiras;
+            _thystameNumber = numberThystame;
 
             for (int i = 0; i < numberFood; i++)
             {
@@ -309,6 +322,14 @@ public class GameScene : MonoBehaviour
 
         public void UpdateTile(int numberFood, int numberLinemate, int numberDeraumere, int numberSibur, int numberMendiane, int numberPhiras, int numberThystame)
         {
+            _foodNumber = numberFood;
+            _linemateNumber = numberLinemate;
+            _deraumereNumber = numberDeraumere;
+            _siburNumber = numberSibur;
+            _mendianeNumber = numberMendiane;
+            _phirasNumber = numberPhiras;
+            _thystameNumber = numberThystame;
+
             int diff = 0;
             if (_foodList.Count < numberFood)
             {
@@ -463,6 +484,12 @@ public class GameScene : MonoBehaviour
             }
         }
 
+        public int[] GetInfoTile()
+        {
+            int[] result = { _foodNumber, _linemateNumber, _deraumereNumber, _siburNumber, _mendianeNumber, _phirasNumber, _thystameNumber};
+            return result;
+        }
+
         private LinkedList<GameObject> _foodList;
         private LinkedList<GameObject> _linemateList;
         private LinkedList<GameObject> _deraumereList;
@@ -474,6 +501,14 @@ public class GameScene : MonoBehaviour
         private int _posY;
         private Vector3 _spawnPos;
         private Quaternion _rotation;
+
+        private int _foodNumber;
+        private int _linemateNumber;
+        private int _deraumereNumber;
+        private int _siburNumber;
+        private int _mendianeNumber;
+        private int _phirasNumber;
+        private int _thystameNumber;
 
         public GameObject _food;
         public GameObject _linemate;
@@ -589,6 +624,18 @@ public class GameScene : MonoBehaviour
         {
             PauseMenu.SetActive(true);
         }
+
+        //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        //RaycastHit hit;
+        //if (Physics.Raycast(ray, out hit))
+        //{
+        //    Debug.Log(hit.transform.name);
+        //    if (hit.transform.name == "Cube")
+        //    {
+                
+        //    }
+        //}
+
     }
 
     public void ReceiveMessageFromServer()
@@ -619,10 +666,10 @@ public class GameScene : MonoBehaviour
 
         else if (tmp == 200)
             receiveMessage = "ppo 0 1 0 2\n";
-        else if (tmp == 600)
-            receiveMessage = "pic 5 0 8 0\n";
-        else if (tmp == 800)
-            receiveMessage = "seg Team1\n";
+        //else if (tmp == 600)
+        //    receiveMessage = "pic 5 0 8 0\n";
+        //else if (tmp == 800)
+        //    receiveMessage = "seg Team1\n";
         //else if (tmp == 400)
         //    receiveMessage = "ppo 0 14 14 3\n";
         //else if (tmp == 600)
@@ -961,6 +1008,18 @@ public class GameScene : MonoBehaviour
                     map.AddLast(new Tile(x, y, int.Parse(arguments[3]), int.Parse(arguments[4]), int.Parse(arguments[5]), int.Parse(arguments[6]), int.Parse(arguments[7]), int.Parse(arguments[8]),
                         int.Parse(arguments[9]), mapPos, food, linemate, deraumere, sibur, mendiane, phiras, thystame));
                 }
+            }
+        }
+    }
+
+    public void GetInfoTileSelected(int posX, int posY)
+    {
+        foreach (Tile tile in map)
+        {
+            if (tile.GoodTileSelected(posX, posY))
+            {
+
+                tile.GetInfoTile();
             }
         }
     }
