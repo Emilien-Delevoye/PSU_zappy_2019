@@ -14,6 +14,8 @@ void msz_command(client_t *cli, data_server_t *data,
     __attribute__((unused))char **arg);
 void bct_command(client_t *cli, data_server_t *data, char **arg);
 void tna_command(client_t *cli, data_server_t *data, char **arg);
+void sgt_command(client_t *cli, data_server_t *data,
+    __attribute__((unused))char **arg);
 void ppo_command(client_t *cli, data_server_t *data);
 void pnw_command(client_t *cli, data_server_t *data);
 void pic_command(client_t *cli, data_server_t *data);

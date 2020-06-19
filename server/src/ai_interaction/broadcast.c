@@ -75,8 +75,10 @@ void broadcast(data_server_t *data)
 
     pbc_command(data->l_connected.first, data);
     for (client_t *tmp = data->l_connected.first; tmp; tmp = tmp->next) {
-        x = get_fastest_way(data, tmp, 0);
-        y = get_fastest_way(data, tmp, 1);
-        search_tile(data, tmp, x, y);
+        if (tmp != data->cli_work->cli) {
+            x = get_fastest_way(data, tmp, 0);
+            y = get_fastest_way(data, tmp, 1);
+            search_tile(data, tmp, x, y);
+        }
     }
 }
