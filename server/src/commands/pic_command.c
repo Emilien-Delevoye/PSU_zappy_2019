@@ -8,8 +8,7 @@
 #include "server.h"
 #include <string.h>
 
-void pic_command(client_t *cli, __attribute__((unused))data_server_t *data,
-    __attribute__((unused))char **arg)
+void pic_command(client_t *cli, data_server_t *data)
 {
     char str[120];
     char id[11];
@@ -26,5 +25,5 @@ void pic_command(client_t *cli, __attribute__((unused))data_server_t *data,
         strcat(str, id);
     }
     strcat(str, "\n");
-    add_to_write_list(cli, str);
+    add_to_write_list(data->l_graphical.first, str);
 }

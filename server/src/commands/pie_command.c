@@ -8,8 +8,7 @@
 #include "server.h"
 #include <string.h>
 
-void pie_command(client_t *cli, __attribute__((unused))data_server_t *data,
-    __attribute__((unused))char **arg)
+void pie_command(client_t *cli, data_server_t *data)
 {
     char str[35];
     unsigned int x = cli->drone.tile->coord[0];
@@ -18,5 +17,5 @@ void pie_command(client_t *cli, __attribute__((unused))data_server_t *data,
 
     memset(str, 0, sizeof(str));
     sprintf(str, "pie %d %d %c\n", x, y, c);
-    add_to_write_list(cli, str);
+    add_to_write_list(data->l_graphical.first, str);
 }

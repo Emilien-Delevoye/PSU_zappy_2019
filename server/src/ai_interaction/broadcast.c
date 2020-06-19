@@ -7,6 +7,7 @@
 
 #include "server.h"
 #include "commands/broadcast.h"
+#include "commands/commands.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -72,6 +73,7 @@ void broadcast(data_server_t *data)
     int x;
     int y;
 
+    pbc_command(data->l_connected.first, data);
     for (client_t *tmp = data->l_connected.first; tmp; tmp = tmp->next) {
         x = get_fastest_way(data, tmp, 0);
         y = get_fastest_way(data, tmp, 1);

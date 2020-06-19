@@ -66,4 +66,5 @@ add_executable(zappy_server
         src/commands/seg_command.c
         src/commands/pic_command.c
         src/commands/pie_command.c
-        src/commands/pdi_command.c)
+        src/commands/pdi_command.c
+        src/commands/pbc_command.c)

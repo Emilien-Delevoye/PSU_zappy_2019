@@ -8,8 +8,7 @@
 #include "server.h"
 #include <string.h>
 
-void pnw_command(client_t *cli, data_server_t *data,
-    __attribute__((unused))char **arg)
+void pnw_command(client_t *cli, data_server_t *data)
 {
     int n = cli->drone.id;
     unsigned int x = cli->drone.tile->coord[0];
@@ -21,5 +20,5 @@ void pnw_command(client_t *cli, data_server_t *data,
 
     memset(str, 0, 66 + strlen(name));
     sprintf(str, "pnw %d %d %d %d %d %s\n", n, x, y, o, l, name);
-    add_to_write_list(cli, str);
+    add_to_write_list(data->l_graphical.first, str);
 }
