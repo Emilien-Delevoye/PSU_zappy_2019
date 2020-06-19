@@ -41,6 +41,8 @@ public class GameScene : MonoBehaviour
     public GameObject endScreen;
     public TextMeshProUGUI winTeamName;
 
+    float timeUnit;
+
     private Vector3 spawnPos;
 
     private Vector3 mapPos;
@@ -59,7 +61,7 @@ public class GameScene : MonoBehaviour
 
     public class Character
     {
-        public Character(GameObject gameObject, GameObject shockWave, int number, int posX, int posY, int orientation, int level, string teamName, int mapX, int mapY)
+        public Character(GameObject gameObject, GameObject shockWave, int number, int posX, int posY, int orientation, int level, string teamName, int mapX, int mapY, float timeUnit)
         {
             _gameObject = gameObject;
             _shockWave = shockWave;
@@ -73,6 +75,7 @@ public class GameScene : MonoBehaviour
             _teamName = teamName;
             _mapX = mapX;
             _mapY = mapY;
+            _timeUnit = timeUnit;
             _animator = _gameObject.gameObject.GetComponent<Animator>();
             _gameObject.transform.position = new Vector3(UnityEngine.Random.Range(posX + 0.2f, posX + 0.8f), 0, UnityEngine.Random.Range(posY + 0.2f, posY + 0.8f));
             if (orientation == 1)
@@ -122,36 +125,36 @@ public class GameScene : MonoBehaviour
 
             if (_posToMoveX > _posX && _posToMoveX == _mapX - 1) /// Gauche de la map TP droite
             {
-                _gameObject.transform.Translate(-1f * Time.deltaTime, 0, 0, Space.World);
+                _gameObject.transform.Translate(-1f * Time.deltaTime * _timeUnit, 0, 0, Space.World);
                 if (_gameObject.transform.position.x < 0f)
                     _gameObject.transform.position = new Vector3(_mapX, 0, _posY);
             } else if (_posToMoveX < _posX && _posToMoveX == 0 && _posX == _mapX - 1) /// Droite de la map TP gauche
             {
-                _gameObject.transform.Translate(1f * Time.deltaTime, 0, 0, Space.World);
+                _gameObject.transform.Translate(1f * Time.deltaTime * _timeUnit, 0, 0, Space.World);
                 if (_gameObject.transform.position.x > _mapX)
                     _gameObject.transform.position = new Vector3(0, 0, _posY);
             }
             else if (_posToMoveY > _posY && _posToMoveY == _mapY - 1) /// Bas de la map TP haut
             {
-                _gameObject.transform.Translate(0, 0, -1f * Time.deltaTime, Space.World);
+                _gameObject.transform.Translate(0, 0, -1f * Time.deltaTime * _timeUnit, Space.World);
                 if (_gameObject.transform.position.z < 0f)
                     _gameObject.transform.position = new Vector3(_posX, 0, _mapY);
             } else if (_posToMoveY < _posY && _posToMoveY == 0 && _posY == _mapY - 1) /// Haut de la map TP bas
             {
-                _gameObject.transform.Translate(0, 0, 1f * Time.deltaTime, Space.World);
+                _gameObject.transform.Translate(0, 0, 1f * Time.deltaTime * _timeUnit, Space.World);
                 if (_gameObject.transform.position.z > _mapY)
                     _gameObject.transform.position = new Vector3(_posX, 0, 0);
             }
             else
             {
                 if (_posToMoveX > _posX)
-                    _gameObject.transform.Translate(1f * Time.deltaTime, 0, 0, Space.World);
+                    _gameObject.transform.Translate(1f * Time.deltaTime * _timeUnit, 0, 0, Space.World);
                 if (_posToMoveY > _posY)
-                    _gameObject.transform.Translate(0, 0, 1f * Time.deltaTime, Space.World);
+                    _gameObject.transform.Translate(0, 0, 1f * Time.deltaTime * _timeUnit, Space.World);
                 if (_posToMoveX < _posX)
-                    _gameObject.transform.Translate(-1f * Time.deltaTime, 0, 0, Space.World);
+                    _gameObject.transform.Translate(-1f * Time.deltaTime * _timeUnit, 0, 0, Space.World);
                 if (_posToMoveY < _posY)
-                    _gameObject.transform.Translate(0, 0, -1f * Time.deltaTime, Space.World);
+                    _gameObject.transform.Translate(0, 0, -1f * Time.deltaTime * _timeUnit, Space.World);
             }
         }
 
@@ -211,6 +214,7 @@ public class GameScene : MonoBehaviour
         private string _teamName;
         private int _mapX;
         private int _mapY;
+        private float _timeUnit;
     };
     private Dictionary<int, Character> characters;
 
@@ -555,6 +559,7 @@ public class GameScene : MonoBehaviour
         eggs = new Dictionary<int, Egg>();
         end = false;
 
+        GetTimeUnit(); /// To activate when the command sgt will be up
         SetUpAssetsSize();
         SetUpSizeMap();
         SetUpMap();
@@ -591,20 +596,18 @@ public class GameScene : MonoBehaviour
         receiveMessage = client.ReceiveMesageFromServer();
         if (tmp == 0)
             receiveMessage = "pnw 0 0 0 2 3 Team1\n";
-        else if (tmp == 200)
-            receiveMessage = "pbc 0\n";
-        else if (tmp == 400)
-            receiveMessage = "pnw 1 1 1 2 3 Team1\n";
-        else if (tmp == 600)
-            receiveMessage = "pbc 1\n";
-        else if (tmp == 800)
-            receiveMessage = "pbc 0\n";
+        //else if (tmp == 200)
+        //    receiveMessage = "pbc 0\n";
+        //else if (tmp == 400)
+        //    receiveMessage = "pnw 1 1 1 2 3 Team1\n";
+        //else if (tmp == 600)
+        //    receiveMessage = "pbc 1\n";
+        //else if (tmp == 800)
+        //    receiveMessage = "pbc 0\n";
         //else if (tmp == 200)
         //    receiveMessage = "enw 1 5 5\n";
         //else if (tmp == 400)
         //    receiveMessage = "eht 1\n";
-        //else if (tmp == 200)
-        //    receiveMessage = "pic 0 0 8 0\n";
         //else if (tmp == 500)
         //    receiveMessage = "pic 5 5 8 0\n";
         //else if (tmp == 400)
@@ -614,8 +617,12 @@ public class GameScene : MonoBehaviour
         //else if (tmp == 600)
         //    receiveMessage = "seg Team1\n";
 
-        //else if (tmp == 200)
-        //    receiveMessage = "ppo 0 14 0 4\n";
+        else if (tmp == 200)
+            receiveMessage = "ppo 0 1 0 2\n";
+        else if (tmp == 600)
+            receiveMessage = "pic 5 0 8 0\n";
+        else if (tmp == 800)
+            receiveMessage = "seg Team1\n";
         //else if (tmp == 400)
         //    receiveMessage = "ppo 0 14 14 3\n";
         //else if (tmp == 600)
@@ -652,6 +659,21 @@ public class GameScene : MonoBehaviour
                 DeleteEgg();
             else if (arguments[0] == "pbc")
                 StartBroadcast();
+        }
+    }
+
+    public void GetTimeUnit()
+    {
+        client.SendMessageToServer("sgt\n");
+        receiveMessage = client.WaitMessageFromServer();
+
+        if (receiveMessage != null)
+        {
+            arguments = receiveMessage.Split(' ');
+            if (arguments[0] == "sgt" && arguments.Length >= 2)
+            {
+                timeUnit = float.Parse(arguments[1]);
+            } 
         }
     }
     
@@ -801,7 +823,7 @@ public class GameScene : MonoBehaviour
     {
         if (arguments.Length >= 7)
         {
-            characters.Add(int.Parse(arguments[1]), new Character(Instantiate(character), shockWave, int.Parse(arguments[1]), int.Parse(arguments[2]), int.Parse(arguments[3]), int.Parse(arguments[4]), int.Parse(arguments[5]), arguments[6], mapSizeX, mapSizeY));
+            characters.Add(int.Parse(arguments[1]), new Character(Instantiate(character), shockWave, int.Parse(arguments[1]), int.Parse(arguments[2]), int.Parse(arguments[3]), int.Parse(arguments[4]), int.Parse(arguments[5]), arguments[6], mapSizeX, mapSizeY, timeUnit));
         } else
         {
             Debug.Log("pnw: Reply missing argument.");
@@ -841,6 +863,7 @@ public class GameScene : MonoBehaviour
 
         if (receiveMessage != null)
         {
+            Array.Clear(arguments, 0, arguments.Length);
             arguments = receiveMessage.Split(' ');
             if (arguments[0] == "msz")
             {
