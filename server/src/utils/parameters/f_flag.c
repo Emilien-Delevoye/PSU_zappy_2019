@@ -13,6 +13,9 @@ static int get_freq(char *freq_in)
 {
     int freq;
 
+    for (int a = 0; freq_in[a]; ++a)
+        if (freq_in[a] > '9' || freq_in[a] < '0')
+            return (-1);
     if (sscanf(freq_in, "%d", &freq) != 1)
         freq = -1;
     return (freq);
@@ -27,8 +30,8 @@ bool f_flag(char **av, data_server_t *data)
     if (use_flag == true || !av[1])
         return (false);
     use_flag = true;
-    data->freq = get_freq(av[1]);
-    if (data->freq < 1)
+    data->params.freq = get_freq(av[1]);
+    if (data->params.freq < 1)
         return (false);
     return (true);
 }

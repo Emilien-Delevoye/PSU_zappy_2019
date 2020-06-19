@@ -7,9 +7,10 @@
 
 #include "sockets/accept_connections.h"
 #include "sockets/run_server.h"
-#include "sockets/select.h"
 #include <signal.h>
 #include <unistd.h>
+#include <time.h>
+#include <stdlib.h>
 
 static int memory_running(int new_val)
 {
@@ -46,6 +47,7 @@ static bool server_running(void)
 
 int run_server(data_server_t *data)
 {
+    srand(time(NULL));
     if (setup_sigcatch() < 0)
         return (84);
     while (server_running()) {
@@ -53,8 +55,11 @@ int run_server(data_server_t *data)
         if (!select_fd(data))
             return (0);
         accept_connections(data);
+        write_socket(data);
         read_socket(data);
         close_clients(data);
+        ai_interaction(data);
+        loop_tmp_check_every_buffer(data);
     }
     return (0);
 }

@@ -31,7 +31,7 @@ int main(int ac, char **av)
 {
     data_server_t data = get_parameters(ac, av);
 
-    if (data.valid_params == false)
+    if (data.params.valid_params == false)
         return (usage(84, av[0]));
     if (setup_map(&data) == 84)
         return (84);

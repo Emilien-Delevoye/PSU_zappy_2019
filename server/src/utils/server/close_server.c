@@ -6,9 +6,12 @@
 */
 
 #include "server.h"
+#include "map/setup_map.h"
 #include <unistd.h>
 
 void close_server(data_server_t data)
 {
+    free_team_names(data);
+    free_map(data);
     close(data.fd);
 }

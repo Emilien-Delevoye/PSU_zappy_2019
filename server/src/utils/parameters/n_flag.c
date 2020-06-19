@@ -17,18 +17,30 @@ static unsigned int count_teams(char **av)
         return (0);
     while (av[a] && av[a][0] != '-')
         ++a;
-    return (a);
+    return (a - 1);
 }
 
-static void create_tab(data_server_t *data, char **av)
+static void create_tab(data_server_t *d, char **av)
 {
-    data->team_names = malloc(sizeof(char *) * (data->team_nb + 1));
-    if (!data->team_names)
+    d->params.team_names =
+        malloc(sizeof(char *) * (d->params.team_nb + 1));
+    if (!d->params.team_names)
         return;
-    for (unsigned int a = 0; a < data->team_nb; ++a) {
-        data->team_names[a] = strdup(av[a]);
-        data->team_names[a + 1] = NULL;
+    for (unsigned int a = 0; a < d->params.team_nb; ++a) {
+        d->params.team_names[a] = strdup(av[a + 1]);
+        d->params.team_names[a + 1] = NULL;
     }
+}
+
+static bool create_names(data_server_t *data)
+{
+    data->params.r_cli =
+        malloc(sizeof(unsigned short) * (data->params.team_nb + 1));
+    if (!data->params.r_cli)
+        return (false);
+    memset(data->params.r_cli, 0,
+        sizeof(unsigned short) * (data->params.team_nb + 1));
+    return (true);
 }
 
 bool n_flag(char **av, data_server_t *data)
@@ -42,9 +54,9 @@ bool n_flag(char **av, data_server_t *data)
     if (use_flag == true || !av[1] || nb_team == 0)
         return (false);
     use_flag = true;
+    data->params.team_nb = nb_team;
     create_tab(data, av);
-    data->team_nb = nb_team;
-    if (!data->team_names || data->team_nb < 1)
+    if (!data->params.team_names || data->params.team_nb < 1)
         return (false);
-    return (true);
+    return (create_names(data));
 }

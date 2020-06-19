@@ -1,0 +1,14 @@
+.idea
+__pycache__
+local_tmp
+zappy_server
+*.o
+.idea
+cmake-build-debug
+/vgcore.*
+/tests/src/main.gcno
+/tests_run
+/tests/server_tests
+*.gcno
+*.gcda
+/zappy_example_server

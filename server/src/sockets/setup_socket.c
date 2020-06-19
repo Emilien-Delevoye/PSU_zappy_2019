@@ -16,12 +16,12 @@ int setup_socket(data_server_t *data)
     int opt = -1;
 
     data->fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (data->fd < 0)
+    if (data->fd < 0 || data->params.port < 1)
         return (84);
     if (setsockopt(data->fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
         return (84);
     serv_addr.sin_addr.s_addr = INADDR_ANY;
-    serv_addr.sin_port = htons(data->port);
+    serv_addr.sin_port = htons(data->params.port);
     serv_addr.sin_family = AF_INET;
     if (bind(data->fd, (sockaddr_t *)&serv_addr, sizeof(sockaddr_t)) < 0)
         return (84);
