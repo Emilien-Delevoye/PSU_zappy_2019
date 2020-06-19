@@ -7,6 +7,8 @@
 
 NAME_SERVER	=	zappy_server
 
+NAME_AI		=	zappy_ai
+
 SRC_MAIN_SERVER	=	server/src/main.c
 
 SRC_SERVER	=	server/src/utils/parameters/get_parameters.c	\
@@ -92,13 +94,16 @@ OBJ_SRC_TEST	=	$(SRC_TEST:.cpp=.o)
 CFLAGS	=	-W -Wall -Wextra -I server/include -Ofast
 CPPFLAGS	=	-W -Wall -Wextra -I server/include -I tests/include
 
-all:	$(NAME_SERVER)
+all:	$(NAME_SERVER) $(NAME_AI)
 
 debug:	CFLAGS += -g
 debug:	all
 
 debugre:	CFLAGS += -g
 debugre:	re
+
+$(NAME_AI):
+	cp ai/main.py $(NAME_AI)
 
 $(NAME_SERVER):	$(OBJ) $(OBJ_SRC_MAIN)
 	gcc -o $(NAME_SERVER) $(OBJ) $(OBJ_SRC_MAIN) -I server/include
@@ -109,7 +114,7 @@ clean:
 	find . -name "*.gcno" -exec /bin/rm '{}' \;
 
 fclean:	clean
-	rm -f $(NAME_SERVER)
+	rm -f $(NAME_SERVER) $(NAME_AI)
 
 tests_run: CFLAGS += --coverage
 tests_run: clean $(OBJ) $(OBJ_SRC_TEST)
