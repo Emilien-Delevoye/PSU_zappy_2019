@@ -45,7 +45,6 @@ void forward(data_server_t *data)
     map_t *dest = get_dest_tile(data->cli_work->cli->drone);
     tile_players_t *prev = NULL;
 
-    puts("Début de Forward");
     if (!dest)
         return;
     for (tile_players_t *cu_l = cur->list_players; cu_l; cu_l = cu_l->next) {
@@ -60,6 +59,5 @@ void forward(data_server_t *data)
         move_to_other_tile(dest, cu_l);
         cli->drone.tile = dest;
     }
-    puts("Fin de forward");
     add_to_write_list(cli, "ok\n");
 }
