@@ -167,5 +167,6 @@ void connect_nbr(data_server_t *data);
 void eject(data_server_t *data);
 void fork_cmd(data_server_t *data);
 void take(data_server_t *data);
+void set(data_server_t *data);
 
 #endif //SERVER_SERVER_H

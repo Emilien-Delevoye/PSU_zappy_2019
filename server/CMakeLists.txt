@@ -63,4 +63,4 @@ add_executable(zappy_server
         src/ai_interaction/broadcast.c
         src/ai_interaction/connect_nbr.c
         src/ai_interaction/eject.c
-        src/ai_interaction/fork.c src/ai_interaction/take.c)
+        src/ai_interaction/fork.c src/ai_interaction/take.c src/ai_interaction/set.c)
