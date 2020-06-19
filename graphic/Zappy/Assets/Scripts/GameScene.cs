@@ -41,6 +41,15 @@ public class GameScene : MonoBehaviour
     public GameObject endScreen;
     public TextMeshProUGUI winTeamName;
 
+    public GameObject hud;
+    public TextMeshProUGUI numberFood;
+    public TextMeshProUGUI numberLinemate;
+    public TextMeshProUGUI numberDeraumere;
+    public TextMeshProUGUI numberSibur;
+    public TextMeshProUGUI numberMendiane;
+    public TextMeshProUGUI numberPhiras;
+    public TextMeshProUGUI numberThystame;
+
     float timeUnit;
 
     private Vector3 spawnPos;
@@ -1014,13 +1023,27 @@ public class GameScene : MonoBehaviour
 
     public void GetInfoTileSelected(int posX, int posY)
     {
+        int[] infos;
+
         foreach (Tile tile in map)
         {
             if (tile.GoodTileSelected(posX, posY))
             {
-
-                tile.GetInfoTile();
+                infos = tile.GetInfoTile();
+                hud.SetActive(true);
+                numberFood.text = infos[0].ToString();
+                numberLinemate.text = infos[1].ToString();
+                numberDeraumere.text = infos[2].ToString();
+                numberSibur.text = infos[3].ToString();
+                numberMendiane.text = infos[4].ToString();
+                numberPhiras.text = infos[5].ToString();
+                numberThystame.text = infos[6].ToString();
             }
         }
+    }
+
+    public void GetCharacterInfo()
+    {
+
     }
 }
