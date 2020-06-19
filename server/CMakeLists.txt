@@ -60,4 +60,4 @@ add_executable(zappy_server
         src/ai_interaction/broadcast.c
         src/ai_interaction/inventory.c
         src/ai_interaction/look.c
-        src/ai_interaction/broadcast.c)
+        src/ai_interaction/broadcast.c src/ai_interaction/connect_nbr.c)
