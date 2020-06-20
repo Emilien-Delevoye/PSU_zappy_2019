@@ -30,9 +30,8 @@ TEST(bct_command, good_arg)
 {
     char *arg[4] = {(char *)"useless", (char *)"1", (char *)"2", NULL};
     data_server_t data;
-    client_t cli;
 
-    cli.list_msg = NULL;
+    data.l_graphical.first->list_msg = NULL;
     data.params.width = 10;
     data.params.height = 10;
     setup_map(&data);
@@ -43,7 +42,7 @@ TEST(bct_command, good_arg)
     data.bottom_left->right->top->top->items[MENDIANE] = 0;
     data.bottom_left->right->top->top->items[PHIRAS] = 0;
     data.bottom_left->right->top->top->items[THYSTAME] = 0;
-    bct_command(&cli, &data, static_cast<char **>(arg));
-    EXPECT_STREQ(cli.list_msg->to_write, "bct 1 2 0 0 0 0 0 0 0\n");
+    bct_command(data.l_graphical.first, &data, static_cast<char **>(arg));
+    EXPECT_STREQ(data.l_graphical.first->list_msg->to_write, "bct 1 2 0 0 0 0 0 0 0\n");
     free_map(data);
 }

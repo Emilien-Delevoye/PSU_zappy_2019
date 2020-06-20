@@ -10,17 +10,18 @@
 #include <stdlib.h>
 #include <string.h>
 
-void send_bct_info(client_t *cli, char **arg, map_t *map)
+void send_bct_info(data_server_t *data, char **arg, map_t *map)
 {
     char str[113] = {0};
 
     sprintf(str, "bct %s %s %d %d %d %d %d %d %d\n", arg[1], arg[2],
         map->items[0], map->items[1], map->items[2], map->items[3],
         map->items[4], map->items[5], map->items[6]);
-    add_to_write_list(cli, str);
+    add_to_write_list(data->l_graphical.first, str);
 }
 
-void bct_command(client_t *cli, data_server_t *data, char **arg)
+void bct_command(__attribute__((unused))client_t *cli,
+    data_server_t *data, char **arg)
 {
     map_t *cur = data->bottom_left;
 
@@ -30,5 +31,5 @@ void bct_command(client_t *cli, data_server_t *data, char **arg)
         cur = cur->right;
     for (int j = 0; j < atoi(arg[2]); ++j)
         cur = cur->top;
-    send_bct_info(cli, arg, cur);
+    send_bct_info(data, arg, cur);
 }

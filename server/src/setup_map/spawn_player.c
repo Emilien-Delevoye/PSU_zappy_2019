@@ -6,6 +6,7 @@
 */
 
 #include "server.h"
+#include "commands/commands.h"
 #include <stdlib.h>
 
 static tile_players_t *get_new_tile(client_t *cli)
@@ -35,16 +36,6 @@ static void add_to_tile(map_t *tile, client_t *cli)
     cli->drone.orientation = (rand() % 4) + 1;
 }
 
-void spawn_player_graph(data_server_t *data, client_t *cli)
-{
-    char str[100] = {0};
-
-    sprintf(str, "ppo %d %d %d %d", cli->drone.id,
-        cli->drone.tile->coord[WIDTH], cli->drone.tile->coord[HEIGHT],
-        cli->drone.orientation);
-    add_to_write_list(data->l_graphical.first, str);
-}
-
 void spawn_player(data_server_t *data, client_t *cli)
 {
     unsigned int coord[2];
@@ -64,5 +55,5 @@ void spawn_player(data_server_t *data, client_t *cli)
     while (obj_tile->coord[HEIGHT] != coord[HEIGHT])
         obj_tile = obj_tile->top;
     add_to_tile(obj_tile, cli);
-    spawn_player_graph(data, cli);
+    pnw_command(cli, data);
 }
