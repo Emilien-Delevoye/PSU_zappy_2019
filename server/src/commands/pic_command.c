@@ -19,7 +19,7 @@ void pic_command(client_t *cli, data_server_t *data)
 
     memset(str, 0, sizeof(str));
     sprintf(str, "pic %d %d %d %d", x, y, l, n);
-    for (client_t *tmp = cli; tmp != NULL; tmp = tmp->next) {
+    for (client_t *tmp = cli; tmp; tmp = tmp->next) {
         strcat(str, " ");
         sprintf(id, "%d", tmp->drone.id);
         strcat(str, id);
