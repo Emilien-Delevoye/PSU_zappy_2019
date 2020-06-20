@@ -156,6 +156,7 @@ class IA:
         self.situation_ = "normalLife"
 
         """ LEAD """
+        self.myIncNb_ = 0
         self.sameLvlIDs_ = {}  # On stocke l'id (int), s'il est là (bool), son inventaire (dict)
         self.itersBeforeCancel = 30  # FIXME ça doit dépendre d'autre chose comme la vitesse de réponse de la première IA (ou bien y'en a pas besoin et tout est reset quand on recommence)
         self.limit_ = 20  # FIXME
@@ -164,7 +165,18 @@ class IA:
         """ NOT LEAD """
         self.leadID = -1
         self.elevDir = 0
+        self.othIncNb_ = 0
         self.nbMoves = 1  # FIXME la quantité de mouvements pour se rapprocher doit dépendre de la taille de la map (Il réduit au fil du temps)
+
+        """ CREATE EGGS FOR OTHERS """
+        self.broadcast(' '.join([str(self.newNb()), 'GET_INFO']))
+        # On envoie le message pour savoir ou en sont les autres
+        # On demande le nombre de client qui peuvent être connecté au serveur
+        # Si c'est 0, on fait fork
+
+
+        # Quand on reçoit la NEW_INFO
+
 
     """
         UPDATE FROM SERVER
@@ -233,7 +245,7 @@ class IA:
                 self.level_ += 1
                 self.situation_ = 'normalLife'
             if 'ko' in msg:
-                self.broadcast(' '.join([str(self.newNb()), 'CANCELALL', str(self.id_)]))
+                self.broadcast(' '.join([str(self.newNb()), 'CANCELALL', str(self.id_), str(self.myIncNb_)]))
                 self.situation_ = "normalLife"
             self.sameLvlIDs_.clear()
 
@@ -575,8 +587,9 @@ class IA:
         if msg[0] == 'LEAD' and self.level_ == int(msg[1]) and self.inventory_[GameObj.Food] > 50:
             dPrint(self.debugInv_, colored("CO FOUND", "red"))
             self.leadID = int(msg[2])
+            self.othIncNb_ = int(msg[3])
             self.situation_ = "waitForGoNoLead"
-            self.broadcast(' '.join([str(self.newNb()), 'OK', str(self.leadID), str(self.id_), invToStr(self.inventory_)]))
+            self.broadcast(' '.join([str(self.newNb()), 'OK', str(self.leadID), str(self.othIncNb_), str(self.id_), invToStr(self.inventory_)]))
             return
 
     def waitForGoNoLeadMsg(self, dirC, msg):
@@ -589,27 +602,16 @@ class IA:
         if msg is None:
             return
 
-        # if msg[0] == 'LEAD' and self.level_ == int(msg[1]) and int(msg[2]) > self.leadID:
-        #     dPrint(self.debugInc_, colored("CO FOUND REPLACE", "red"))
-        #     self.leadID = int(msg[2])
-        #     self.situation_ = "waitForGoNoLead"
-        #     self.broadcast(' '.join([str(self.newNb()), 'OK', str(self.leadID), str(self.id_), invToStr(self.inventory_)]))
-        #     return
-        if msg[0] == 'GO' and int(msg[1]) == self.leadID and self.id_ in strTolIDs(msg[2]):
-            self.situation_ = 'goToIncantationNoLead'
+        if msg[0] == 'GO' and int(msg[1]) == self.leadID and int(msg[2]) == self.othIncNb_ and self.id_ in strTolIDs(msg[3]):
             self.elevDir = dirC
-            if self.elevDir == 0:
-                self.broadcast(' '.join([str(self.newNb()), 'PLACED', str(self.leadID), str(self.id_)]))
-                self.lookAroundNow()
-                dPrint(self.debugInv_, colored("ASKIP JE SUIS PLACED " + str(dirC), "yellow"), self.around_[self.currentPos_])
-                self.situation_ = 'waitForInstructions'
+            self.situation_ = 'goToIncantationNoLead'
             self.updateDataFromServForce()
             return
-        if msg[0] == 'CANCEL' and int(msg[1]) == self.leadID and self.id_ in strTolIDs(msg[2]):
+        if msg[0] == 'CANCEL' and int(msg[1]) == self.leadID and self.othIncNb_ == int(msg[2]) and self.id_ in strTolIDs(msg[3]):
             self.situation_ = 'normalLife'
             self.leadID = -1
             return
-        if msg[0] == 'CANCELALL' and int(msg[1]) == self.leadID:
+        if msg[0] == 'CANCELALL' and int(msg[1]) == self.leadID and self.othIncNb_ == int(msg[2]):
             self.situation_ = 'normalLife'
             self.leadID = -1
             return
@@ -623,12 +625,11 @@ class IA:
         if msg is None:
             return
 
-        if msg[0] == 'UPDATE' and int(msg[1]) == self.leadID:
+        if msg[0] == 'UPDATE' and int(msg[1]) == self.leadID and self.id_ == int(msg[2]):
             self.elevDir = dirC
             if self.elevDir == 0:
                 self.broadcast(' '.join([str(self.newNb()), 'PLACED', str(self.leadID), str(self.id_)]))
-                self.lookAroundNow()
-                dPrint(self.debugInv_, colored("ASKIP JE SUIS PLACED 2 " + str(dirC), "yellow"), self.around_[self.currentPos_])
+                dPrint(self.debugInv_, colored("ASKIP JE SUIS PLACED", "yellow"))
                 self.situation_ = 'waitForInstructions'
             return
 
@@ -648,7 +649,7 @@ class IA:
                 for e in range(d[self.id_][i]):
                     self.set(i)
             return
-        if msg[0] == 'CANCELALL' and int(msg[1]) == self.leadID:
+        if msg[0] == 'CANCELALL' and int(msg[1]) == self.leadID and self.othIncNb_ == int(msg[2]):
             self.situation_ = "normalLife"
             return
 
@@ -662,17 +663,18 @@ class IA:
         if msg is None:
             return
 
-        if msg[0] == 'OK' and int(msg[1]) == self.id_:
-            self.sameLvlIDs_[int(msg[2])] = [False, strToinv(msg[3])]
+        if msg[0] == 'OK' and int(msg[1]) == self.id_ and int(msg[2]) == self.myIncNb_:
+            self.sameLvlIDs_[int(msg[3])] = [False, strToinv(msg[4])]
             return
 
         if msg[0] == 'LEAD' and self.level_ == int(msg[1]) and int(msg[2]) > self.id_:
             dPrint(self.debugInv_, colored("CO FOUND REPLACE", "red"))
-            self.broadcast(' '.join([str(self.newNb()), 'CANCELALL', str(self.id_)]))
+            self.broadcast(' '.join([str(self.newNb()), 'CANCELALL', str(self.id_), str(self.myIncNb_)]))
             self.leadID = int(msg[2])
+            self.othIncNb_ = int(msg[3])
             self.situation_ = "waitForGoNoLead"
             self.sameLvlIDs_.clear()
-            self.broadcast(' '.join([str(self.newNb()), 'OK', str(self.leadID), str(self.id_), invToStr(self.inventory_)]))
+            self.broadcast(' '.join([str(self.newNb()), 'OK', str(self.leadID), str(self.othIncNb_), str(self.id_), invToStr(self.inventory_)]))
             return
 
     def waitForOthersCmgLeadMsg(self, dirC, msg):
@@ -684,17 +686,21 @@ class IA:
         msg = self.updateComNbs(msg)
         if msg is None:
             return
+
+        # On enregistre ceux qui sont placés
         if msg[0] == 'PLACED' and int(msg[1]) == self.id_:
             self.sameLvlIDs_[int(msg[2])] = [True, self.sameLvlIDs_[int(msg[2])][1]]
             self.lookAroundNow()
             return
 
+        # On envoie des messages à ceux qui viennent quand ils veulent
         if msg[0] == 'ASKED' and int(msg[1]) == self.id_:
             self.updateDataFromServForce()
-            self.broadcast(' '.join([str(self.newNb()), 'UPDATE', str(self.id_)]))
+            self.broadcast(' '.join([str(self.newNb()), 'UPDATE', str(self.id_), str(msg[2])]))
 
-        if msg[0] == 'OK' and int(msg[1]) == self.id_:
-            self.broadcast(' '.join([str(self.newNb()), 'CANCEL', str(self.id_), lIDsToStr([int(msg[2])])]))
+        # On cancel ceux qui arrivent en retard
+        if msg[0] == 'OK' and int(msg[1]) == self.id_ and int(msg[2]) == self.myIncNb_:
+            self.broadcast(' '.join([str(self.newNb()), 'CANCEL', str(self.id_), str(self.myIncNb_), lIDsToStr([int(msg[3])])]))
             return
 
     def setOrganizationLeadMsg(self, dirC, msg):
@@ -725,6 +731,7 @@ class IA:
         if self.haveGoodAmountOfStones() and self.situation_ == 'normalLife' and self.inventory_[GameObj.Food] > 70:
             if self.level_ > 1:
                 self.situation_ = "waitForAnswersLead"
+                self.myIncNb_ += 1
             else:
                 self.setUpElevLead()
                 self.situation_ = "setOrganizationLead"
@@ -742,18 +749,25 @@ class IA:
         """
         On se dirige vers l'incantation (en faisant en sorte d'avoir de la nourriture)
         """
+
         dPrint(self.debugInv_, Colors.SMALL + "goToIncantationNoLead" + Colors.ENDC, self.id_, self.leadID)
 
-        getattr(self, self.foodStageForElev_[min([va if self.inventory_[GameObj.Food] < va else self.maxFoodStage for va, v in self.foodStageForElev_.items()])])()
+        # getattr(self, self.foodStageForElev_[min([va if self.inventory_[GameObj.Food] < va else self.maxFoodStage for va, v in self.foodStageForElev_.items()])])()
+        self.goSlowEat()  # FIXME ?
 
-        if self.elevDir is not None and self.situation_ == 'goToIncantationNoLead':
+        if self.elevDir is not None and self.elevDir != 0 and self.situation_ == 'goToIncantationNoLead':
             self.updateDataFromServForce()
             self.goToDir(self.elevDir, self.nbMoves)
             self.updateDataFromServForce()
-            self.broadcast(' '.join([str(self.newNb()), 'ASKED', str(self.leadID)]))
+            self.broadcast(' '.join([str(self.newNb()), 'ASKED', str(self.leadID), str(self.id_)]))
+
             if self.nbMoves > 1:
                 self.nbMoves -= 1
             self.elevDir = None
+
+        if self.elevDir == 0 and self.situation_ == 'goToIncantationNoLead':
+            self.updateDataFromServForce()
+            self.broadcast(' '.join([str(self.newNb()), 'ASKED', str(self.leadID), str(self.id_)]))
 
     def waitForInstructions(self):
         """
@@ -774,7 +788,10 @@ class IA:
         getattr(self, self.foodStage_[min([va if self.inventory_[GameObj.Food] < va else self.maxFoodStage for va, v in self.foodStage_.items()])])()
 
         dPrint(self.debugInv_, Colors.WARNING + str(len(self.sameLvlIDs_)) + ' ' + str(elevPlayers[self.level_] - 1) + Colors.ENDC)
-        self.broadcast(' '.join([str(self.newNb()), 'LEAD', str(self.level_), str(self.id_)]))
+        if self.countItersBeforeCancel == self.itersBeforeCancel or (self.itersBeforeCancel - self.countItersBeforeCancel) % 4 == 0:
+            self.broadcast(' '.join([str(self.newNb()), 'LEAD', str(self.level_), str(self.id_), str(self.myIncNb_)]))
+        else:
+            dPrint(self.debugInv_, "NOPE ", self.countItersBeforeCancel, " ", self.itersBeforeCancel)
         if len(self.sameLvlIDs_) >= elevPlayers[self.level_] - 1:
             dPrint(self.debugInv_, colored("check", "red"))
             ids = self.idsTohaveEnoughStones()
@@ -784,19 +801,18 @@ class IA:
                 dPrint(self.debugInv_, colored("On a assez de resources pour start " + ids.__str__(), "red"))
                 CanceledIds = set(list(self.sameLvlIDs_.keys())) - set(ids)
                 if len(CanceledIds) > 0:
-                    self.broadcast(' '.join([str(self.newNb()), 'CANCEL', str(self.id_), lIDsToStr(CanceledIds)]))
+                    self.broadcast(' '.join([str(self.newNb()), 'CANCEL', str(self.id_), str(self.myIncNb_), lIDsToStr(CanceledIds)]))
 
-                self.broadcast(' '.join([str(self.newNb()), 'GO', str(self.id_), lIDsToStr(ids)]))
+                self.broadcast(' '.join([str(self.newNb()), 'GO', str(self.id_), str(self.myIncNb_), lIDsToStr(ids)]))
                 self.sameLvlIDs_ = {i: self.sameLvlIDs_[i] for i in ids}
 
                 self.updateDataFromServForce()
-                self.broadcast(' '.join([str(self.newNb()), 'UPDATE', str(self.id_)]))
                 return
 
         self.countItersBeforeCancel -= 1
         if self.countItersBeforeCancel <= 0 and self.situation_ == 'waitForAnswersLead':
             self.countItersBeforeCancel = self.itersBeforeCancel
-            self.broadcast(' '.join([str(self.newNb()), 'CANCELALL', str(self.id_)]))
+            self.broadcast(' '.join([str(self.newNb()), 'CANCELALL', str(self.id_), str(self.myIncNb_)]))
             dPrint(self.debugInv_, colored("pas assez de gens ou de ressources : cancel"))
             self.situation_ = "normalLife"
             self.sameLvlIDs_.clear()
@@ -826,7 +842,7 @@ class IA:
             self.removeItemThatShouldntBeThereSecondLead()
             self.limit_ -= 1
             if self.limit_ <= 0:
-                self.broadcast(' '.join([str(self.newNb()), 'CANCELALL', str(self.id_)]))
+                self.broadcast(' '.join([str(self.newNb()), 'CANCELALL', str(self.id_), str(self.myIncNb_)]))
                 self.situation_ = 'normalLife'
                 self.sameLvlIDs_.clear()
                 self.limit_ = 20  # FIXME
