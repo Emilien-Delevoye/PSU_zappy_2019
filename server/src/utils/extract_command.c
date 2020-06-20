@@ -74,10 +74,10 @@ static bool cli_too_many_cmd(client_t *cli)
         if (counter > 10) {
             free(cli->buffer);
             cli->buffer = NULL;
-            return (false);
+            return (true);
         }
     }
-    return (true);
+    return (false);
 }
 
 void extract_command(client_t *cli)

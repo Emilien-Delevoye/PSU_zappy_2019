@@ -10,14 +10,14 @@
 extern const struct cmd_ai_s cmd[];
 
 static void do_move_node(data_server_t *data, list_actions_t *prev,
-    list_actions_t *tmp)
+    list_actions_t *new_elem)
 {
     if (prev) {
-        tmp->next = prev->next;
-        prev->next = tmp;
+        new_elem->next = prev->next;
+        prev->next = new_elem;
     } else {
-        data->cli_work = tmp;
-        tmp->next = NULL;
+        new_elem->next = data->cli_work;
+        data->cli_work = new_elem;
     }
 }
 
@@ -34,10 +34,13 @@ static void move_to_work_list(list_actions_t *cur, data_server_t *data,
     for (list_actions_t *tmp = data->cli_work; tmp; tmp = tmp->next) {
         if ((tmp->tv.tv_sec == cu_time.tv_sec &&
             tmp->tv.tv_usec < cu_time.tv_usec) ||
-            (tmp->tv.tv_sec > cu_time.tv_sec))
-            do_move_node(data, prev, tmp);
+            (tmp->tv.tv_sec < cu_time.tv_sec)) {
+            do_move_node(data, prev, cur);
+            return;
+        }
         prev = tmp;
     }
+    do_move_node(data, prev, cur);
 }
 
 static void calc_cu_time(data_server_t *data, struct timeval *tv, int cmd_nb,
@@ -72,6 +75,7 @@ void move_wait_to_work_list(data_server_t *data, client_t *cli,
             else
                 prev->next = next;
             cur->cmd_str = cli->cmd_queue->command;
+            return;
         }
         prev = cur;
     }

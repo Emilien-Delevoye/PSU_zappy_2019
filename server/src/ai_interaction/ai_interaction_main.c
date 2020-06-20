@@ -42,10 +42,13 @@ static void update_waiting_cli(data_server_t *data, struct timeval cur_time,
             continue;
         }
         read_new_cmd(data, cur->cli, cur_time);
-        if (prev)
+        if (prev) {
             update_waiting_cli(data, cur_time, prev);
-        else
+            return;
+        } else {
             update_waiting_cli(data, cur_time, data->cli_wait);
+            return;
+        }
     }
 }
 

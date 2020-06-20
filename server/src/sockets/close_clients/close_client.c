@@ -36,6 +36,27 @@ static void close_graphical(data_server_t *data, client_t *first)
     data->l_graphical.last = NULL;
 }
 
+static void remove_from_tile(client_t *cli)
+{
+    map_t *tile = cli->drone.tile;
+    tile_players_t *prev = NULL;
+
+    if (!tile)
+        return;
+    for (tile_players_t *cur = tile->list_players; cur; cur = cur->next) {
+        if (cur->cli != cli) {
+            prev = cur;
+            continue;
+        }
+        if (prev)
+            prev->next = cur->next;
+        else
+            tile->list_players = cur->next;
+        free(cur);
+        return;
+    }
+}
+
 void close_clients(data_server_t *data)
 {
     for (client_t *cli = data->l_waiting.first; cli; cli = cli->next) {
@@ -49,6 +70,7 @@ void close_clients(data_server_t *data)
     for (client_t *cli = data->l_connected.first; cli; cli = cli->next) {
         if (cli->to_close == false)
             continue;
+        remove_from_tile(cli);
         free_command_queue(cli);
         remove_a_client_connected(data, cli);
         close_in_cli_ww_list(data, cli);
