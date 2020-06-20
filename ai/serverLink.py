@@ -4,7 +4,7 @@ from threading import Thread
 import select
 import sys
 from enum import Enum
-from utils import dPrint
+from ai.utils import dPrint
 from termcolor import colored
 
 
@@ -35,7 +35,7 @@ class ServerLink:
         self.activeConnection = False
         self.buffers = {"read": str(), "write": bytes()}
         self.serverMsg = None
-        self.debug_ = True
+        self.debug_ = False
 
     def readWrite(self):
         while self.thread_running is True:
@@ -71,7 +71,7 @@ class ServerLink:
         self.thread_running = True
         self.thread = Thread(target=self.readWrite)
         self.thread.start()
-        return int(coReturn.split('\n')[1].split(' ')[0]), int(coReturn.split('\n')[1].split(' ')[1])
+        return int(coReturn.split('\n')[0]), int(coReturn.split('\n')[1].split(' ')[0]), int(coReturn.split('\n')[1].split(' ')[1])
 
     def write(self, string):
         data = bytes(string, 'utf-8')

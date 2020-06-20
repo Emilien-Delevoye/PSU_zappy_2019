@@ -5,28 +5,20 @@ from random import randrange
 
 from termcolor import colored
 
-from serverLink import Command
-from utils import dPrint, Colors
-
+from ai.serverLink import Command
+from ai.utils import dPrint, Colors
+import time
 
 # TODO gérer les ejects
-# TODO sécuriser les communications
-
-# TODO Faire en sorte de se reproduire dans certains cas
-# TODO Get info pour savoir combien il y a d'ia de quel niveau (pour se reproduire)
-
-# TODO aller chercher de la nourriture pour faire des réserves en attendant que les autres viennent
-# TODO faire en sorte que les IAs aient le temps d'aller chercher de la nourriture entre 2 incantations
 
 # FIXME retirer les assert à la fin
 
 # TODO gérer si qqun attend une ia qui finnalement ne vient pas
 # TODO vérifier qu'on clear bien les ids qu'on a trouvé au bon moment
-# TODO considérer que tout peut fail si on se fait emmerder
-
-# TODO mettre zappy_ai à la racine
+# TODO considérer que tout peut fail si on se fait emmerder (A vérifier)
 
 # TODO Brouiller les communications des autres
+
 
 class GameObj(Enum):
     Empty = 1 << 0,
@@ -112,20 +104,22 @@ def rand():
 
 
 class IA:
-    def __init__(self, CSLink, team_name, x, y):
+    def __init__(self, CSLink, team_name, id, x, y):
         self.id_ = rand()
         self.teamName_ = team_name
-        self.comNbs = []
+        self.comNbs = [0]
+        self.pendingRqt_ = []
+        self.maxServCommands_ = 9
+        self.CSLink_ = CSLink
+
         self.mapSize = (x, y)
         self.level_ = 1
         self.around_ = None
         self.currentPos_ = 0
         self.currentDir_ = Command.Forward
-        self.CSLink_ = CSLink
         self.debug_ = False
         self.debugInv_ = True
         self.reverse = True if randrange(1, 3) == 1 else False
-        self.maxServCommands_ = 9
         self.inventory_ = {GameObj.Food: 10,
                            GameObj.Linemate: 0,
                            GameObj.Deraumere: 0,
@@ -140,7 +134,6 @@ class IA:
         self.foodStageForElev_ = {self.maxFoodStage: "goHalfEat",
                                   80: "goSlowEat",
                                   20: "goFastEat"}
-        self.pendingRqt_ = []
         self.updateFcts = {Command.Take: "updateTake",
                            Command.Inventory: "updateInv",
                            Command.Look: "updateLookAround",
@@ -151,8 +144,12 @@ class IA:
                            Command.Set: "updateSet",
                            Command.Incantation: "updateIncantation",
                            Command.Eject: "noUpdateNeeded",
-                           Command.Connect_nbr: "updateConnectNbr"
+                           Command.Connect_nbr: "updateConnectNbr",
+                           Command.Fork: 'noUpdateNeeded'
                            }
+        """"""
+        self.broadcast(' '.join([str(self.newNb()), 'GET_INFO', str(self.id_)]))
+        """"""
         self.maxLineRow = [int(sum([e for e in range(0, i * 2 + 1, 2)][:i]) + ([e for e in range(0, i * 2 + 1, 2)][i] / 2)) for i in range(0, 15, 1)]
 
         dPrint(self.debugInv_, "Random Id: {0}".format(self.id_))
@@ -168,8 +165,8 @@ class IA:
         self.sameLvlIDs_ = {}  # On stocke l'id (int), s'il est là (bool), son inventaire (dict)
         self.itersBeforeCancel = 30  # FIXME ça doit dépendre d'autre chose comme la vitesse de réponse de la première IA (ou bien y'en a pas besoin et tout est reset quand on recommence)
         self.limit_ = 25
-        self.countLimit_ = self.limit_  # TODO ajouter là où ça doit être restart
-        self.countItersBeforeCancel = self.itersBeforeCancel  # TODO ajouter là où ça doit être
+        self.countLimit_ = self.limit_
+        self.countItersBeforeCancel = self.itersBeforeCancel
 
         """ NOT LEAD """
         self.leadID = -1
@@ -179,14 +176,17 @@ class IA:
         self.countNbMoves = self.nbMoves
 
         """ CREATE EGGS FOR OTHERS """
-        self.matesNb = None
-        self.places = None
-        self.broadcast(' '.join([str(self.newNb()), 'GET_INFO']))
+        self.helpedIds = []
+        self.first = True
+        self.matesNb = 0
+        self.places = 1
+        self.eggCreated = False
+        self.startTime = time.time()
         self.connectNbr()
 
     """
     EMERGENCY
-       
+
     """
 
     def emergency(self):
@@ -241,6 +241,8 @@ class IA:
         return False
 
     def updateDataFromServ(self):
+        if self.CSLink_.isAlive() is False:
+            exit(0)
         while self.CSLink_.msgReceived() is True:
             self.rcvDead()
             if self.rcvBroadCast() is True or self.rcvEject() is True:
@@ -281,6 +283,9 @@ class IA:
 
     def updateConnectNbr(self, msg, obj):
         self.places = int(msg)
+        if self.first is True and self.matesNb < 8 and self.places < 1 and time.time() - self.startTime > 20:
+            self.fork()
+            self.forward()
 
     def updateSet(self, msg, obj):
         """
@@ -423,6 +428,12 @@ class IA:
         self.CSLink_.connectNbr()
         self.pendingRqt_ += [(Command.Connect_nbr, None)]
         dPrint(self.debugInv_, Colors.UNDERLINE + "Connect nbr" + Colors.ENDC)
+
+    def fork(self):
+        self.waitForPlace()
+        self.CSLink_.fork()
+        self.pendingRqt_ += [(Command.Fork, None)]
+        dPrint(self.debugInv_, Colors.UNDERLINE + "Fork" + Colors.ENDC)
 
     """
         IA
@@ -614,6 +625,11 @@ class IA:
             self.comNbs.append(int(msg[0]))
         except:
             return None
+        if msg[2] == 'GET_INFO':
+            self.broadcast(' '.join([str(self.newNb()), 'NEW_INFO', msg[3], str(self.id_), '-'.join([str(i) for i in self.comNbs])]))
+            self.matesNb += 1
+            self.helpedIds.append(int(msg[3]))
+            return None
         return msg[2:]
 
     def normalLifeMsg(self, dirC, msg):
@@ -633,6 +649,13 @@ class IA:
             self.situation_ = "waitForGoNoLead"
             self.broadcast(' '.join([str(self.newNb()), 'OK', str(self.leadID), str(self.othIncNb_), str(self.id_), invToStr(self.inventory_)]))
             return
+
+        if msg[0] == 'NEW_INFO' and int(msg[1]) == self.id_:
+            self.comNbs += msg[3].split('-')
+            self.comNbs = list(dict.fromkeys(self.comNbs))
+            self.matesNb += 1
+            if int(msg[2]) not in self.helpedIds or int(msg[2]) > self.id_:
+                self.first = False
 
     def waitForGoNoLeadMsg(self, dirC, msg):
         """
@@ -804,6 +827,16 @@ class IA:
         getattr(self, self.foodStage_[min([va if self.inventory_[GameObj.Food] < va else self.maxFoodStage for va, v in self.foodStage_.items()])])()
         self.getStones()
 
+        # dPrint(self.debugInv_, self.eggCreated, self.places, self.first, self.inventory_[GameObj.Food])
+        if self.eggCreated is False and self.places < 8 and self.first is True and self.inventory_[GameObj.Food] > 40 and time.time() - self.startTime > 4:
+            while self.places < 8:
+                self.fork()
+                self.forward()
+                self.places += 1
+            self.eggCreated = True
+
+        if randrange(1, 40) == 1:
+            self.connectNbr()
         self.countCoolDown -= 1
         # TODO Mettre le bordel dans les incantations des autres
 
