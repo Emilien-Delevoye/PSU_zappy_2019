@@ -75,6 +75,7 @@ void move_wait_to_work_list(data_server_t *data, client_t *cli,
             else
                 prev->next = next;
             cur->cmd_str = cli->cmd_queue->command;
+            return;
         }
         prev = cur;
     }
