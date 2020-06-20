@@ -57,7 +57,7 @@ void client_validation(data_server_t *data, client_t *cli, int team_id)
     add_to_valid_list(data, cli);
     if (!data->params.r_cli || !data->params.r_cli[team_id]) {
         sprintf(team_nb, "ko\n");
-         cli->to_close = true;
+        cli->to_close = true;
     } else {
         sprintf(team_nb, "%d\n%d %d\n", --data->params.r_cli[cli->team_id],
             data->params.width, data->params.height);
