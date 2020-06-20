@@ -20,7 +20,7 @@ void ppo_command(client_t *cli, data_server_t *data);
 void pnw_command(client_t *cli, data_server_t *data);
 void pic_command(client_t *cli, data_server_t *data);
 void seg_command(client_t *cli, data_server_t *data);
-void pie_command(client_t *cli, data_server_t *data);
+void pie_command(client_t *cli, data_server_t *data, char result);
 void pdi_command(client_t *cli, data_server_t *data);
 void pbc_command(client_t *cli, data_server_t *data);
 
