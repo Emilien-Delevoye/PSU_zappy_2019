@@ -64,7 +64,7 @@ void look(data_server_t *data)
 
     memset(str, 0, len_str);
     str[0] = '[';
-    for (int a = 0; a <= (cli->drone.lvl + 1); ++a) {
+    for (int a = 0; a <= cli->drone.lvl; ++a) {
         if (strlen(str) > (len_str - 96))
             break;
         map_move(start, str, a, cli->drone.orientation);
