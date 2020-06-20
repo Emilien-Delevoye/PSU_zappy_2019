@@ -23,7 +23,7 @@ map_t *get_dest_tile(drone_t drone)
     }
 }
 
-static void move_to_other_tile(map_t *dest, tile_players_t *cu_l)
+void move_to_other_tile(map_t *dest, tile_players_t *cu_l)
 {
     cu_l->next = NULL;
     if (!dest->list_players) {

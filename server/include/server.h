@@ -170,6 +170,7 @@ void take(data_server_t *data);
 void set(data_server_t *data);
 void incantation_before(client_t *cli);
 void incantation_after(data_server_t *data);
+void move_to_other_tile(map_t *dest, tile_players_t *cu_l);
 
 #define get_direction1(c, o) \
     (o <= 2 ? (o == 1 ? c->top : c->right) : (o == 3 ? c->bottom : c->left))
