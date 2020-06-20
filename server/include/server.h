@@ -171,4 +171,11 @@ void set(data_server_t *data);
 void incantation_before(client_t *cli);
 void incantation_after(data_server_t *data);
 
+#define get_direction1(c, o) \
+    (o <= 2 ? (o == 1 ? c->top : c->right) : (o == 3 ? c->bottom : c->left))
+#define get_direction2(c, o) \
+    (o <= 2 ? (o == 1 ? c->left : c->top) : (o == 3 ? c->right : c->bottom))
+#define get_direction3(c, o) \
+    (o <= 2 ? (o == 1 ? c->right : c->bottom) : (o == 3 ? c->left : c->top))
+
 #endif //SERVER_SERVER_H

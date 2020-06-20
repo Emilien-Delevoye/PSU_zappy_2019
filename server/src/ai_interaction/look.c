@@ -33,13 +33,6 @@ static void str_to_list_write(char str[len_str], client_t *cli)
     add_to_write_list(cli, str);
 }
 
-#define get_direction1(c, o) \
-    (o <= 2 ? (o == 1 ? c->top : c->right) : (o == 3 ? c->bottom : c->left))
-#define get_direction2(c, o) \
-    (o <= 2 ? (o == 1 ? c->left : c->top) : (o == 3 ? c->right : c->bottom))
-#define get_direction3(c, o) \
-    (o <= 2 ? (o == 1 ? c->right : c->bottom) : (o == 3 ? c->left : c->top))
-
 static void map_move(map_t *start, char *str, int a, int orientation)
 {
     map_t *current = start;
