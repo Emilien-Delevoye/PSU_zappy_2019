@@ -124,6 +124,7 @@ class IA:
         self.CSLink_ = CSLink
         self.debug_ = False
         self.debugInv_ = True
+        self.reverse = True if randrange(1, 3) == 1 else False
         self.maxServCommands_ = 9
         self.inventory_ = {GameObj.Food: 10,
                            GameObj.Linemate: 0,
@@ -149,7 +150,8 @@ class IA:
                            Command.Broadcast: "noUpdateNeeded",
                            Command.Set: "updateSet",
                            Command.Incantation: "updateIncantation",
-                           Command.Eject: "noUpdateNeeded"
+                           Command.Eject: "noUpdateNeeded",
+                           Command.Connect_nbr: "updateConnectNbr"
                            }
         self.maxLineRow = [int(sum([e for e in range(0, i * 2 + 1, 2)][:i]) + ([e for e in range(0, i * 2 + 1, 2)][i] / 2)) for i in range(0, 15, 1)]
 
@@ -165,7 +167,7 @@ class IA:
         self.myIncNb_ = 0
         self.sameLvlIDs_ = {}  # On stocke l'id (int), s'il est là (bool), son inventaire (dict)
         self.itersBeforeCancel = 30  # FIXME ça doit dépendre d'autre chose comme la vitesse de réponse de la première IA (ou bien y'en a pas besoin et tout est reset quand on recommence)
-        self.limit_ = 20
+        self.limit_ = 25
         self.countLimit_ = self.limit_  # TODO ajouter là où ça doit être restart
         self.countItersBeforeCancel = self.itersBeforeCancel  # TODO ajouter là où ça doit être
 
@@ -173,15 +175,14 @@ class IA:
         self.leadID = -1
         self.elevDir = 0
         self.othIncNb_ = 0
-        self.nbMoves = 1  # FIXME la quantité de mouvements pour se rapprocher doit dépendre de la taille de la map (Il réduit au fil du temps)
+        self.nbMoves = int(x / 5) if int(x / 5) >= 1 else 1
+        self.countNbMoves = self.nbMoves
 
         """ CREATE EGGS FOR OTHERS """
+        self.matesNb = None
+        self.places = None
         self.broadcast(' '.join([str(self.newNb()), 'GET_INFO']))
-        # On envoie le message pour savoir ou en sont les autres
-        # On demande le nombre de client qui peuvent être connecté au serveur
-        # Si c'est 0, on fait fork
-
-        # Quand on reçoit la NEW_INFO
+        self.connectNbr()
 
     """
     EMERGENCY
@@ -194,8 +195,10 @@ class IA:
             for i in range(15):
                 self.lookAroundNow()
                 self.goFastEat()
+            self.countLimit_ = self.limit_
+            self.countItersBeforeCancel = self.itersBeforeCancel
+            self.countCoolDown = 10
             self.sameLvlIDs_.clear()
-            # FIXME ajouter tout ce qui doit être reset
             self.situation_ = 'normalLife'
 
     """
@@ -275,6 +278,9 @@ class IA:
             if 'Current level' in msg:
                 self.level_ += 1
                 self.situation_ = 'normalLife'
+
+    def updateConnectNbr(self, msg, obj):
+        self.places = int(msg)
 
     def updateSet(self, msg, obj):
         """
@@ -412,6 +418,12 @@ class IA:
         self.pendingRqt_ += [(Command.Incantation, "End")]
         dPrint(self.debugInv_, Colors.UNDERLINE + "ELEVATION" + Colors.ENDC)
 
+    def connectNbr(self):
+        self.waitForPlace()
+        self.CSLink_.connectNbr()
+        self.pendingRqt_ += [(Command.Connect_nbr, None)]
+        dPrint(self.debugInv_, Colors.UNDERLINE + "Connect nbr" + Colors.ENDC)
+
     """
         IA
     """
@@ -502,10 +514,16 @@ class IA:
     """ STONES """
 
     def getStones(self):
-        for s in elevRqrmts[self.level_]:  # FIXME changer l'ordre
-            if self.inventory_[s] < elevRqrmts[self.level_][s] and self.searchAndGoFor(s) is True:
-                self.takeNow(s)
-                break
+        if self.reverse is True:
+            for s in elevRqrmts[self.level_]:
+                if self.inventory_[s] < elevRqrmts[self.level_][s] and self.searchAndGoFor(s) is True:
+                    self.takeNow(s)
+                    break
+        else:
+            for s in list(list(elevRqrmts[self.level_].keys()).__reversed__()):
+                if self.inventory_[s] < elevRqrmts[self.level_][s] and self.searchAndGoFor(s) is True:
+                    self.takeNow(s)
+                    break
 
     """ ELEVATION """
 
@@ -629,6 +647,7 @@ class IA:
         if msg[0] == 'GO' and int(msg[1]) == self.leadID and int(msg[2]) == self.othIncNb_ and self.id_ in strTolIDs(msg[3]):
             self.elevDir = dirC
             self.situation_ = 'goToIncantationNoLead'
+            self.countNbMoves = self.nbMoves
             self.updateDataFromServForce()
             return
         if msg[0] == 'CANCEL' and int(msg[1]) == self.leadID and self.othIncNb_ == int(msg[2]) and self.id_ in strTolIDs(msg[3]):
@@ -822,12 +841,12 @@ class IA:
 
         if self.elevDir is not None and self.elevDir != 0 and self.situation_ == 'goToIncantationNoLead':
             self.updateDataFromServForce()
-            self.goToDir(self.elevDir, self.nbMoves)
+            self.goToDir(self.elevDir, self.countNbMoves)
             self.updateDataFromServForce()
             self.broadcast(' '.join([str(self.newNb()), 'ASKED', str(self.leadID), str(self.id_)]))
 
-            if self.nbMoves > 1:
-                self.nbMoves -= 1
+            if self.countNbMoves > 1:
+                self.countNbMoves -= 1
             self.elevDir = None
 
         if self.elevDir == 0 and self.situation_ == 'goToIncantationNoLead':

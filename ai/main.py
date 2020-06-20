@@ -24,6 +24,7 @@ def main():
     port = int()
     name = str()
     hostname = str()
+    x, y = 0, 0
 
     try:
         port, name, hostname = take_args()
