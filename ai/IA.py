@@ -821,6 +821,7 @@ class IA:
             if self.limit_ <= 0:
                 self.broadcast(' '.join([str(self.newNb()), 'CANCELALL', str(self.id_)]))
                 self.situation_ = 'normalLife'
+                self.sameLvlIDs_.clear()
                 self.limit_ = 20  # FIXME
             return
 
