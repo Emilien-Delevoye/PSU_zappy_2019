@@ -64,6 +64,7 @@ public class GameScene : MonoBehaviour
     public TextMeshProUGUI levelHudCharacter;
     public TextMeshProUGUI teamNameHudCharacter;
     private float timeUpHudCharacter;
+    private int characterSelected;
 
     float timeUnit;
 
@@ -715,7 +716,7 @@ public class GameScene : MonoBehaviour
     {
         receiveMessage = client.ReceiveMesageFromServer();
         if (tmp == 0)
-            receiveMessage = "pnw 0 0 0 2 3 Team1\n";
+            receiveMessage = "pnw 0 0 0 2 1 Team1\n";
 
         //else if (tmp == 200)
         //    receiveMessage = "pnw 1 0 0 2 1 Team1\n";
@@ -751,6 +752,8 @@ public class GameScene : MonoBehaviour
         //    receiveMessage = "ppo 0 0 0 1\n";
         else if (tmp == 200)
             receiveMessage = "pin 0 5 5 5 5 5 5 5\n";
+        else if (tmp == 400)
+            receiveMessage = "plv 0 5\n";
         else
             receiveMessage = null;
         ++tmp;
@@ -789,12 +792,26 @@ public class GameScene : MonoBehaviour
     public void SetInventoryPlayer()
     {
         int[] inventory;
+        int rank = 0;
 
         if (arguments.Length >= 9)
         {
+            rank = int.Parse(arguments[1]);
             inventory = new int[] {int.Parse(arguments[2]), int.Parse(arguments[3]), int.Parse(arguments[4]), int.Parse(arguments[5]),
                 int.Parse(arguments[6]), int.Parse(arguments[7]), int.Parse(arguments[8])};
-            characters[int.Parse(arguments[1])].SetInventory(inventory);
+            characters[rank].SetInventory(inventory);
+            if (characters[rank].GetGameObjectInstanceID() == characterSelected)
+            {
+                teamNameHudCharacter.text = characters[rank].GetTeamName();
+                inventory = characters[rank].GetInventory();
+                numberFoodHudCharacter.text = inventory[0].ToString();
+                numberLinemateHudCharacter.text = inventory[1].ToString();
+                numberDeraumereHudCharacter.text = inventory[2].ToString();
+                numberSiburHudCharacter.text = inventory[3].ToString();
+                numberMendianeHudCharacter.text = inventory[4].ToString();
+                numberPhirasHudCharacter.text = inventory[5].ToString();
+                numberThystameHudCharacter.text = inventory[6].ToString();
+            }
         } else
         {
             Debug.Log("pin: Reply missing argument.");
@@ -803,9 +820,16 @@ public class GameScene : MonoBehaviour
 
     public void SetLevelPlayer()
     {
+        int rank = 0;
+
         if (arguments.Length >= 3)
         {
-            characters[int.Parse(arguments[1])].SetLevel(int.Parse(arguments[2]));
+            rank = int.Parse(arguments[1]);
+            characters[rank].SetLevel(int.Parse(arguments[2]));
+            if (characters[rank].GetGameObjectInstanceID() == characterSelected)
+            {
+                levelHudCharacter.text = "Level: " + characters[rank].GetLevel().ToString();
+            }
         } else
         {
             Debug.Log("plv: Reply missing argument.");
@@ -1165,6 +1189,7 @@ public class GameScene : MonoBehaviour
         {
             if (characters[kvp.Key].GetGameObjectInstanceID() == gameObjectInstanceID)
             {
+                characterSelected = gameObjectInstanceID;
                 timeUpHudCharacter = Time.fixedTime;
                 hudCharacter.SetActive(true);
                 levelHudCharacter.text = "Level: " + characters[kvp.Key].GetLevel().ToString();
