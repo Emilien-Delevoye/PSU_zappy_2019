@@ -126,8 +126,6 @@ typedef struct data_server_s {
     //Timer structures
     struct timeval tv;
     struct tm *tm;
-    long int timer;
-    int sec;
 } data_server_t;
 
 struct cmd_ai_s {

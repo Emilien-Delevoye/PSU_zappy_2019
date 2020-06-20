@@ -76,4 +76,6 @@ add_executable(zappy_server
         src/commands/pdi_command.c
         src/commands/pbc_command.c
         src/commands/sgt_command.c
-        src/commands/plv_command.c src/commands/pin_command.c)
+        src/commands/plv_command.c
+        src/commands/pin_command.c
+        include/lib.h)
