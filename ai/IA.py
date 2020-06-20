@@ -60,7 +60,7 @@ class IA:
         self.currentPos_ = 0
         self.currentDir_ = Command.Forward
         self.CSLink_ = CSLink
-        self.debug_ = True
+        self.debug_ = False
         self.maxServCommands_ = 10
         self.inventory_ = {GameObj.Food: 10,
                            GameObj.Linemate: 0,
