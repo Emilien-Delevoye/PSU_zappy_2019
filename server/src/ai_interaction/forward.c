@@ -15,9 +15,9 @@ map_t *get_dest_tile(drone_t drone)
         case EAST:
             return (drone.tile->right);
         case SOUTH:
-            return (drone.tile->left);
-        case WEST:
             return (drone.tile->bottom);
+        case WEST:
+            return (drone.tile->left);
         default:
             return (NULL);
     }
