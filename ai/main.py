@@ -1,7 +1,7 @@
 #!/usr/bin/python3.7
 
-from IA import IA
-from serverLink import ServerLink, Command
+from ai.IA import IA
+from ai.serverLink import ServerLink, Command
 import argparse
 from sys import stderr
 import time

@@ -5,8 +5,8 @@ from random import randrange
 
 from termcolor import colored
 
-from serverLink import Command
-from utils import dPrint, Colors
+from ai.serverLink import Command
+from ai.utils import dPrint, Colors
 import time
 
 # TODO gérer les ejects
@@ -844,7 +844,7 @@ class IA:
                 self.places += 1
             self.eggCreated = True
 
-        if randrange(1, 60) == 1:
+        if randrange(1, 40) == 1:
             self.connectNbr()
         self.countCoolDown -= 1
         # TODO Mettre le bordel dans les incantations des autres
@@ -922,7 +922,6 @@ class IA:
             if ids is not None:
                 self.situation_ = "waitForOthersCmgLead"
                 # Cancel for other ids
-                # FIXME avant d'attendre les autres, bouger s'il y a un oeuf
                 dPrint(self.debugInv_, colored("On a assez de resources pour start " + ids.__str__(), "red"))
                 CanceledIds = set(list(self.sameLvlIDs_.keys())) - set(ids)
                 if len(CanceledIds) > 0:

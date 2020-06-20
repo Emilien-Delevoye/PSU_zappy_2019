@@ -4,7 +4,7 @@ from threading import Thread
 import select
 import sys
 from enum import Enum
-from utils import dPrint
+from ai.utils import dPrint
 from termcolor import colored
 
 

@@ -7,6 +7,8 @@
 
 NAME_SERVER	=	zappy_server
 
+NAME_AI		=	zappy_ai
+
 SRC_MAIN_SERVER	=	server/src/main.c
 
 SRC_SERVER	=	server/src/utils/parameters/get_parameters.c	\
@@ -76,6 +78,7 @@ CFLAGS	=	-W -Wall -Wextra -I server/include
 CPPFLAGS	=	-W -Wall -Wextra -I server/include -I tests/include
 
 all:	$(NAME_SERVER)
+	cp ai/main.py $(NAME_AI)
 
 debug:	CFLAGS += -g
 debug:	all
