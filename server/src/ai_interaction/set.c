@@ -39,6 +39,7 @@ void set(data_server_t *data)
             add_to_write_list(cli, "ok\n");
             sprintf(arg, "bct %d %d", cur->coord[0], cur->coord[1]);
             bct_command(cli, data, my_str_to_word_array(arg));
+            pin_command(cli, data);
             return;
         }
     }
