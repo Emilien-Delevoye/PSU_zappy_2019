@@ -5,6 +5,7 @@
 ** Created by emilien
 */
 
+#include "commands/commands.h"
 #include "server.h"
 
 map_t *get_dest_tile(drone_t drone)
@@ -44,7 +45,6 @@ void forward(data_server_t *data)
     map_t *cur = data->cli_work->cli->drone.tile;
     map_t *dest = get_dest_tile(data->cli_work->cli->drone);
     tile_players_t *prev = NULL;
-
     if (!dest)
         return;
     for (tile_players_t *cu_l = cur->list_players; cu_l; cu_l = cu_l->next) {
@@ -60,4 +60,5 @@ void forward(data_server_t *data)
         cli->drone.tile = dest;
     }
     add_to_write_list(cli, "ok\n");
+    ppo_command(cli, data);
 }

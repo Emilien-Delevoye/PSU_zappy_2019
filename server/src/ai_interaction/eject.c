@@ -5,6 +5,7 @@
 ** Created by emilien
 */
 
+#include "commands/commands.h"
 #include "server.h"
 
 void change_tile_eject(map_t *cur, client_t *cli, map_t *dest)
@@ -53,6 +54,7 @@ void eject(data_server_t *data)
         cli->drone.tile->list_players; tmp; tmp = tmp->next) {
         if (tmp->cli != cli) {
             move_for_eject(tmp->cli, cli->drone.orientation);
+            ppo_command(tmp->cli, data);
             ++counter;
         }
     }
