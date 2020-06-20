@@ -29,14 +29,30 @@ void end_client_validation(data_server_t *data, client_t *cli, char t_nb[62])
     calc_food_time(data, data->tv, cli);
 }
 
+void move_to_end_of_the_list(data_server_t *data)
+{
+    client_t *cli = data->l_connected.first;
+
+    if (cli->next) {
+        data->l_connected.first = cli->next;
+        data->l_connected.first->prev = NULL;
+        data->l_connected.last->next = cli;
+        cli->prev = data->l_connected.last;
+        data->l_connected.last = cli;
+        cli->next = NULL;
+    }
+    calc_food_time(data, data->tv, cli);
+}
+
 void check_food(data_server_t *data, client_t *cli)
 {
     if (cli->drone.inventory[FOOD] > 0) {
         --cli->drone.inventory[FOOD];
-        //move_to_end_of_the_list
+        move_to_end_of_the_list(data);
     } else {
         add_to_write_list(cli, "dead\n");
         cli->to_close = true;
+        cli->dead = true;
     }
 }
 
@@ -47,13 +63,10 @@ void update_food(data_server_t *data)
 
     if (!cli)
         return;
-    if ((cli->tv_food.tv_sec == tv_server.tv_sec &&
+    if (!((cli->tv_food.tv_sec == tv_server.tv_sec &&
         cli->tv_food.tv_usec < tv_server.tv_usec) ||
-        (cli->tv_food.tv_sec < tv_server.tv_sec)) {
-        check_food(data, cli);
+        (cli->tv_food.tv_sec < tv_server.tv_sec)) || cli->dead == true)
         return;
-        update_food(data);
-    } else {
-        return;
-    }
+    check_food(data, cli);
+    update_food(data);
 }
