@@ -30,7 +30,9 @@ data_server_t get_parameters(int ac, char **av)
     data.params.valid_params = st;
     if (!data.params.r_cli)
         return (data);
-    for (unsigned short a = 0; a != data.params.team_nb; ++a)
+    for (unsigned short a = 0; a != data.params.team_nb; ++a) {
         data.params.r_cli[a] = data.params.client_nb;
+        data.params.win_cli[a] = 0;
+    }
     return (data);
 }

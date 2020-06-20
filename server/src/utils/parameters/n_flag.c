@@ -36,9 +36,16 @@ static bool create_names(data_server_t *data)
 {
     data->params.r_cli =
         malloc(sizeof(unsigned short) * (data->params.team_nb + 1));
+    data->params.win_cli =
+        malloc(sizeof(unsigned short) * (data->params.team_nb + 1));
+
     if (!data->params.r_cli)
         return (false);
+    if (!data->params.win_cli)
+        return (false);
     memset(data->params.r_cli, 0,
+        sizeof(unsigned short) * (data->params.team_nb + 1));
+    memset(data->params.win_cli, 0,
         sizeof(unsigned short) * (data->params.team_nb + 1));
     return (true);
 }

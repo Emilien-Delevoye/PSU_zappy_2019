@@ -98,6 +98,7 @@ typedef struct param_s {
     unsigned short client_nb;
     unsigned int freq;
     unsigned short *r_cli;
+    unsigned short *win_cli;
     bool valid_params;
 } param_t;
 

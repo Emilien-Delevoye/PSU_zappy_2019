@@ -18,6 +18,14 @@ const unsigned int condi[7][7] = {
     {6, 2, 2, 2, 2, 2, 1}
 };
 
+void check_end(data_server_t *data, client_t *cli)
+{
+    if (cli->drone.lvl == 8) {
+        if (++data->params.win_cli[cli->team_id] >= 6)
+            seg_command(data, data->params.team_names[cli->team_id]);
+    }
+}
+
 void incantation_ok(client_t *cli, int choice, data_server_t *data)
 {
     char str[50] = {0};
@@ -26,6 +34,7 @@ void incantation_ok(client_t *cli, int choice, data_server_t *data)
         for (tile_players_t *tmp =
             cli->drone.tile->list_players; tmp; tmp = tmp->next) {
             tmp->cli->drone.lvl += 1;
+            check_end(data, tmp->cli);
             plv_command(tmp->cli, data);
             sprintf(str, "Current level: %d\n", tmp->cli->drone.lvl);
             add_to_write_list(tmp->cli, str);
