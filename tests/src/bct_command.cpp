@@ -31,7 +31,10 @@ TEST(bct_command, good_arg)
     char *arg[4] = {(char *)"useless", (char *)"1", (char *)"2", NULL};
     data_server_t data;
 
-    data.l_graphical.first->list_msg = NULL;
+    memset(&data, 0, sizeof(data_server_t));
+    data.l_graphical.first = new client_t;
+    data.l_graphical.last = data.l_graphical.first;
+    memset(data.l_graphical.first, 0, sizeof(client_t));
     data.params.width = 10;
     data.params.height = 10;
     setup_map(&data);
@@ -43,6 +46,6 @@ TEST(bct_command, good_arg)
     data.bottom_left->right->right->top->items[PHIRAS] = 0;
     data.bottom_left->right->right->top->items[THYSTAME] = 0;
     bct_command(data.l_graphical.first, &data, static_cast<char **>(arg));
-    EXPECT_STREQ(data.l_graphical.first->list_msg->to_write, "bct 2 1 0 0 0 0 0 0 0\n");
+    EXPECT_STREQ(data.l_graphical.first->list_msg->to_write, "bct 1 2 0 0 0 0 0 0 0\n");
     free_map(data);
 }
