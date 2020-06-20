@@ -23,8 +23,9 @@ char *get_take_arg(char *str)
     return tmp;
 }
 
-void spawn_random_food(data_server_t *data, int value)
+void spawn_random_food(data_server_t *data, int value, client_t *cli)
 {
+    char arg[30] = {0};
     int x = rand() % data->params.width;
     int y = rand() % data->params.height;
     map_t *start = data->bottom_left;
@@ -33,6 +34,8 @@ void spawn_random_food(data_server_t *data, int value)
         for (int i = 0; i < x; ++i, start = start->right);
         for (int i = 0; i < y; ++i, start = start->top);
         start->items[FOOD] += 1;
+        sprintf(arg, "bct %d %d", start->coord[0], start->coord[1]);
+        bct_command(cli, data, my_str_to_word_array(arg));
     }
 }
 
@@ -47,7 +50,7 @@ void take(data_server_t *data)
 
     for (int i = 0; i < 7; ++i) {
         if (strcmp(equi[i], str) == 0 && cur->items[i] > 0) {
-            spawn_random_food(data, i);
+            spawn_random_food(data, i, cli);
             cur->items[i] -= 1;
             cli->drone.inventory[i] += 1;
             add_to_write_list(cli, "ok\n");

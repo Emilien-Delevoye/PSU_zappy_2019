@@ -27,9 +27,9 @@ void bct_command(__attribute__((unused))client_t *cli,
 
     if (!arg[1] || !arg[2])
         return;
-    for (int i = 0; i < atoi(arg[1]); ++i)
+    for (int i = 0; i < atoi(arg[2]); ++i)
         cur = cur->right;
-    for (int j = 0; j < atoi(arg[2]); ++j)
+    for (int j = 0; j < atoi(arg[1]); ++j)
         cur = cur->top;
     send_bct_info(data, arg, cur);
 }
