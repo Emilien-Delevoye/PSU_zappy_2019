@@ -216,6 +216,22 @@ public class GameScene : MonoBehaviour
             }
         }
 
+        public void SetLevel(int level)
+        {
+            _level = level;
+        }
+
+        public void SetInventory(int[] inventory)
+        {
+            _numberFood = inventory[0];
+            _numberLinemate = inventory[1];
+            _numberDeraumere = inventory[2];
+            _numberSibur = inventory[3];
+            _numberMendiane = inventory[4];
+            _numberPhiras = inventory[5];
+            _numberThystame = inventory[6];
+        }
+
         public float GetXPos()
         {
             return _posX;
@@ -734,7 +750,7 @@ public class GameScene : MonoBehaviour
         //else if (tmp == 800)
         //    receiveMessage = "ppo 0 0 0 1\n";
         else if (tmp == 200)
-            receiveMessage = "bct 0 0 1 1 1 1 1 1 1\n";
+            receiveMessage = "pin 0 5 5 5 5 5 5 5\n";
         else
             receiveMessage = null;
         ++tmp;
@@ -763,6 +779,36 @@ public class GameScene : MonoBehaviour
                 DeleteEgg();
             else if (arguments[0] == "pbc")
                 StartBroadcast();
+            else if (arguments[0] == "plv")
+                SetLevelPlayer();
+            else if (arguments[0] == "pin")
+                SetInventoryPlayer();
+        }
+    }
+
+    public void SetInventoryPlayer()
+    {
+        int[] inventory;
+
+        if (arguments.Length >= 9)
+        {
+            inventory = new int[] {int.Parse(arguments[2]), int.Parse(arguments[3]), int.Parse(arguments[4]), int.Parse(arguments[5]),
+                int.Parse(arguments[6]), int.Parse(arguments[7]), int.Parse(arguments[8])};
+            characters[int.Parse(arguments[1])].SetInventory(inventory);
+        } else
+        {
+            Debug.Log("pin: Reply missing argument.");
+        }
+    }
+
+    public void SetLevelPlayer()
+    {
+        if (arguments.Length >= 3)
+        {
+            characters[int.Parse(arguments[1])].SetLevel(int.Parse(arguments[2]));
+        } else
+        {
+            Debug.Log("plv: Reply missing argument.");
         }
     }
 
