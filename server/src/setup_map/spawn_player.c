@@ -50,7 +50,7 @@ void spawn_player(data_server_t *data, client_t *cli)
         coord[WIDTH] = rand() % data->params.width;
         coord[HEIGHT] = rand() % data->params.height;
     }
-    cli->drone.inventory[FOOD] = 10;
+    cli->drone.inventory[FOOD] = 9;
     while (obj_tile->coord[WIDTH] != coord[WIDTH])
         obj_tile = obj_tile->right;
     while (obj_tile->coord[HEIGHT] != coord[HEIGHT])
