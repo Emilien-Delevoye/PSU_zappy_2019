@@ -18,7 +18,7 @@ const unsigned int condi[7][7] = {
     {6, 2, 2, 2, 2, 2, 1}
 };
 
-void incantation_ok(client_t *cli, int choice)
+void incantation_ok(client_t *cli, int choice, data_server_t *data)
 {
     char str[50] = {0};
 
@@ -26,6 +26,7 @@ void incantation_ok(client_t *cli, int choice)
         for (tile_players_t *tmp =
             cli->drone.tile->list_players; tmp; tmp = tmp->next) {
             tmp->cli->drone.lvl += 1;
+            plv_command(tmp->cli, data);
             sprintf(str, "Current level: %d\n", tmp->cli->drone.lvl);
             add_to_write_list(tmp->cli, str);
         }
@@ -52,7 +53,7 @@ void incantation_after(data_server_t *data)
     condi[cli->drone.lvl - 1][4] == cli->drone.tile->items[MENDIANE] &&
     condi[cli->drone.lvl - 1][5] == cli->drone.tile->items[PHIRAS] &&
     condi[cli->drone.lvl - 1][6] == cli->drone.tile->items[THYSTAME]) {
-        incantation_ok(cli, 0);
+        incantation_ok(cli, 0, data);
         pie_command(cli, data, 'S');
     } else {
         add_to_write_list(cli, "ko\n");
@@ -76,7 +77,7 @@ void incantation_before(client_t *cli, data_server_t *data)
     condi[cli->drone.lvl - 1][4] == cli->drone.tile->items[MENDIANE] &&
     condi[cli->drone.lvl - 1][5] == cli->drone.tile->items[PHIRAS] &&
     condi[cli->drone.lvl - 1][6] == cli->drone.tile->items[THYSTAME]) {
-        incantation_ok(cli, 1);
+        incantation_ok(cli, 1, data);
         pic_command(cli, data);
     } else
         add_to_write_list(cli, "ko\n");

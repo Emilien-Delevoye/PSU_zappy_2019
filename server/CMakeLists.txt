@@ -75,4 +75,4 @@ add_executable(zappy_server
         src/commands/pie_command.c
         src/commands/pdi_command.c
         src/commands/pbc_command.c
-        src/commands/sgt_command.c)
+        src/commands/sgt_command.c src/commands/plv_command.c)
