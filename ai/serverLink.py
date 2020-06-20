@@ -71,6 +71,7 @@ class ServerLink:
         self.thread_running = True
         self.thread = Thread(target=self.readWrite)
         self.thread.start()
+        return int(coReturn.split('\n')[1].split(' ')[0]), int(coReturn.split('\n')[1].split(' ')[1])
 
     def write(self, string):
         data = bytes(string, 'utf-8')

@@ -24,6 +24,8 @@ import collections, functools, operator
 # TODO vérifier qu'on clear bien les ids qu'on a trouvé au bon moment
 # TODO considérer que tout peut fail si on se fait emmerder
 
+# TODO mettre zappy_ai à la racine
+
 class GameObj(Enum):
     Empty = 1 << 0,
     Player = 1 << 1,
@@ -108,9 +110,11 @@ def rand():
 
 
 class IA:
-    def __init__(self, CSLink):
+    def __init__(self, CSLink, team_name, x, y):
         self.id_ = rand()
+        self.teamName_ = team_name
         self.comNbs = []
+        self.mapSize = (x, y)
         self.level_ = 1
         self.around_ = None
         self.currentPos_ = 0
@@ -169,7 +173,7 @@ class IA:
     def newNb(self):
         r = rand()
         self.comNbs.append(r)
-        return r
+        return str(r) + ' ' + self.teamName_
 
     def rcvDead(self):
         if self.CSLink_.isDead() is True:
@@ -549,11 +553,14 @@ class IA:
     """ MANAGE RECEIVED MESSAGES DEPENGING OF SITUATION """
 
     def updateComNbs(self, msg):
-        msg = msg.split(' ')
-        if int(msg[0]) in self.comNbs:
+        try:
+            msg = msg.split(' ')
+            if int(msg[0]) in self.comNbs or msg[1] != self.teamName_:
+                return None
+            self.comNbs.append(int(msg[0]))
+        except:
             return None
-        self.comNbs.append(int(msg[0]))
-        return msg[1:]
+        return msg[2:]
 
     def normalLifeMsg(self, dirC, msg):
         """

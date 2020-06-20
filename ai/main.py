@@ -33,12 +33,12 @@ def main():
         exit(84)
     CSLink = ServerLink(hostname, port, name)
     try:
-        CSLink.connect()
+        x, y = CSLink.connect()
     except ConnectionRefusedError:
         print("Connection failed", file=stderr)
         exit(84)
 
-    ia = IA(CSLink)
+    ia = IA(CSLink, name, x, y)
     while CSLink.isAlive() and ia.run():
         # print("AI is Alive", flush=True) # FIXME
         pass
