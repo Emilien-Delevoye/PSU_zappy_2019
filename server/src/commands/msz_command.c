@@ -15,6 +15,6 @@ void msz_command(client_t *cli, data_server_t *data,
     char str[29];
 
     memset(str, 0, 29);
-    sprintf(str, "msz %d %d\n", data->params.width, data->params.height);
+    sprintf(str, "msz %d %d\n", data->params.height, data->params.width);
     add_to_write_list(cli, str);
 }
