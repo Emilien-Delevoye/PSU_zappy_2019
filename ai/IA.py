@@ -10,21 +10,12 @@ from ai.utils import dPrint, Colors
 import time
 
 # TODO gérer les ejects
-# TODO sécuriser les communications
-
-# TODO Faire en sorte de se reproduire dans certains cas
-# TODO Get info pour savoir combien il y a d'ia de quel niveau (pour se reproduire)
-
-# TODO aller chercher de la nourriture pour faire des réserves en attendant que les autres viennent
-# TODO faire en sorte que les IAs aient le temps d'aller chercher de la nourriture entre 2 incantations
 
 # FIXME retirer les assert à la fin
 
 # TODO gérer si qqun attend une ia qui finnalement ne vient pas
 # TODO vérifier qu'on clear bien les ids qu'on a trouvé au bon moment
-# TODO considérer que tout peut fail si on se fait emmerder
-
-# TODO mettre zappy_ai à la racine
+# TODO considérer que tout peut fail si on se fait emmerder (A vérifier)
 
 # TODO Brouiller les communications des autres
 

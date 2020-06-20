@@ -35,7 +35,7 @@ class ServerLink:
         self.activeConnection = False
         self.buffers = {"read": str(), "write": bytes()}
         self.serverMsg = None
-        self.debug_ = True
+        self.debug_ = False
 
     def readWrite(self):
         while self.thread_running is True:
