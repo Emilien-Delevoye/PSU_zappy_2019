@@ -26,6 +26,8 @@ import collections, functools, operator
 
 # TODO mettre zappy_ai à la racine
 
+# TODO Brouiller les communications des autres
+
 class GameObj(Enum):
     Empty = 1 << 0,
     Player = 1 << 1,
@@ -121,8 +123,8 @@ class IA:
         self.currentDir_ = Command.Forward
         self.CSLink_ = CSLink
         self.debug_ = False
-        self.debugInv_ = True
-        self.maxServCommands_ = 10
+        self.debugInv_ = False
+        self.maxServCommands_ = 9
         self.inventory_ = {GameObj.Food: 10,
                            GameObj.Linemate: 0,
                            GameObj.Deraumere: 0,
@@ -159,8 +161,9 @@ class IA:
         self.myIncNb_ = 0
         self.sameLvlIDs_ = {}  # On stocke l'id (int), s'il est là (bool), son inventaire (dict)
         self.itersBeforeCancel = 30  # FIXME ça doit dépendre d'autre chose comme la vitesse de réponse de la première IA (ou bien y'en a pas besoin et tout est reset quand on recommence)
-        self.limit_ = 20  # FIXME
-        self.countItersBeforeCancel = self.itersBeforeCancel
+        self.limit_ = 20
+        self.countLimit_ = self.limit_  # TODO ajouter là où ça doit être restart
+        self.countItersBeforeCancel = self.itersBeforeCancel  # TODO ajouter là où ça doit être
 
         """ NOT LEAD """
         self.leadID = -1
@@ -174,9 +177,22 @@ class IA:
         # On demande le nombre de client qui peuvent être connecté au serveur
         # Si c'est 0, on fait fork
 
-
         # Quand on reçoit la NEW_INFO
 
+    """
+    EMERGENCY
+       
+    """
+
+    def emergency(self):
+        if self.inventory_[GameObj.Food] <= 3:
+            self.broadcast(' '.join([str(self.newNb()), "ALERT", str(self.id_)]))
+            for i in range(15):
+                self.lookAroundNow()
+                self.goFastEat()
+            self.sameLvlIDs_.clear()
+            # FIXME ajouter tout ce qui doit être reset
+            self.situation_ = 'normalLife'
 
     """
         UPDATE FROM SERVER
@@ -277,7 +293,7 @@ class IA:
         """
         Parse Look Around
         """
-        dPrint(self.debug_, Colors.HEADER + "Look Around" + Colors.ENDC, msg, self.around_)
+        dPrint(self.debug_ or self.debugInv_, Colors.HEADER + "Look Around" + Colors.ENDC, msg, self.around_)
         self.around_ = [[links[e] for e in list(filter(lambda x: True if x.replace(' ', '') is not None and x.replace(' ', '') != '' else False, i.split(' ')))] for i in msg.replace('[', '').replace(']', '').split(',')]
         self.currentPos_ = 0
         self.currentDir_ = Command.Forward
@@ -286,7 +302,7 @@ class IA:
         """
         Parse Inventory
         """
-        dPrint(self.debug_, Colors.HEADER + "Update Inventory" + Colors.ENDC, msg, self.inventory_)
+        dPrint(self.debug_ or self.debugInv_, Colors.HEADER + "Update Inventory" + Colors.ENDC, msg, self.inventory_)
         self.inventory_ = {links[v[0]]: int(v[1]) for v in [list(filter(lambda x: True if x != '' and x != ' ' else False, i.split(' '))) for i in msg.replace('[', '').replace(']', '').split(',')]}
 
     def noUpdateNeeded(self, msg, _):
@@ -602,6 +618,10 @@ class IA:
         if msg is None:
             return
 
+        if msg[0] == 'ALERT' and int(msg[1]) == self.leadID:
+            self.situation_ = 'normalLife'
+            self.leadID = -1
+            return
         if msg[0] == 'GO' and int(msg[1]) == self.leadID and int(msg[2]) == self.othIncNb_ and self.id_ in strTolIDs(msg[3]):
             self.elevDir = dirC
             self.situation_ = 'goToIncantationNoLead'
@@ -625,12 +645,23 @@ class IA:
         if msg is None:
             return
 
+        if msg[0] == 'ALERT' and int(msg[1]) == self.leadID:
+            self.elevDir = -1
+            self.leadID = -1
+            self.situation_ = 'normalLife'
+            return
+
         if msg[0] == 'UPDATE' and int(msg[1]) == self.leadID and self.id_ == int(msg[2]):
             self.elevDir = dirC
             if self.elevDir == 0:
                 self.broadcast(' '.join([str(self.newNb()), 'PLACED', str(self.leadID), str(self.id_)]))
                 dPrint(self.debugInv_, colored("ASKIP JE SUIS PLACED", "yellow"))
                 self.situation_ = 'waitForInstructions'
+            return
+
+        if msg[0] == 'CANCELALL' and int(msg[1]) == self.leadID and self.othIncNb_ == int(msg[2]):
+            self.situation_ = 'normalLife'
+            self.leadID = -1
             return
 
     def waitForInstructionsMsg(self, dirC, msg):
@@ -649,7 +680,14 @@ class IA:
                 for e in range(d[self.id_][i]):
                     self.set(i)
             return
+
         if msg[0] == 'CANCELALL' and int(msg[1]) == self.leadID and self.othIncNb_ == int(msg[2]):
+            self.situation_ = "normalLife"
+            return
+
+        if msg[0] == 'ALERT' and int(msg[1]) == self.leadID:
+            self.elevDir = -1
+            self.leadID = -1
             self.situation_ = "normalLife"
             return
 
@@ -675,6 +713,12 @@ class IA:
             self.situation_ = "waitForGoNoLead"
             self.sameLvlIDs_.clear()
             self.broadcast(' '.join([str(self.newNb()), 'OK', str(self.leadID), str(self.othIncNb_), str(self.id_), invToStr(self.inventory_)]))
+            return
+
+        if msg[0] == 'ALERT' and int(msg[1]) in list(self.sameLvlIDs_.keys()):
+            self.broadcast(' '.join([str(self.newNb()), 'CANCELALL', str(self.id_), str(self.myIncNb_)]))
+            self.sameLvlIDs_.clear()
+            self.situation_ = 'normalLife'
             return
 
     def waitForOthersCmgLeadMsg(self, dirC, msg):
@@ -703,12 +747,19 @@ class IA:
             self.broadcast(' '.join([str(self.newNb()), 'CANCEL', str(self.id_), str(self.myIncNb_), lIDsToStr([int(msg[3])])]))
             return
 
+        if msg[0] == 'ALERT' and int(msg[1]) in list(self.sameLvlIDs_.keys()):
+            self.broadcast(' '.join([str(self.newNb()), 'CANCELALL', str(self.id_), str(self.myIncNb_)]))
+            self.sameLvlIDs_.clear()
+            self.situation_ = 'normalLife'
+            return
+
     def setOrganizationLeadMsg(self, dirC, msg):
         """
         Dés qu'il y a la bonne quantité d'élément on incante.
         Puis on passe à la situation suivante
         [Gestion Des messages]
         """
+
         pass
 
     def secureElevationSecondLeadMsg(self, dirC, msg):
@@ -729,7 +780,11 @@ class IA:
         # TODO Mettre le bordel dans les incantations des autres
 
         if self.haveGoodAmountOfStones() and self.situation_ == 'normalLife' and self.inventory_[GameObj.Food] > 70:
+            self.countLimit_ = self.limit_
+            self.countItersBeforeCancel = self.itersBeforeCancel
             if self.level_ > 1:
+                self.sameLvlIDs_.clear()
+                self.countLimit_ = self.limit_
                 self.situation_ = "waitForAnswersLead"
                 self.myIncNb_ += 1
             else:
@@ -840,12 +895,12 @@ class IA:
         if self.placeIsReadyToElevLead() is False:
             dPrint(self.debugInv_, "Place is not ready")
             self.removeItemThatShouldntBeThereSecondLead()
-            self.limit_ -= 1
-            if self.limit_ <= 0:
+            self.countLimit_ -= 1
+            if self.countLimit_ <= 0:
                 self.broadcast(' '.join([str(self.newNb()), 'CANCELALL', str(self.id_), str(self.myIncNb_)]))
                 self.situation_ = 'normalLife'
                 self.sameLvlIDs_.clear()
-                self.limit_ = 20  # FIXME
+                self.countLimit_ = self.limit_
             return
 
         if self.level_ > 1:
@@ -861,7 +916,7 @@ class IA:
         """
         dPrint(self.debugInv_, Colors.SMALL + "secureElevationSecondLead" + Colors.ENDC, self.id_, self.leadID)
 
-        # Si un truc pop, on le prend, si un joueur est en trop on dégage tout
+        # Si un truc pop, on le prend, si un joueur est en trop on dégage tout TODO
         # Si c'est fini on revient au cas 1
         pass
 
