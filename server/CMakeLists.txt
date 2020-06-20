@@ -78,4 +78,5 @@ add_executable(zappy_server
         src/commands/sgt_command.c
         src/commands/plv_command.c
         src/commands/pin_command.c
-        include/lib.h)
+        include/lib.h
+        src/sockets/end_valid_client.c)

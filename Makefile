@@ -55,7 +55,7 @@ SRC_SERVER	=	server/src/utils/parameters/get_parameters.c	\
 			server/src/ai_interaction/forward.c	\
 			server/src/ai_interaction/broadcast.c	\
 			server/src/ai_interaction/search_left_broadcast.c	\
-            server/src/ai_interaction/search_right_broadcast.c	\
+			server/src/ai_interaction/search_right_broadcast.c	\
 			server/src/ai_interaction/look.c	\
 			server/src/ai_interaction/inventory.c	\
 			server/src/ai_interaction/connect_nbr.c	\
@@ -71,7 +71,8 @@ SRC_SERVER	=	server/src/utils/parameters/get_parameters.c	\
 			server/src/commands/pbc_command.c	\
 			server/src/commands/sgt_command.c	\
 			server/src/commands/plv_command.c	\
-			server/src/commands/pin_command.c
+			server/src/commands/pin_command.c	\
+			server/src/sockets/end_valid_client.c
 
 SRC_TEST	=	tests/src/bct_command.cpp	\
                         tests/src/close_server.cpp	\
@@ -94,7 +95,7 @@ OBJ_SRC_MAIN	=	$(SRC_MAIN_SERVER:.c=.o)
 
 OBJ_SRC_TEST	=	$(SRC_TEST:.cpp=.o)
 
-CFLAGS	=	-W -Wall -Wextra -I server/include -O3
+CFLAGS	=	-W -Wall -Wextra -I server/include -O3 -std=gnu11
 CPPFLAGS	=	-W -Wall -Wextra -I server/include -I tests/include
 
 all:	$(NAME_SERVER) $(NAME_AI)
