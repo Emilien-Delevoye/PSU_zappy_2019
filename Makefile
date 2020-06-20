@@ -69,7 +69,8 @@ SRC_SERVER	=	server/src/utils/parameters/get_parameters.c	\
 			server/src/commands/pie_command.c	\
 			server/src/commands/pdi_command.c	\
 			server/src/commands/pbc_command.c	\
-			server/src/commands/sgt_command.c
+			server/src/commands/sgt_command.c	\
+			server/src/commands/plv_command.c
 
 SRC_TEST	=	tests/src/bct_command.cpp	\
                         tests/src/close_server.cpp	\
