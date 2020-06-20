@@ -117,7 +117,7 @@ class IA:
         self.around_ = None
         self.currentPos_ = 0
         self.currentDir_ = Command.Forward
-        self.debug_ = False
+        self.debug_ = True
         self.debugInv_ = True
         self.reverse = True if randrange(1, 3) == 1 else False
         self.inventory_ = {GameObj.Food: 10,
@@ -182,7 +182,7 @@ class IA:
         self.places = 1
         self.eggCreated = False
         self.startTime = time.time()
-        self.connectNbr()
+        # self.connectNbr()
 
     """
     EMERGENCY
@@ -982,9 +982,17 @@ class IA:
         pass
 
     def run(self):
-        self.inventory()
-        self.lookAroundNow()
-        self.updateDataFromServ()
-        getattr(self, self.situation_)()
+        # self.inventory()
+        # self.lookAroundNow()
+        # self.updateDataFromServ()
+        # getattr(self, self.situation_)()
+        if randrange(1, 4) == 1:
+            self.forward()
+        if randrange(1, 4) == 1:
+            self.left()
+        if randrange(1, 4) == 1:
+            self.take(GameObj.Food)
+        if randrange(1, 4) == 1:
+            self.right()
 
         return True
