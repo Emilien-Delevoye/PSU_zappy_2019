@@ -92,7 +92,7 @@ OBJ_SRC_MAIN	=	$(SRC_MAIN_SERVER:.c=.o)
 
 OBJ_SRC_TEST	=	$(SRC_TEST:.cpp=.o)
 
-CFLAGS	=	-W -Wall -Wextra -I server/include -Ofast
+CFLAGS	=	-W -Wall -Wextra -I server/include -O3
 CPPFLAGS	=	-W -Wall -Wextra -I server/include -I tests/include
 
 all:	$(NAME_SERVER) $(NAME_AI)
@@ -107,7 +107,7 @@ $(NAME_AI):
 	cp ai/main.py $(NAME_AI)
 
 $(NAME_SERVER):	$(OBJ) $(OBJ_SRC_MAIN)
-	gcc -o $(NAME_SERVER) $(OBJ) $(OBJ_SRC_MAIN) -I server/include
+	gcc -o $(NAME_SERVER) $(OBJ) $(OBJ_SRC_MAIN) -I server/include -O3
 
 clean:
 	rm -f $(OBJ_SRC_TEST) $(OBJ_SRC_MAIN) $(OBJ)
