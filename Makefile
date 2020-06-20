@@ -77,14 +77,16 @@ OBJ_SRC_TEST	=	$(SRC_TEST:.cpp=.o)
 CFLAGS	=	-W -Wall -Wextra -I server/include
 CPPFLAGS	=	-W -Wall -Wextra -I server/include -I tests/include
 
-all:	$(NAME_SERVER)
-	cp ai/main.py $(NAME_AI)
+all:	$(NAME_SERVER) $(NAME_AI)
 
 debug:	CFLAGS += -g
 debug:	all
 
 debugre:	CFLAGS += -g
 debugre:	re
+
+$(NAME_AI):
+	cp ai/main.py $(NAME_AI)
 
 $(NAME_SERVER):	$(OBJ) $(OBJ_SRC_MAIN)
 	gcc -o $(NAME_SERVER) $(OBJ) $(OBJ_SRC_MAIN) -I server/include
