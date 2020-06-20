@@ -1,12 +1,12 @@
 
-from utils import dPrint, Colors
-import numpy as np
-from enum import Enum
-from serverLink import ServerLink, Command
-from termcolor import colored
-from random import randrange
 import itertools
-import collections, functools, operator
+from enum import Enum
+from random import randrange
+
+from termcolor import colored
+
+from serverLink import Command
+from utils import dPrint, Colors
 
 
 # TODO gérer les ejects
@@ -123,7 +123,7 @@ class IA:
         self.currentDir_ = Command.Forward
         self.CSLink_ = CSLink
         self.debug_ = False
-        self.debugInv_ = False
+        self.debugInv_ = True
         self.maxServCommands_ = 9
         self.inventory_ = {GameObj.Food: 10,
                            GameObj.Linemate: 0,
@@ -149,10 +149,14 @@ class IA:
                            Command.Broadcast: "noUpdateNeeded",
                            Command.Set: "updateSet",
                            Command.Incantation: "updateIncantation",
+                           Command.Eject: "noUpdateNeeded"
                            }
         self.maxLineRow = [int(sum([e for e in range(0, i * 2 + 1, 2)][:i]) + ([e for e in range(0, i * 2 + 1, 2)][i] / 2)) for i in range(0, 15, 1)]
 
         dPrint(self.debugInv_, "Random Id: {0}".format(self.id_))
+
+        self.coolDown = 4
+        self.countCoolDown = self.coolDown
 
         # ELEVATION
         self.situation_ = "normalLife"
@@ -229,7 +233,7 @@ class IA:
         msg = self.CSLink_.getServerMsg()
         if 'eject' in msg:
             self.CSLink_.clearServerMsg()
-            pass  # FIXME
+            self.lookAroundNow()
             return True
         return False
 
@@ -293,7 +297,7 @@ class IA:
         """
         Parse Look Around
         """
-        dPrint(self.debug_ or self.debugInv_, Colors.HEADER + "Look Around" + Colors.ENDC, msg, self.around_)
+        dPrint(self.debug_, Colors.HEADER + "Look Around" + Colors.ENDC, msg, self.around_)
         self.around_ = [[links[e] for e in list(filter(lambda x: True if x.replace(' ', '') is not None and x.replace(' ', '') != '' else False, i.split(' ')))] for i in msg.replace('[', '').replace(']', '').split(',')]
         self.currentPos_ = 0
         self.currentDir_ = Command.Forward
@@ -302,7 +306,7 @@ class IA:
         """
         Parse Inventory
         """
-        dPrint(self.debug_ or self.debugInv_, Colors.HEADER + "Update Inventory" + Colors.ENDC, msg, self.inventory_)
+        dPrint(self.debug_, Colors.HEADER + "Update Inventory" + Colors.ENDC, msg, self.inventory_)
         self.inventory_ = {links[v[0]]: int(v[1]) for v in [list(filter(lambda x: True if x != '' and x != ' ' else False, i.split(' '))) for i in msg.replace('[', '').replace(']', '').split(',')]}
 
     def noUpdateNeeded(self, msg, _):
@@ -315,6 +319,12 @@ class IA:
     def waitForPlace(self):
         while not len(self.pendingRqt_) < self.maxServCommands_:
             self.updateDataFromServ()
+
+    def eject(self):
+        self.waitForPlace()
+        self.CSLink_.eject()
+        self.pendingRqt_ += [(Command.Eject, None)]
+        dPrint(self.debugInv_, Colors.BOLD + "Eject " + Colors.ENDC)
 
     def broadcast(self, msg):
         self.waitForPlace()
@@ -463,7 +473,6 @@ class IA:
         if len(poses) != 0:
             self.goTo(poses[0])
             return True
-        # FIXME If the object is not found in scope then turn right and go forward
         self.right()
         r = randrange(1, self.maxServCommands_)
         for i in range(r):
@@ -536,7 +545,6 @@ class IA:
                 return False
         if self.around_[self.currentPos_].count(GameObj.Player) != elevPlayers[self.level_]:
             dPrint(self.debugInv_, colored("MISSING there is " + str(self.around_[self.currentPos_].count(GameObj.Player)) + ' need: ' + str(elevPlayers[self.level_]), "red"))
-            # FIXME eject, mais il faut que les autres reviennent
             return False
         if self.around_[self.currentPos_].count(GameObj.Food) != 0:
             return False
@@ -618,10 +626,6 @@ class IA:
         if msg is None:
             return
 
-        if msg[0] == 'ALERT' and int(msg[1]) == self.leadID:
-            self.situation_ = 'normalLife'
-            self.leadID = -1
-            return
         if msg[0] == 'GO' and int(msg[1]) == self.leadID and int(msg[2]) == self.othIncNb_ and self.id_ in strTolIDs(msg[3]):
             self.elevDir = dirC
             self.situation_ = 'goToIncantationNoLead'
@@ -635,6 +639,10 @@ class IA:
             self.situation_ = 'normalLife'
             self.leadID = -1
             return
+        if msg[0] == 'ALERT' and int(msg[1]) == self.leadID:
+            self.situation_ = 'normalLife'
+            self.leadID = -1
+            return
 
     def goToIncantationNoLeadMsg(self, dirC, msg):
         """
@@ -643,12 +651,6 @@ class IA:
         """
         msg = self.updateComNbs(msg)
         if msg is None:
-            return
-
-        if msg[0] == 'ALERT' and int(msg[1]) == self.leadID:
-            self.elevDir = -1
-            self.leadID = -1
-            self.situation_ = 'normalLife'
             return
 
         if msg[0] == 'UPDATE' and int(msg[1]) == self.leadID and self.id_ == int(msg[2]):
@@ -662,6 +664,12 @@ class IA:
         if msg[0] == 'CANCELALL' and int(msg[1]) == self.leadID and self.othIncNb_ == int(msg[2]):
             self.situation_ = 'normalLife'
             self.leadID = -1
+            return
+
+        if msg[0] == 'ALERT' and int(msg[1]) == self.leadID:
+            self.elevDir = -1
+            self.leadID = -1
+            self.situation_ = 'normalLife'
             return
 
     def waitForInstructionsMsg(self, dirC, msg):
@@ -777,10 +785,12 @@ class IA:
         getattr(self, self.foodStage_[min([va if self.inventory_[GameObj.Food] < va else self.maxFoodStage for va, v in self.foodStage_.items()])])()
         self.getStones()
 
+        self.countCoolDown -= 1
         # TODO Mettre le bordel dans les incantations des autres
 
-        if self.haveGoodAmountOfStones() and self.situation_ == 'normalLife' and self.inventory_[GameObj.Food] > 70:
+        if self.haveGoodAmountOfStones() and self.situation_ == 'normalLife' and self.inventory_[GameObj.Food] > 70 and self.countCoolDown <= 0:
             self.countLimit_ = self.limit_
+            self.countCoolDown = self.coolDown
             self.countItersBeforeCancel = self.itersBeforeCancel
             if self.level_ > 1:
                 self.sameLvlIDs_.clear()
@@ -843,10 +853,8 @@ class IA:
         getattr(self, self.foodStage_[min([va if self.inventory_[GameObj.Food] < va else self.maxFoodStage for va, v in self.foodStage_.items()])])()
 
         dPrint(self.debugInv_, Colors.WARNING + str(len(self.sameLvlIDs_)) + ' ' + str(elevPlayers[self.level_] - 1) + Colors.ENDC)
-        if self.countItersBeforeCancel == self.itersBeforeCancel or (self.itersBeforeCancel - self.countItersBeforeCancel) % 4 == 0:
+        if self.countItersBeforeCancel == self.itersBeforeCancel or (self.itersBeforeCancel - self.countItersBeforeCancel) % 2 == 0:
             self.broadcast(' '.join([str(self.newNb()), 'LEAD', str(self.level_), str(self.id_), str(self.myIncNb_)]))
-        else:
-            dPrint(self.debugInv_, "NOPE ", self.countItersBeforeCancel, " ", self.itersBeforeCancel)
         if len(self.sameLvlIDs_) >= elevPlayers[self.level_] - 1:
             dPrint(self.debugInv_, colored("check", "red"))
             ids = self.idsTohaveEnoughStones()
@@ -899,6 +907,7 @@ class IA:
             if self.countLimit_ <= 0:
                 self.broadcast(' '.join([str(self.newNb()), 'CANCELALL', str(self.id_), str(self.myIncNb_)]))
                 self.situation_ = 'normalLife'
+                self.eject()
                 self.sameLvlIDs_.clear()
                 self.countLimit_ = self.limit_
             return
