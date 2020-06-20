@@ -13,6 +13,6 @@ public class GetInfoCharacter : MonoBehaviour
 
     private void OnMouseDown()
     {
-        Debug.Log("Player");
+        gameScene.GetInfoCharacterSelected(gameObject.GetInstanceID());
     }
 }

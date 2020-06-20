@@ -41,14 +41,29 @@ public class GameScene : MonoBehaviour
     public GameObject endScreen;
     public TextMeshProUGUI winTeamName;
 
-    public GameObject hud;
-    public TextMeshProUGUI numberFood;
-    public TextMeshProUGUI numberLinemate;
-    public TextMeshProUGUI numberDeraumere;
-    public TextMeshProUGUI numberSibur;
-    public TextMeshProUGUI numberMendiane;
-    public TextMeshProUGUI numberPhiras;
-    public TextMeshProUGUI numberThystame;
+    public GameObject hudTile;
+    public TextMeshProUGUI numberFoodHudTile;
+    public TextMeshProUGUI numberLinemateHudTile;
+    public TextMeshProUGUI numberDeraumereHudTile;
+    public TextMeshProUGUI numberSiburHudTile;
+    public TextMeshProUGUI numberMendianeHudTile;
+    public TextMeshProUGUI numberPhirasHudTile;
+    public TextMeshProUGUI numberThystameHudTile;
+    private float timeUpHudTile;
+    private int tileSelectedX = 0;
+    private int tileSelectedY = 0;
+
+    public GameObject hudCharacter;
+    public TextMeshProUGUI numberFoodHudCharacter;
+    public TextMeshProUGUI numberLinemateHudCharacter;
+    public TextMeshProUGUI numberDeraumereHudCharacter;
+    public TextMeshProUGUI numberSiburHudCharacter;
+    public TextMeshProUGUI numberMendianeHudCharacter;
+    public TextMeshProUGUI numberPhirasHudCharacter;
+    public TextMeshProUGUI numberThystameHudCharacter;
+    public TextMeshProUGUI levelHudCharacter;
+    public TextMeshProUGUI teamNameHudCharacter;
+    private float timeUpHudCharacter;
 
     float timeUnit;
 
@@ -85,6 +100,13 @@ public class GameScene : MonoBehaviour
             _mapX = mapX;
             _mapY = mapY;
             _timeUnit = timeUnit;
+            _numberFood = 0;
+            _numberLinemate = 0;
+            _numberDeraumere = 0;
+            _numberSibur = 0;
+            _numberMendiane = 0;
+            _numberPhiras = 0;
+            _numberThystame = 0;
             _animator = _gameObject.gameObject.GetComponent<Animator>();
             _gameObject.transform.position = new Vector3(UnityEngine.Random.Range(posX + 0.2f, posX + 0.8f), 0, UnityEngine.Random.Range(posY + 0.2f, posY + 0.8f));
             if (orientation == 1)
@@ -204,9 +226,30 @@ public class GameScene : MonoBehaviour
             return _posY;
         }
 
-        public GameObject GetGameObject()
+        public int GetGameObjectInstanceID()
         {
-            return _gameObject;
+            return _gameObject.GetInstanceID();
+        }
+
+        public int GetNumber()
+        {
+            return _number;
+        }
+
+        public int GetLevel()
+        {
+            return _level;
+        }
+
+        public string GetTeamName()
+        {
+            return _teamName;
+        }
+
+        public int[] GetInventory()
+        {
+            int[] result = { _numberFood, _numberLinemate, _numberDeraumere, _numberSibur, _numberMendiane, _numberPhiras, _numberThystame};
+            return result;
         }
 
         public void DestroyPlayer()
@@ -218,17 +261,26 @@ public class GameScene : MonoBehaviour
         private Animator _animator;
         private GameObject _shockWave;
         private float _timeBroadcast;
-        private int _number;
         private int _posX;
         private int _posY;
         private int _posToMoveX;
         private int _posToMoveY;
         private int _orientation;
-        private int _level;
-        private string _teamName;
         private int _mapX;
         private int _mapY;
         private float _timeUnit;
+
+        private int _number;
+        private int _level;
+        private string _teamName;
+        private int _numberFood;
+        private int _numberLinemate;
+        private int _numberDeraumere;
+        private int _numberSibur;
+        private int _numberMendiane;
+        private int _numberPhiras;
+        private int _numberThystame;
+
     };
     private Dictionary<int, Character> characters;
 
@@ -603,7 +655,7 @@ public class GameScene : MonoBehaviour
         eggs = new Dictionary<int, Egg>();
         end = false;
 
-        GetTimeUnit(); /// To activate when the command sgt will be up
+        GetTimeUnit();
         SetUpAssetsSize();
         SetUpSizeMap();
         SetUpMap();
@@ -622,6 +674,14 @@ public class GameScene : MonoBehaviour
             }
             characters[kvp.Key].CheckEndBroadcast();
         }
+        if (Time.fixedTime - timeUpHudCharacter >= 5)
+        {
+            hudCharacter.SetActive(false);
+        }
+        if (Time.fixedTime - timeUpHudTile >= 5)
+        {
+            hudTile.SetActive(false);
+        }
 
         if (end == true)
         {
@@ -633,18 +693,6 @@ public class GameScene : MonoBehaviour
         {
             PauseMenu.SetActive(true);
         }
-
-        //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        //RaycastHit hit;
-        //if (Physics.Raycast(ray, out hit))
-        //{
-        //    Debug.Log(hit.transform.name);
-        //    if (hit.transform.name == "Cube")
-        //    {
-                
-        //    }
-        //}
-
     }
 
     public void ReceiveMessageFromServer()
@@ -652,6 +700,9 @@ public class GameScene : MonoBehaviour
         receiveMessage = client.ReceiveMesageFromServer();
         if (tmp == 0)
             receiveMessage = "pnw 0 0 0 2 3 Team1\n";
+
+        //else if (tmp == 200)
+        //    receiveMessage = "pnw 1 0 0 2 1 Team1\n";
         //else if (tmp == 200)
         //    receiveMessage = "pbc 0\n";
         //else if (tmp == 400)
@@ -672,9 +723,6 @@ public class GameScene : MonoBehaviour
         //    receiveMessage = "pdi 0\n";
         //else if (tmp == 600)
         //    receiveMessage = "seg Team1\n";
-
-        else if (tmp == 200)
-            receiveMessage = "ppo 0 1 0 2\n";
         //else if (tmp == 600)
         //    receiveMessage = "pic 5 0 8 0\n";
         //else if (tmp == 800)
@@ -685,8 +733,8 @@ public class GameScene : MonoBehaviour
         //    receiveMessage = "ppo 0 0 14 2\n";
         //else if (tmp == 800)
         //    receiveMessage = "ppo 0 0 0 1\n";
-        //else if (tmp == 1000)
-        //    receiveMessage = "bct 0 0 1 1 1 1 1 1 1\n";
+        else if (tmp == 200)
+            receiveMessage = "bct 0 0 1 1 1 1 1 1 1\n";
         else
             receiveMessage = null;
         ++tmp;
@@ -846,6 +894,8 @@ public class GameScene : MonoBehaviour
 
     public void UpdateContentOfTile()
     {
+        int[] infos;
+
         if (arguments.Length >= 10)
         {
             foreach (Tile tile in map)
@@ -854,6 +904,17 @@ public class GameScene : MonoBehaviour
                 {
                     tile.UpdateTile(int.Parse(arguments[3]), int.Parse(arguments[4]), int.Parse(arguments[5]), int.Parse(arguments[6]),
                         int.Parse(arguments[7]), int.Parse(arguments[8]), int.Parse(arguments[9]));
+                    if (tileSelectedX == int.Parse(arguments[1]) && tileSelectedY == int.Parse(arguments[2]))
+                    {
+                        infos = tile.GetInfoTile();
+                        numberFoodHudTile.text = infos[0].ToString();
+                        numberLinemateHudTile.text = infos[1].ToString();
+                        numberDeraumereHudTile.text = infos[2].ToString();
+                        numberSiburHudTile.text = infos[3].ToString();
+                        numberMendianeHudTile.text = infos[4].ToString();
+                        numberPhirasHudTile.text = infos[5].ToString();
+                        numberThystameHudTile.text = infos[6].ToString();
+                    }
                 }    
             }
         } else
@@ -947,54 +1008,59 @@ public class GameScene : MonoBehaviour
         float diffY = 0f;
         float pourcY = 0f;
 
-        float maxSize;
+        float maxSize = 0f;
 
-        if (mapSizeX <= mapSizeY)
-        {
-            for (int y = 0; y < mapSizeY; y++)
-            {
-                for (int x = 0; x < mapSizeX; x++)
-                {
-                    diffX = x - mapSizeX / 2;
-                    if (diffX < 0)
-                        diffX = -diffX;
-                    pourcX = diffX * 100 / maxDiffX;
-                    pourcX = 100 - pourcX;
-
-                    diffY = y - mapSizeY / 2;
-                    if (diffY < 0)
-                        diffY = -diffY;
-                    pourcY = diffY * 100 / maxDiffY;
-                    pourcY = 100 - pourcY;
-
-                    maxSize = UnityEngine.Random.Range(1f, pourcX / 11 + pourcY / 11);
-                    if (maxSize < 1f)
-                        maxSize = 1f;
-                    client.SendMessageToServer("bct " + x + " " + y + "\n");
-                    plane.transform.localScale = new Vector3(1f, maxSize, 1f);
-                    mapPos.y = -plane.transform.localScale.y / 2;
-                    Instantiate(plane, mapPos, rotation);
-                    SetUpTile(x, y);
-                    mapPos.x += 1f;
-                }
-                mapPos.z += 1f;
-                mapPos.x = startPointZ;
-            }
-        }
-        else
+        //if (mapSizeX <= mapSizeY)
+        //{
+        for (int y = 0; y < mapSizeY; y++)
         {
             for (int x = 0; x < mapSizeX; x++)
             {
-                for (int y = 0; y < mapSizeY; y++)
-                {
-                    Instantiate(plane, mapPos, rotation);
-                    SetUpTile(x, y);
-                    mapPos.z += 1f;
-                }
+                diffX = x - mapSizeX / 2;
+                if (diffX < 0)
+                    diffX = -diffX;
+                pourcX = diffX * 100 / maxDiffX;
+                pourcX = 100 - pourcX;
+
+                diffY = y - mapSizeY / 2;
+                if (diffY < 0)
+                    diffY = -diffY;
+                pourcY = diffY * 100 / maxDiffY;
+                pourcY = 100 - pourcY;
+
+                maxSize = UnityEngine.Random.Range(1f, pourcX / 11 + pourcY / 11);
+                if (maxSize < 1f)
+                    maxSize = 1f;
+                client.SendMessageToServer("bct " + x + " " + y + "\n");
+                plane.transform.localScale = new Vector3(1f, maxSize, 1f);
+                mapPos.y = -plane.transform.localScale.y / 2;
+                Instantiate(plane, mapPos, rotation);
+                SetUpTile(x, y);
                 mapPos.x += 1f;
-                mapPos.z = startPointZ;
             }
+            mapPos.z += 1f;
+            mapPos.x = startPointZ;
         }
+        //}
+        //else
+        //{
+        //    for (int x = 0; x < mapSizeX; x++)
+        //    {
+        //        for (int y = 0; y < mapSizeY; y++)
+        //        {
+        //            if (maxSize < 1f)
+        //                maxSize = 1f;
+        //            client.SendMessageToServer("bct " + x + " " + y + "\n");
+        //            plane.transform.localScale = new Vector3(1f, maxSize, 1f);
+        //            mapPos.y = -plane.transform.localScale.y / 2;
+        //            Instantiate(plane, mapPos, rotation);
+        //            SetUpTile(x, y);
+        //            mapPos.z += 1f;
+        //        }
+        //        mapPos.x += 1f;
+        //        mapPos.z = startPointZ;
+        //    }
+        //}
     }
 
     private void SetUpTile(int x, int y)
@@ -1029,21 +1095,43 @@ public class GameScene : MonoBehaviour
         {
             if (tile.GoodTileSelected(posX, posY))
             {
+                tileSelectedX = posX;
+                tileSelectedY = posY;
+                timeUpHudTile = Time.fixedTime;
                 infos = tile.GetInfoTile();
-                hud.SetActive(true);
-                numberFood.text = infos[0].ToString();
-                numberLinemate.text = infos[1].ToString();
-                numberDeraumere.text = infos[2].ToString();
-                numberSibur.text = infos[3].ToString();
-                numberMendiane.text = infos[4].ToString();
-                numberPhiras.text = infos[5].ToString();
-                numberThystame.text = infos[6].ToString();
+                hudTile.SetActive(true);
+                numberFoodHudTile.text = infos[0].ToString();
+                numberLinemateHudTile.text = infos[1].ToString();
+                numberDeraumereHudTile.text = infos[2].ToString();
+                numberSiburHudTile.text = infos[3].ToString();
+                numberMendianeHudTile.text = infos[4].ToString();
+                numberPhirasHudTile.text = infos[5].ToString();
+                numberThystameHudTile.text = infos[6].ToString();
             }
         }
     }
 
-    public void GetCharacterInfo()
+    public void GetInfoCharacterSelected(int gameObjectInstanceID)
     {
+        int[] infos;
 
+        foreach (KeyValuePair<int, Character> kvp in characters)
+        {
+            if (characters[kvp.Key].GetGameObjectInstanceID() == gameObjectInstanceID)
+            {
+                timeUpHudCharacter = Time.fixedTime;
+                hudCharacter.SetActive(true);
+                levelHudCharacter.text = "Level: " + characters[kvp.Key].GetLevel().ToString();
+                teamNameHudCharacter.text = characters[kvp.Key].GetTeamName();
+                infos = characters[kvp.Key].GetInventory();
+                numberFoodHudCharacter.text = infos[0].ToString();
+                numberLinemateHudCharacter.text = infos[1].ToString();
+                numberDeraumereHudCharacter.text = infos[2].ToString();
+                numberSiburHudCharacter.text = infos[3].ToString();
+                numberMendianeHudCharacter.text = infos[4].ToString();
+                numberPhirasHudCharacter.text = infos[5].ToString();
+                numberThystameHudCharacter.text = infos[6].ToString();
+            }
+        }
     }
 }
