@@ -86,7 +86,7 @@ public class GameScene : MonoBehaviour
 
     public class Character
     {
-        public Character(GameObject gameObject, GameObject shockWave, int number, int posX, int posY, int orientation, int level, string teamName, int mapX, int mapY, float timeUnit)
+        public Character(GameObject gameObject, GameObject shockWave, int number, int posX, int posY, int orientation, int level, string teamName, int mapX, int mapY, float timeUnit, LinkedList<Tile> map)
         {
             _gameObject = gameObject;
             _shockWave = shockWave;
@@ -108,6 +108,7 @@ public class GameScene : MonoBehaviour
             _numberMendiane = 0;
             _numberPhiras = 0;
             _numberThystame = 0;
+            _map = map;
             _animator = _gameObject.gameObject.GetComponent<Animator>();
             _gameObject.transform.position = new Vector3(UnityEngine.Random.Range(posX + 0.2f, posX + 0.8f), 0, UnityEngine.Random.Range(posY + 0.2f, posY + 0.8f));
             if (orientation == 1)
@@ -144,49 +145,48 @@ public class GameScene : MonoBehaviour
             return true;
         }
 
-        public void Move()
+        public void Move() /// Boucle
         {
-            if (_gameObject.transform.position.x - 0.25f >=_posToMoveX && _gameObject.transform.position.x - 0.75 <= _posToMoveX)
+            //if (_posToMoveX > _posX && _posToMoveX >= _mapX - 1 && _posX == 0) /// Gauche de la map TP droite
+            //{
+            //    _gameObject.transform.Translate(-2f * Time.deltaTime * _timeUnit, 0, 0, Space.World);
+            //    if (_gameObject.transform.position.x < 0f)
+            //        _gameObject.transform.position = new Vector3(_mapX, 0, _posY);
+            //} else if (_posToMoveX < _posX && _posToMoveX == 0 && _posX == _mapX - 1) /// Droite de la map TP gauche
+            //{
+            //    _gameObject.transform.Translate(2f * Time.deltaTime * _timeUnit, 0, 0, Space.World);
+            //    if (_gameObject.transform.position.x > _mapX)
+            //        _gameObject.transform.position = new Vector3(0, 0, _posY);
+            //} else if (_posToMoveY > _posY && _posToMoveY == _mapY - 1 && _posY == 0) /// Bas de la map TP haut
+            //{
+            //    _gameObject.transform.Translate(0, 0, -2f * Time.deltaTime * _timeUnit, Space.World);
+            //    if (_gameObject.transform.position.z < 0f)
+            //        _gameObject.transform.position = new Vector3(_posX, 0, _mapY);
+            //} else if (_posToMoveY < _posY && _posToMoveY == 0 && _posY == _mapY - 1) /// Haut de la map TP bas
+            //{
+            //    _gameObject.transform.Translate(0, 0, 2f * Time.deltaTime * _timeUnit, Space.World);
+            //    if (_gameObject.transform.position.z > _mapY)
+            //        _gameObject.transform.position = new Vector3(_posX, 0, 0);
+            //}
+            //else
+            //{
+                if (_posToMoveX > _posX)
+                    _gameObject.transform.Translate(1f * Time.deltaTime, 0, 0, Space.World);
+                if (_posToMoveY > _posY)
+                    _gameObject.transform.Translate(0, 0, 1f * Time.deltaTime, Space.World);
+                if (_posToMoveX < _posX)
+                    _gameObject.transform.Translate(-1f * Time.deltaTime, 0, 0, Space.World);
+                if (_posToMoveY < _posY)
+                    _gameObject.transform.Translate(0, 0, -1f * Time.deltaTime, Space.World);
+            //}
+
+            if (_gameObject.transform.position.x - 0.25f >= _posToMoveX && _gameObject.transform.position.x - 0.75 <= _posToMoveX)
             {
                 _posX = _posToMoveX;
             }
             if (_gameObject.transform.position.z - 0.25f >= _posToMoveY && _gameObject.transform.position.z - 0.75 <= _posToMoveY)
             {
                 _posY = _posToMoveY;
-            }
-
-            if (_posToMoveX > _posX && _posToMoveX == _mapX - 1) /// Gauche de la map TP droite
-            {
-                _gameObject.transform.Translate(-1f * Time.deltaTime * _timeUnit, 0, 0, Space.World);
-                if (_gameObject.transform.position.x < 0f)
-                    _gameObject.transform.position = new Vector3(_mapX, 0, _posY);
-            } else if (_posToMoveX < _posX && _posToMoveX == 0 && _posX == _mapX - 1) /// Droite de la map TP gauche
-            {
-                _gameObject.transform.Translate(1f * Time.deltaTime * _timeUnit, 0, 0, Space.World);
-                if (_gameObject.transform.position.x > _mapX)
-                    _gameObject.transform.position = new Vector3(0, 0, _posY);
-            }
-            else if (_posToMoveY > _posY && _posToMoveY == _mapY - 1) /// Bas de la map TP haut
-            {
-                _gameObject.transform.Translate(0, 0, -1f * Time.deltaTime * _timeUnit, Space.World);
-                if (_gameObject.transform.position.z < 0f)
-                    _gameObject.transform.position = new Vector3(_posX, 0, _mapY);
-            } else if (_posToMoveY < _posY && _posToMoveY == 0 && _posY == _mapY - 1) /// Haut de la map TP bas
-            {
-                _gameObject.transform.Translate(0, 0, 1f * Time.deltaTime * _timeUnit, Space.World);
-                if (_gameObject.transform.position.z > _mapY)
-                    _gameObject.transform.position = new Vector3(_posX, 0, 0);
-            }
-            else
-            {
-                if (_posToMoveX > _posX)
-                    _gameObject.transform.Translate(1f * Time.deltaTime * _timeUnit, 0, 0, Space.World);
-                if (_posToMoveY > _posY)
-                    _gameObject.transform.Translate(0, 0, 1f * Time.deltaTime * _timeUnit, Space.World);
-                if (_posToMoveX < _posX)
-                    _gameObject.transform.Translate(-1f * Time.deltaTime * _timeUnit, 0, 0, Space.World);
-                if (_posToMoveY < _posY)
-                    _gameObject.transform.Translate(0, 0, -1f * Time.deltaTime * _timeUnit, Space.World);
             }
         }
 
@@ -297,7 +297,8 @@ public class GameScene : MonoBehaviour
         private int _numberMendiane;
         private int _numberPhiras;
         private int _numberThystame;
-
+        private LinkedList<Tile> _map;
+        private LinkedList<string> _waitingActions;
     };
     private Dictionary<int, Character> characters;
 
@@ -334,6 +335,8 @@ public class GameScene : MonoBehaviour
             _phirasNumber = numberPhiras;
             _thystameNumber = numberThystame;
 
+            //print("x: " + posX + " y: " + posY + " | Food: " + numberFood + " | Linemate: " + numberLinemate + " | Deraumere: " + numberDeraumere + " | Sibur: " 
+            //    + numberSibur + " | Mendiane: " + numberMendiane + " | phiras: " + numberPhiras + " | thystame: " + numberThystame);
             for (int i = 0; i < numberFood; i++)
             {
                 _spawnPos.x = UnityEngine.Random.Range(mapPos.x - 0.5f, mapPos.x + 0.5f);
@@ -389,6 +392,8 @@ public class GameScene : MonoBehaviour
                 _spawnPos.y = 0.050f;
                _thystameList.AddLast(Instantiate(thystame, _spawnPos, _rotation));
             }
+            //print("x: " + posX + " y: " + posY + " | Food: " + _foodList.Count + " | Linemate: " + _linemateList.Count + " | Deraumere: " + _deraumereList.Count + " | Sibur: "
+            //    + _siburList.Count + " | Mendiane: " + _mendianeList.Count + " | phiras: " + _phirasList.Count + " | thystame: " + _thystameList.Count);
         }
 
         public bool GoodTileSelected(int x, int y)
@@ -400,6 +405,8 @@ public class GameScene : MonoBehaviour
 
         public void UpdateTile(int numberFood, int numberLinemate, int numberDeraumere, int numberSibur, int numberMendiane, int numberPhiras, int numberThystame)
         {
+            int diff = 0;
+
             _foodNumber = numberFood;
             _linemateNumber = numberLinemate;
             _deraumereNumber = numberDeraumere;
@@ -408,7 +415,11 @@ public class GameScene : MonoBehaviour
             _phirasNumber = numberPhiras;
             _thystameNumber = numberThystame;
 
-            int diff = 0;
+            //print("Food: " + numberFood + " | Linemate: " + numberLinemate + " | Deraumere: " + numberDeraumere + " | Sibur: "
+            //     + numberSibur + " | Mendiane: " + numberMendiane + " | phiras: " + numberPhiras + " | thystame: " + numberThystame);
+            //print("Food: " + _foodList.Count + " | Linemate: " + _linemateList.Count + " | Deraumere: " + _deraumereList.Count + " | Sibur: "
+            //    + _siburList.Count + " | Mendiane: " + _mendianeList.Count + " | phiras: " + _phirasList.Count + " | thystame: " + _thystameList.Count);
+
             if (_foodList.Count < numberFood)
             {
                 diff = numberFood - _foodList.Count;
@@ -418,6 +429,7 @@ public class GameScene : MonoBehaviour
                     _spawnPos.z = UnityEngine.Random.Range(_posY, _posY + 1f);
                     _spawnPos.y = 0.1f;
                     _foodList.AddLast(Instantiate(_food, _spawnPos, _rotation));
+                    Debug.Log("Food Created");
                 }
             }
             else if (_foodList.Count > numberFood)
@@ -439,7 +451,8 @@ public class GameScene : MonoBehaviour
                     _spawnPos.x = UnityEngine.Random.Range(_posX, _posX + 1f);
                     _spawnPos.z = UnityEngine.Random.Range(_posY, _posY + 1f);
                     _spawnPos.y = 0.050f;
-                    _foodList.AddLast(Instantiate(_linemate, _spawnPos, _rotation));
+                    _linemateList.AddLast(Instantiate(_linemate, _spawnPos, _rotation));
+                    Debug.Log("Linemate Created");
                 }
             } else if (_linemateList.Count > numberLinemate) 
             {
@@ -460,7 +473,8 @@ public class GameScene : MonoBehaviour
                     _spawnPos.x = UnityEngine.Random.Range(_posX, _posX + 1f);
                     _spawnPos.z = UnityEngine.Random.Range(_posY, _posY + 1f);
                     _spawnPos.y = 0.050f;
-                    _foodList.AddLast(Instantiate(_deraumere, _spawnPos, _rotation));
+                    _deraumereList.AddLast(Instantiate(_deraumere, _spawnPos, _rotation));
+                    print("Deraumere Created");
                 }
             } else if (_deraumereList.Count > numberDeraumere)
             {
@@ -470,7 +484,7 @@ public class GameScene : MonoBehaviour
                 {
                     Destroy(_deraumereList.Last.Value);
                     _deraumereList.RemoveLast();
-                    Debug.Log("Deraumere Deleted");
+                    print("Deraumere Deleted");
                 }
             }
             if (_siburList.Count < numberSibur)
@@ -481,7 +495,8 @@ public class GameScene : MonoBehaviour
                     _spawnPos.x = UnityEngine.Random.Range(_posX, _posX + 1f);
                     _spawnPos.z = UnityEngine.Random.Range(_posY, _posY + 1f);
                     _spawnPos.y = 0.050f;
-                    _foodList.AddLast(Instantiate(_sibur, _spawnPos, _rotation));
+                    _siburList.AddLast(Instantiate(_sibur, _spawnPos, _rotation));
+                    print("Sibur Created");
                 }
             } else if (_siburList.Count > numberSibur)
             {
@@ -491,7 +506,7 @@ public class GameScene : MonoBehaviour
                 {
                     Destroy(_siburList.Last.Value);
                     _siburList.RemoveLast();
-                    Debug.Log("Sibur Deleted");
+                    print("Sibur Deleted");
                 }
             }
             if (_mendianeList.Count < numberMendiane)
@@ -502,7 +517,8 @@ public class GameScene : MonoBehaviour
                     _spawnPos.x = UnityEngine.Random.Range(_posX, _posX + 1f);
                     _spawnPos.z = UnityEngine.Random.Range(_posY, _posY + 1f);
                     _spawnPos.y = 0.050f;
-                    _foodList.AddLast(Instantiate(_mendiane, _spawnPos, _rotation));
+                    _mendianeList.AddLast(Instantiate(_mendiane, _spawnPos, _rotation));
+                    print("Sibur Created");
                 }
             }
             else if (_mendianeList.Count > numberMendiane)
@@ -513,7 +529,7 @@ public class GameScene : MonoBehaviour
                 {
                     Destroy(_mendianeList.Last.Value);
                     _mendianeList.RemoveLast();
-                    Debug.Log("Mendiane Deleted");
+                    print("Sibur Deleted");
                 }
             }
             if (_phirasList.Count < numberPhiras)
@@ -524,7 +540,8 @@ public class GameScene : MonoBehaviour
                     _spawnPos.x = UnityEngine.Random.Range(_posX, _posX + 1f);
                     _spawnPos.z = UnityEngine.Random.Range(_posY, _posY + 1f);
                     _spawnPos.y = 0.050f;
-                    _foodList.AddLast(Instantiate(_phiras, _spawnPos, _rotation));
+                    _phirasList.AddLast(Instantiate(_phiras, _spawnPos, _rotation));
+                    print("Phiras Created");
                 }
             }
             else if (_phirasList.Count > numberPhiras)
@@ -535,7 +552,7 @@ public class GameScene : MonoBehaviour
                 {
                     Destroy(_phirasList.Last.Value);
                     _phirasList.RemoveLast();
-                    Debug.Log("Phiras Deleted");
+                    print("Phiras Deleted");
                 }
             }
             if (_thystameList.Count < numberThystame)
@@ -546,7 +563,8 @@ public class GameScene : MonoBehaviour
                     _spawnPos.x = UnityEngine.Random.Range(_posX, _posX + 1f);
                     _spawnPos.z = UnityEngine.Random.Range(_posY, _posY + 1f);
                     _spawnPos.y = 0.050f;
-                    _foodList.AddLast(Instantiate(_thystame, _spawnPos, _rotation));
+                    _thystameList.AddLast(Instantiate(_thystame, _spawnPos, _rotation));
+                    print("Thystame Created");
                 }
             }
             else if (_thystameList.Count > numberThystame)
@@ -557,7 +575,7 @@ public class GameScene : MonoBehaviour
                 {
                     Destroy(_thystameList.Last.Value);
                     _thystameList.RemoveLast();
-                    Debug.Log("Thystame Deleted");
+                    print("Thystame Deleted");
                 }
             }
         }
@@ -655,8 +673,6 @@ public class GameScene : MonoBehaviour
 
     private bool end;
 
-    static int tmp = 0;
-
     // Start is called before the first frame update
     void Start()
     {
@@ -715,8 +731,8 @@ public class GameScene : MonoBehaviour
     public void ReceiveMessageFromServer()
     {
         receiveMessage = client.ReceiveMesageFromServer();
-        if (tmp == 0)
-            receiveMessage = "pnw 0 0 0 2 1 Team1\n";
+        //if (tmp == 0)
+        //    receiveMessage = "pnw 0 0 0 2 1 Team1\n";
 
         //else if (tmp == 200)
         //    receiveMessage = "pnw 1 0 0 2 1 Team1\n";
@@ -744,19 +760,19 @@ public class GameScene : MonoBehaviour
         //    receiveMessage = "pic 5 0 8 0\n";
         //else if (tmp == 800)
         //    receiveMessage = "seg Team1\n";
-        //else if (tmp == 400)
-        //    receiveMessage = "ppo 0 14 14 3\n";
+        //else if (tmp == 200)
+        //    receiveMessage = "ppo 0 1 0 2\n";
         //else if (tmp == 600)
         //    receiveMessage = "ppo 0 0 14 2\n";
         //else if (tmp == 800)
         //    receiveMessage = "ppo 0 0 0 1\n";
-        else if (tmp == 200)
-            receiveMessage = "pin 0 5 5 5 5 5 5 5\n";
-        else if (tmp == 400)
-            receiveMessage = "plv 0 5\n";
-        else
-            receiveMessage = null;
-        ++tmp;
+        //else if (tmp == 200)
+        //    receiveMessage = "pin 0 5 5 5 5 5 5 5\n";
+        //else if (tmp == 400)
+        //    receiveMessage = "plv 0 5\n";
+        //else
+        //    receiveMessage = null;
+        //++tmp;
 
         if (receiveMessage != null)
         {
@@ -1010,7 +1026,7 @@ public class GameScene : MonoBehaviour
     {
         if (arguments.Length >= 7)
         {
-            characters.Add(int.Parse(arguments[1]), new Character(Instantiate(character), shockWave, int.Parse(arguments[1]), int.Parse(arguments[2]), int.Parse(arguments[3]), int.Parse(arguments[4]), int.Parse(arguments[5]), arguments[6], mapSizeX, mapSizeY, timeUnit));
+            characters.Add(int.Parse(arguments[1]), new Character(Instantiate(character), shockWave, int.Parse(arguments[1]), int.Parse(arguments[2]), int.Parse(arguments[3]), int.Parse(arguments[4]), int.Parse(arguments[5]), arguments[6], mapSizeX, mapSizeY, timeUnit, map));
         } else
         {
             Debug.Log("pnw: Reply missing argument.");
