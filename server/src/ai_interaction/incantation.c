@@ -57,7 +57,7 @@ void incantation_after(data_server_t *data)
         add_to_write_list(cli, "ko\n");
 }
 
-void incantation_before(data_server_t *data, client_t *cli)
+void incantation_before(client_t *cli)
 {
     unsigned int nb_player = 0;
 

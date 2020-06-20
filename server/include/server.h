@@ -168,7 +168,7 @@ void eject(data_server_t *data);
 void fork_cmd(data_server_t *data);
 void take(data_server_t *data);
 void set(data_server_t *data);
-void incantation_before(data_server_t *data, client_t *cli);
+void incantation_before(client_t *cli);
 void incantation_after(data_server_t *data);
 
 #endif //SERVER_SERVER_H

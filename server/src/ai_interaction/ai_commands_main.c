@@ -34,7 +34,7 @@ void read_new_cmd(data_server_t *data, client_t *cl, struct timeval cu_time)
             valid_cmd = true;
             cmd_nb = a;
             if (cmd_nb == 11)
-                incantation_before(data, cl);
+                incantation_before(cl);
             break;
         }
     }
