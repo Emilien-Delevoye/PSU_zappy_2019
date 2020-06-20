@@ -3,7 +3,7 @@ __pycache__
 local_tmp
 zappy_server
 *.o
-.idea
+.vscode
 cmake-build-debug
 /vgcore.*
 /tests/src/main.gcno
