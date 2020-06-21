@@ -109,6 +109,7 @@ typedef struct list_egg_s {
     int egg_id;
     struct timeval tv;
     unsigned short team_id;
+    int coord[2];
     struct list_egg_s *next;
 } list_egg_t;
 
@@ -173,7 +174,7 @@ void forward(data_server_t *data);
 void right(data_server_t *data);
 void left(data_server_t *data);
 void broadcast(data_server_t *data);
-void spawn_player(data_server_t *data, client_t *cli);
+void spawn_player(data_server_t *data, client_t *cli, const int c[2]);
 void inventory(data_server_t *data);
 void look(data_server_t *data);
 void connect_nbr(data_server_t *data);
@@ -189,7 +190,8 @@ void update_food(data_server_t *data);
 void create_egg(data_server_t *data, client_t *cli);
 int init_id(void);
 void update_egg(data_server_t *data);
-void egg_to_player(data_server_t *data, char t_nb[62], client_t *cli);
+void egg_to_player(data_server_t *data, client_t *cli);
+void calc_food_time(data_server_t *d, struct timeval tv, client_t *cli);
 
 #define get_direction1(c, o) \
     (o <= 2 ? (o == 1 ? c->top : c->right) : (o == 3 ? c->bottom : c->left))

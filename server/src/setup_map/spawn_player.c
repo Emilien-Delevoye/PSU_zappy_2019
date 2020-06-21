@@ -36,14 +36,15 @@ static void add_to_tile(map_t *tile, client_t *cli)
     cli->drone.orientation = (rand() % 4) + 1;
 }
 
-void spawn_player(data_server_t *data, client_t *cli)
+void spawn_player(data_server_t *data, client_t *cli, const int c[2])
 {
-    unsigned int coord[2];
     map_t *obj_tile = data->bottom_left;
+    param_t param = data->params;
+    unsigned int coord[2];
 
     if (!obj_tile)
         return;
-    if (!data->params.width || !data->params.height) {
+    if (!param.width || !param.height || (c[0] != -1 && c[1] != -1)) {
         coord[WIDTH] = 0;
         coord[HEIGHT] = 0;
     } else {

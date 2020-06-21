@@ -7,7 +7,7 @@
 
 #include "server.h"
 
-static void calc_food_time(data_server_t *d, struct timeval tv, client_t *cli)
+void calc_food_time(data_server_t *d, struct timeval tv, client_t *cli)
 {
     double time = (double)126 / d->params.freq;
     int seconds = (int)time;
@@ -23,11 +23,11 @@ static void calc_food_time(data_server_t *d, struct timeval tv, client_t *cli)
 
 void end_client_validation(data_server_t *data, client_t *cli, char t_nb[62])
 {
+    int c[2] = {-1, -1};
+
     add_to_write_list(cli, t_nb);
-    if (cli->to_close == true)
-        return;
     new_client_to_ww_list(cli, &data->cli_wait);
-    spawn_player(data, cli);
+    spawn_player(data, cli, c);
     calc_food_time(data, data->tv, cli);
 }
 
