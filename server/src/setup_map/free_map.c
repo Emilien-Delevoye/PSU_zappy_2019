@@ -16,6 +16,10 @@ void free_team_names(data_server_t data)
         free(data.params.team_names[a]);
     if (data.params.r_cli)
         free(data.params.r_cli);
+    if (data.params.egg_r_c)
+        free(data.params.egg_r_c);
+    if (data.params.win_cli)
+        free(data.params.win_cli);
     free(data.params.team_names);
 }
 

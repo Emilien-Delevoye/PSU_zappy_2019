@@ -85,6 +85,8 @@ add_executable(server_tests
         ../server/src/utils/egg/create_egg.c
         ../server/src/utils/egg/update_egg.c
         ../server/src/utils/egg/egg_to_player.c
+        ../server/src/commands/enw_command.c
+        ../server/src/commands/eht_command.c
         include/tests.h
         src/main.cpp
         src/get_parameters.cpp
