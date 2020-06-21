@@ -89,7 +89,9 @@ public class GameScene : MonoBehaviour
     {
         public Character(GameObject gameObject, GameObject shockWave, int number, int posX, int posY, int orientation, int level, string teamName, int mapX, int mapY, float timeUnit, LinkedList<Tile> map,
             int tileSelectedX, int tileSelectedY, TextMeshProUGUI numberFoodHudTite, TextMeshProUGUI numberLinemateHudTite, TextMeshProUGUI numberDeraumereHudTite, TextMeshProUGUI numberSiburHudTite,
-            TextMeshProUGUI numberMendianeHudTite, TextMeshProUGUI numberPhirasHudTite, TextMeshProUGUI numberThystameHudTite)
+            TextMeshProUGUI numberMendianeHudTite, TextMeshProUGUI numberPhirasHudTite, TextMeshProUGUI numberThystameHudTite, int characterSelected, TextMeshProUGUI numberFoodHudCharacter, TextMeshProUGUI numberLinemateHudCharacter,
+            TextMeshProUGUI numberDeraumereHudCharacter, TextMeshProUGUI numberSiburHudCharacter, TextMeshProUGUI numberMendianeHudCharacter, TextMeshProUGUI numberPhirasHudCharacter, TextMeshProUGUI numberThystameHudCharacter,
+            TextMeshProUGUI levelHudCharacter, TextMeshProUGUI teamNameHudCharacter)
         {
             _gameObject = gameObject;
             _shockWave = shockWave;
@@ -119,10 +121,20 @@ public class GameScene : MonoBehaviour
             _numberMendianeHudTile = numberMendianeHudTite;
             _numberPhirasHudTile = numberPhirasHudTite;
             _numberThystameHudTile = numberThystameHudTite;
-            _waitingActions = new LinkedList<string>();
-            _actionInProgress = false;
             _tileSelectedX = tileSelectedX;
             _tileSelectedY = tileSelectedY;
+            _numberFoodHudCharacter = numberFoodHudCharacter;
+            _numberLinemateHudCharacter = numberLinemateHudCharacter;
+            _numberDeraumereHudCharacter = numberDeraumereHudCharacter;
+            _numberSiburHudCharacter = numberSiburHudCharacter;
+            _numberMendianeHudCharacter = numberMendianeHudCharacter;
+            _numberPhirasHudCharacter = numberPhirasHudCharacter;
+            _numberThystameHudCharacter = numberThystameHudCharacter;
+            _teamNameHudCharacter = teamNameHudCharacter;
+            _levelHudCharacter = levelHudCharacter;
+            _characterSelected = characterSelected;
+            _waitingActions = new LinkedList<string>();
+            _actionInProgress = false;
             _animator = _gameObject.gameObject.GetComponent<Animator>();
             _gameObject.transform.position = new Vector3(UnityEngine.Random.Range(posX + 0.2f, posX + 0.8f), 0, UnityEngine.Random.Range(posY + 0.2f, posY + 0.8f));
             if (orientation == 1)
@@ -258,7 +270,6 @@ public class GameScene : MonoBehaviour
         public void Update() /// Boucle
         {
             string[] args;
-            int[] infos;
 
             //Debug.Log(_waitingActions.Count);
             if (_waitingActions.Count > 0 && _actionInProgress == false)
@@ -271,27 +282,12 @@ public class GameScene : MonoBehaviour
                 {
                     SetPointToMove(int.Parse(args[2]), int.Parse(args[3]));
                     SetOrientation(int.Parse(args[4]));
-                } else if (args[1] == "bct")
+                } else if (args[0] == "bct")
                 {
-                    foreach (Tile tile in _map)
-                    {
-                        if (tile.GoodTileSelected(int.Parse(args[2]), int.Parse(args[3])))
-                        {
-                            tile.UpdateTile(int.Parse(args[4]), int.Parse(args[5]), int.Parse(args[6]), int.Parse(args[7]),
-                                int.Parse(args[8]), int.Parse(args[9]), int.Parse(args[10]));
-                            if (_tileSelectedX == int.Parse(args[2]) && _tileSelectedY == int.Parse(args[3]))
-                            {
-                                infos = tile.GetInfoTile();
-                                _numberFoodHudTile.text = infos[0].ToString();
-                                _numberLinemateHudTile.text = infos[1].ToString();
-                                _numberDeraumereHudTile.text = infos[2].ToString();
-                                _numberSiburHudTile.text = infos[3].ToString();
-                                _numberMendianeHudTile.text = infos[4].ToString();
-                                _numberPhirasHudTile.text = infos[5].ToString();
-                                _numberThystameHudTile.text = infos[6].ToString();
-                            }
-                        }
-                    }
+                    UpdateTile(args);
+                } else if (args[0] == "pin")
+                {
+                    UpdatePlayerInventory(args);
                 }
                 Array.Clear(args, 0, args.Length);
             }
@@ -301,6 +297,54 @@ public class GameScene : MonoBehaviour
             {
                 Move();
             }
+        }
+
+        private void UpdatePlayerInventory(string[] args)
+        {
+            int[] inventory = {int.Parse(args[2]), int.Parse(args[3]), int.Parse(args[4]), int.Parse(args[5]),
+                int.Parse(args[6]), int.Parse(args[7]), int.Parse(args[8])};
+            SetInventory(inventory);
+
+            if (_gameObject.GetInstanceID() == _characterSelected)
+            {
+                _teamNameHudCharacter.text = GetTeamName();
+                _numberFoodHudCharacter.text = inventory[0].ToString();
+                _numberLinemateHudCharacter.text = inventory[1].ToString();
+                _numberDeraumereHudCharacter.text = inventory[2].ToString();
+                _numberSiburHudCharacter.text = inventory[3].ToString();
+                _numberMendianeHudCharacter.text = inventory[4].ToString();
+                _numberPhirasHudCharacter.text = inventory[5].ToString();
+                _numberThystameHudCharacter.text = inventory[6].ToString();
+            }
+        }
+
+        private void UpdateTile(string[] args)
+        {
+            int[] infos;
+            foreach (Tile tile in _map)
+            {
+                if (tile.GoodTileSelected(int.Parse(args[2]), int.Parse(args[3])))
+                {
+                    tile.UpdateTile(int.Parse(args[4]), int.Parse(args[5]), int.Parse(args[6]), int.Parse(args[7]),
+                        int.Parse(args[8]), int.Parse(args[9]), int.Parse(args[10]));
+                    if (_tileSelectedX == int.Parse(args[2]) && _tileSelectedY == int.Parse(args[3]))
+                    {
+                        infos = tile.GetInfoTile();
+                        _numberFoodHudTile.text = infos[0].ToString();
+                        _numberLinemateHudTile.text = infos[1].ToString();
+                        _numberDeraumereHudTile.text = infos[2].ToString();
+                        _numberSiburHudTile.text = infos[3].ToString();
+                        _numberMendianeHudTile.text = infos[4].ToString();
+                        _numberPhirasHudTile.text = infos[5].ToString();
+                        _numberThystameHudTile.text = infos[6].ToString();
+                    }
+                }
+            }
+        }
+
+        public void UpdateCharacterSelected(int characterSelected)
+        {
+            _characterSelected = characterSelected;
         }
 
         public void UpdateTileSelected(int posX, int posY)
@@ -428,6 +472,18 @@ public class GameScene : MonoBehaviour
         private TextMeshProUGUI _numberThystameHudTile;
         private int _tileSelectedX;
         private int _tileSelectedY;
+
+        private TextMeshProUGUI _numberFoodHudCharacter;
+        private TextMeshProUGUI _numberLinemateHudCharacter;
+        private TextMeshProUGUI _numberDeraumereHudCharacter;
+        private TextMeshProUGUI _numberSiburHudCharacter;
+        private TextMeshProUGUI _numberMendianeHudCharacter;
+        private TextMeshProUGUI _numberPhirasHudCharacter;
+        private TextMeshProUGUI _numberThystameHudCharacter;
+        private TextMeshProUGUI _levelHudCharacter;
+        private TextMeshProUGUI _teamNameHudCharacter;
+
+        private int _characterSelected;
 
         private LinkedList<Tile> _map;
         private LinkedList<string> _waitingActions;
@@ -837,11 +893,11 @@ public class GameScene : MonoBehaviour
             characters[kvp.Key].Update();
             characters[kvp.Key].CheckEndBroadcast();
         }
-        if (Time.fixedTime - timeUpHudCharacter >= 5)
+        if (Time.fixedTime - timeUpHudCharacter >= 20)
         {
             hudCharacter.SetActive(false);
         }
-        if (Time.fixedTime - timeUpHudTile >= 5)
+        if (Time.fixedTime - timeUpHudTile >= 20)
         {
             hudTile.SetActive(false);
         }
@@ -864,49 +920,6 @@ public class GameScene : MonoBehaviour
     public void ReceiveMessageFromServer()
     {
         receiveMessage = client.ReceiveMesageFromServer();
-        //if (tmp == 0)
-        //    receiveMessage = "pnw 0 0 0 2 1 Team1\n";
-
-        //else if (tmp == 200)
-        //    receiveMessage = "pnw 1 0 0 2 1 Team1\n";
-        //else if (tmp == 200)
-        //    receiveMessage = "pbc 0\n";
-        //else if (tmp == 400)
-        //    receiveMessage = "pnw 1 1 1 2 3 Team1\n";
-        //else if (tmp == 600)
-        //    receiveMessage = "pbc 1\n";
-        //else if (tmp == 800)
-        //    receiveMessage = "pbc 0\n";
-        //else if (tmp == 200)
-        //    receiveMessage = "enw 1 5 5\n";
-        //else if (tmp == 400)
-        //    receiveMessage = "eht 1\n";
-        //else if (tmp == 500)
-        //    receiveMessage = "pic 5 5 8 0\n";
-        //else if (tmp == 400)
-        //    receiveMessage = "pie 0 0 S\n";
-        //else if (tmp == 800)
-        //    receiveMessage = "pdi 0\n";
-        //else if (tmp == 600)
-        //    receiveMessage = "seg Team1\n";
-        //else if (tmp == 600)
-        //    receiveMessage = "pic 5 0 8 0\n";
-        //else if (tmp == 800)
-        //    receiveMessage = "seg Team1\n";
-        //else if (tmp == 200)
-        //    receiveMessage = "ppo 0 1 0 2\n";
-        //else if (tmp == 600)
-        //    receiveMessage = "ppo 0 0 14 2\n";
-        //else if (tmp == 800)
-        //    receiveMessage = "ppo 0 0 0 1\n";
-        //else if (tmp == 200)
-        //    receiveMessage = "pin 0 5 5 5 5 5 5 5\n";
-        //else if (tmp == 400)
-        //    receiveMessage = "plv 0 5\n";
-        //else
-        //    receiveMessage = null;
-        //++tmp;
-
         if (receiveMessage != null)
         {
             Array.Clear(arguments, 0, arguments.Length);
@@ -932,42 +945,44 @@ public class GameScene : MonoBehaviour
             else if (arguments[0] == "pbc")
                 StartBroadcast();
             else if (arguments[0] == "plv")
-                SetLevelPlayer();
+                SetLevelPlayer(receiveMessage);
             else if (arguments[0] == "pin")
-                SetInventoryPlayer();
+                SetInventoryPlayer(receiveMessage);
         }
     }
 
-    public void SetInventoryPlayer()
+    public void SetInventoryPlayer(string receiveMessage)
     {
         int[] inventory;
         int rank = 0;
 
         if (arguments.Length >= 9)
-        {
+        { 
             rank = int.Parse(arguments[1]);
-            inventory = new int[] {int.Parse(arguments[2]), int.Parse(arguments[3]), int.Parse(arguments[4]), int.Parse(arguments[5]),
-                int.Parse(arguments[6]), int.Parse(arguments[7]), int.Parse(arguments[8])};
-            characters[rank].SetInventory(inventory);
-            if (characters[rank].GetGameObjectInstanceID() == characterSelected)
-            {
-                teamNameHudCharacter.text = characters[rank].GetTeamName();
-                inventory = characters[rank].GetInventory();
-                numberFoodHudCharacter.text = inventory[0].ToString();
-                numberLinemateHudCharacter.text = inventory[1].ToString();
-                numberDeraumereHudCharacter.text = inventory[2].ToString();
-                numberSiburHudCharacter.text = inventory[3].ToString();
-                numberMendianeHudCharacter.text = inventory[4].ToString();
-                numberPhirasHudCharacter.text = inventory[5].ToString();
-                numberThystameHudCharacter.text = inventory[6].ToString();
-            }
+            characters[rank].AddNewAction(receiveMessage);
+
+            //inventory = new int[] {int.Parse(arguments[2]), int.Parse(arguments[3]), int.Parse(arguments[4]), int.Parse(arguments[5]),
+            //    int.Parse(arguments[6]), int.Parse(arguments[7]), int.Parse(arguments[8])};
+            //characters[rank].SetInventory(inventory);
+            //if (characters[rank].GetGameObjectInstanceID() == characterSelected)
+            //{
+            //    teamNameHudCharacter.text = characters[rank].GetTeamName();
+            //    inventory = characters[rank].GetInventory();
+            //    numberFoodHudCharacter.text = inventory[0].ToString();
+            //    numberLinemateHudCharacter.text = inventory[1].ToString();
+            //    numberDeraumereHudCharacter.text = inventory[2].ToString();
+            //    numberSiburHudCharacter.text = inventory[3].ToString();
+            //    numberMendianeHudCharacter.text = inventory[4].ToString();
+            //    numberPhirasHudCharacter.text = inventory[5].ToString();
+            //    numberThystameHudCharacter.text = inventory[6].ToString();
+            //}
         } else
         {
             Debug.Log("pin: Reply missing argument.");
         }
     }
 
-    public void SetLevelPlayer()
+    public void SetLevelPlayer(string receiveMessage)
     {
         int rank = 0;
 
@@ -1170,7 +1185,8 @@ public class GameScene : MonoBehaviour
         {
             characters.Add(int.Parse(arguments[1]), new Character(Instantiate(character), shockWave, int.Parse(arguments[1]), int.Parse(arguments[2]), int.Parse(arguments[3]), int.Parse(arguments[4]), int.Parse(arguments[5]),
                 arguments[6], mapSizeX, mapSizeY, timeUnit, map, tileSelectedX, tileSelectedY, numberFoodHudTile, numberLinemateHudTile, numberDeraumereHudTile, numberSiburHudTile, numberMendianeHudTile, numberPhirasHudTile,
-                numberThystameHudTile));
+                numberThystameHudTile, characterSelected, numberFoodHudCharacter, numberLinemateHudCharacter, numberDeraumereHudCharacter, numberSiburHudCharacter, numberMendianeHudCharacter, numberPhirasHudCharacter,
+                numberThystameHudCharacter, levelHudCharacter, teamNameHudCharacter));
         } else
         {
             Debug.Log("pnw: Reply missing argument.");
@@ -1354,6 +1370,10 @@ public class GameScene : MonoBehaviour
             if (characters[kvp.Key].GetGameObjectInstanceID() == gameObjectInstanceID)
             {
                 characterSelected = gameObjectInstanceID;
+                foreach (KeyValuePair<int, Character> chara in characters)
+                {
+                    characters[chara.Key].UpdateCharacterSelected(characterSelected);
+                }
                 timeUpHudCharacter = Time.fixedTime;
                 hudCharacter.SetActive(true);
                 levelHudCharacter.text = "Level: " + characters[kvp.Key].GetLevel().ToString();
