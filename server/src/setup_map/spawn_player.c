@@ -57,8 +57,8 @@ void spawn_player(data_server_t *data, client_t *cli, const int c[2])
     if (!obj_tile)
         return;
     if (c[0] != -1 && c[1] != -1) {
-        coord[WIDTH] = (c[0] < 0) ? 0 : c[0];
-        coord[HEIGHT] = (c[1] < 0) ? 0 : c[1];
+        coord[HEIGHT] = (c[0] < 0) ? 0 : c[0];
+        coord[WIDTH] = (c[1] < 0) ? 0 : c[1];
     } else {
         coord[WIDTH] = rand() % data->params.width;
         coord[HEIGHT] = rand() % data->params.height;
