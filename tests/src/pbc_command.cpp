@@ -137,6 +137,8 @@ TEST(ppo_command, classic_test)
     cli.drone.id = 3;
     cli.drone.orientation = 3;
     ppo_command(&cli, &data);
+    cli.drone.orientation = 3 + 4;
+    ppo_command(&cli, &data);
     EXPECT_EQ(std::string(data.l_graphical.first->list_msg->to_write),
         "ppo 3 0 0 4\n");
 }
