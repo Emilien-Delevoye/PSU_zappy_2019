@@ -12,9 +12,11 @@ void ppo_command(client_t *cli, data_server_t *data)
     int n = cli->drone.id;
     unsigned int x = cli->drone.tile->coord[0];
     unsigned int y = cli->drone.tile->coord[1];
-    unsigned int o = cli->drone.orientation;
+    unsigned int o = cli->drone.orientation + 3;
     char str[53] = {0};
 
-    sprintf(str, "ppo %d %d %d %d\n", n, y, x, o);
+    if (o > 4)
+        o -= 4;
+    sprintf(str, "ppo %d %d %d %d\n", n, x, y, o);
     add_to_write_list(data->l_graphical.first, str);
 }

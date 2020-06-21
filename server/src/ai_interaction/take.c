@@ -39,6 +39,19 @@ void spawn_random_food(data_server_t *data, int value, client_t *cli)
     }
 }
 
+map_t *get_good_tile(map_t *cur, data_server_t *data)
+{
+    unsigned int x = cur->coord[0];
+    unsigned int y = cur->coord[1];
+
+    printf("%d|%d\n", cur->coord[0], cur->coord[1]);
+    cur = data->bottom_left;
+    for (unsigned int i = 0; i < x; ++i, cur = cur->right);
+    for (unsigned int i = 0; i < y; ++i, cur = cur->top);
+    printf("%d|%d\n", cur->coord[0], cur->coord[1]);
+    return cur;
+}
+
 void take(data_server_t *data)
 {
     char arg[30] = {0};
