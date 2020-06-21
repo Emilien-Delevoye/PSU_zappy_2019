@@ -30,11 +30,14 @@ void bct_command(__attribute__((unused))client_t *cli,
 {
     map_t *cur = data->bottom_left;
 
-    if (!arg[1] || !arg[2])
+    if (!arg || !arg[1] || !arg[2])
         return;
     for (int i = 0; i < atoi(arg[2]); ++i)
         cur = cur->right;
     for (int i = 0; i < atoi(arg[1]); ++i)
         cur = cur->top;
     send_bct_info(data, arg, cur, cli);
+    for (int a = 0; arg[a]; ++a)
+        free(arg[a]);
+    free(arg);
 }

@@ -5,12 +5,12 @@
 ** Created by emilien
 */
 
+#include "commands/commands.h"
 #include "server.h"
 
 void update_egg(data_server_t *d)
 {
     list_egg_t *c = d->egg_waiting;
-
     if (!c)
         return;
     if (!((d->tv.tv_sec == c->tv.tv_sec && d->tv.tv_usec > c->tv.tv_sec) ||
@@ -19,6 +19,7 @@ void update_egg(data_server_t *d)
     d->egg_waiting = c->next;
     c->next = NULL;
     ++d->params.egg_r_c[c->team_id];
+    eht_command(c->egg_id, d);
     if (!d->hatch_eggs) {
         d->hatch_eggs = c;
         return;

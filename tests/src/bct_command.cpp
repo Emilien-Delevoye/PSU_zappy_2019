@@ -28,7 +28,7 @@ TEST(bct_command, other_wrong_arg)
 
 TEST(bct_command, good_arg)
 {
-    char *arg[4] = {(char *)"useless", (char *)"1", (char *)"2", NULL};
+    char **arg = my_str_to_word_array((char *)"useless 1 2");
     data_server_t data;
 
     memset(&data, 0, sizeof(data_server_t));

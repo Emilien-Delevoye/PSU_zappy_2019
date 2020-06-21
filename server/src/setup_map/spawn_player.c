@@ -36,20 +36,9 @@ static void add_to_tile(map_t *tile, client_t *cli)
     cli->drone.orientation = (rand() % 4) + 1;
 }
 
-void spawn_player(data_server_t *data, client_t *cli, const int c[2])
+void spawn_player_end(data_server_t *data, client_t *cli, map_t *obj_tile,
+    const unsigned int *coord)
 {
-    map_t *obj_tile = data->bottom_left;
-    param_t param = data->params;
-    unsigned int coord[2];
-    if (!obj_tile)
-        return;
-    if (!param.width || !param.height || (c[0] != -1 && c[1] != -1)) {
-        coord[WIDTH] = 0;
-        coord[HEIGHT] = 0;
-    } else {
-        coord[WIDTH] = rand() % data->params.width;
-        coord[HEIGHT] = rand() % data->params.height;
-    }
     cli->drone.inventory[FOOD] = 9;
     while (obj_tile->coord[WIDTH] != coord[WIDTH])
         obj_tile = obj_tile->right;
@@ -58,4 +47,21 @@ void spawn_player(data_server_t *data, client_t *cli, const int c[2])
     add_to_tile(obj_tile, cli);
     pnw_command(cli, data);
     pin_command(cli, data);
+}
+
+void spawn_player(data_server_t *data, client_t *cli, const int c[2])
+{
+    map_t *obj_tile = data->bottom_left;
+    unsigned int coord[2];
+
+    if (!obj_tile)
+        return;
+    if (c[0] != -1 && c[1] != -1) {
+        coord[HEIGHT] = (c[0] < 0) ? 0 : c[0];
+        coord[WIDTH] = (c[1] < 0) ? 0 : c[1];
+    } else {
+        coord[WIDTH] = rand() % data->params.width;
+        coord[HEIGHT] = rand() % data->params.height;
+    }
+    spawn_player_end(data, cli, obj_tile, coord);
 }

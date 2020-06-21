@@ -50,6 +50,7 @@ void search_tile(data_server_t *data, client_t *client, int x, int y)
     } else {
         search_left(client, str, x, y);
     }
+    free(str);
 }
 
 int get_fastest_way(data_server_t *data, client_t *tmp, int i)
