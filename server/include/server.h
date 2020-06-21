@@ -104,6 +104,13 @@ typedef struct param_s {
     bool valid_params;
 } param_t;
 
+typedef struct list_egg_s {
+    int egg_id;
+    struct timeval tv;
+    unsigned short team_id;
+    struct list_egg_s *next;
+} list_egg_t;
+
 typedef struct data_server_s {
     //Server settings
     param_t params;
@@ -174,6 +181,7 @@ void incantation_after(data_server_t *data);
 void move_to_other_tile(map_t *dest, tile_players_t *cu_l);
 void end_client_validation(data_server_t *data, client_t *cli, char t_nb[62]);
 void update_food(data_server_t *data);
+void create_egg(data_server_t *data, client_t *cli);
 int init_id(void);
 
 #define get_direction1(c, o) \
