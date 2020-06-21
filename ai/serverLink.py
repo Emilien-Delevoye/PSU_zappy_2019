@@ -66,9 +66,10 @@ class ServerLink:
                         writable[0].send(bytes(tmp2))
                         self.buffers["write"] = self.buffers["write"][len(tmp2):]
         except:
+            self.activeConnection = False
             self.thread_running = False
-            print("Disconnected.", flush=True)
             exit(0)
+            pass
 
     def connect(self):
         self.socket.connect((self.hostname, self.port))
