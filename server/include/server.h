@@ -148,7 +148,7 @@ struct cmd_ai_s {
     int duration;
 };
 
-#define READ_SIZE 2048
+#define READ_SIZE 100000
 
 bool add_to_client(client_t *, char *);
 bool select_fd(data_server_t *);
