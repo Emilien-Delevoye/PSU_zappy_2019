@@ -43,7 +43,7 @@ typedef struct map_s {
     struct map_s *top;
     struct map_s *bottom;
     tile_players_t *list_players;
-    unsigned int items[7];
+    unsigned int items[100];
 } map_t;
 
 typedef struct write_cli_s {
