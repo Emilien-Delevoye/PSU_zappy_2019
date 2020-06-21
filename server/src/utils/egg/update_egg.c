@@ -19,6 +19,10 @@ void update_egg(data_server_t *data)
         return;
     data->egg_waiting = cur->next;
     cur->next = NULL;
+    if (!data->hatch_eggs) {
+        data->hatch_eggs = cur;
+        return;
+    }
     for (list_egg_t *tmp = data->hatch_eggs; tmp; tmp = tmp->next) {
         if (!tmp->next) {
             tmp->next = cur;
