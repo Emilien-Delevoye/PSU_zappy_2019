@@ -49,7 +49,7 @@ def main():
 
 
 if __name__ == "__main__":
-    # try: FIXME
-    main()
-    # except:
-      #  exit(84)
+    try:
+        main()
+    except:
+        exit(84)

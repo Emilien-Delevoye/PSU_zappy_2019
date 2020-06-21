@@ -617,12 +617,15 @@ class IA:
     """ MANAGE RECEIVED MESSAGES DEPENGING OF SITUATION """
 
     def updateComNbs(self, msg):
+        save = msg
         try:
             msg = msg.split(' ')
             if int(msg[0]) in self.comNbs or msg[1] != self.teamName_:
                 return None
             self.comNbs.append(int(msg[0]))
         except:
+            if randrange(1, 7) == 1:
+                self.broadcast(save)
             return None
         if msg[2] == 'GET_INFO':
             self.broadcast(' '.join([str(self.newNb()), 'NEW_INFO', msg[3], str(self.id_), '-'.join([str(i) for i in self.comNbs])]))
