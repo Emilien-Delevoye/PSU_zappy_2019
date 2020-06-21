@@ -13,6 +13,7 @@
 
 void write_for_broadcast(client_t *client, char *text, int tile)
 {
+    printf("%s\n", text);
     char str[13 + strlen(text)];
     int tile_tmp;
 
@@ -29,12 +30,12 @@ void write_for_broadcast(client_t *client, char *text, int tile)
 
 char *get_broadcast_arg(char *str)
 {
-    char *tmp = malloc(sizeof(char) * strlen(str) - 9 + 1);
+    char *tmp = malloc(sizeof(char) * strlen(str) - 9);
 
-    memset(tmp, 0, sizeof(char) * strlen(str) - 9 + 1);
+    memset(tmp, 0, sizeof(char) * strlen(str) - 9);
     for (int i = 9; str[i]; ++i) {
         if (i != 9)
-            tmp[i - 9] = str[i];
+            tmp[i - 10] = str[i];
     }
     return tmp;
 }
@@ -42,6 +43,7 @@ char *get_broadcast_arg(char *str)
 void search_tile(data_server_t *data, client_t *client, int x, int y)
 {
     char *str = get_broadcast_arg(data->cli_work->cmd_str);
+    printf("%s\n", str);
 
     if (x > 0) {
         search_right(client, str, x, y);
