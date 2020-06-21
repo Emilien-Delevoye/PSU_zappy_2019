@@ -7,26 +7,25 @@
 
 #include "server.h"
 
-void update_egg(data_server_t *data)
+void update_egg(data_server_t *d)
 {
-    list_egg_t *cur = data->egg_waiting;
+    list_egg_t *c = d->egg_waiting;
 
-    if (!cur)
+    if (!c)
         return;
-    if (!((data->tv.tv_sec == cur->tv.tv_sec &&
-        data->tv.tv_usec > cur->tv.tv_sec) ||
-        data->tv.tv_sec > cur->tv.tv_sec))
+    if (!((d->tv.tv_sec == c->tv.tv_sec && d->tv.tv_usec > c->tv.tv_sec) ||
+        d->tv.tv_sec > c->tv.tv_sec))
         return;
-    data->egg_waiting = cur->next;
-    cur->next = NULL;
-    ++data->params.egg_r_c[cur->team_id];
-    if (!data->hatch_eggs) {
-        data->hatch_eggs = cur;
+    d->egg_waiting = c->next;
+    c->next = NULL;
+    ++d->params.egg_r_c[c->team_id];
+    if (!d->hatch_eggs) {
+        d->hatch_eggs = c;
         return;
     }
-    for (list_egg_t *tmp = data->hatch_eggs; tmp; tmp = tmp->next) {
+    for (list_egg_t *tmp = d->hatch_eggs; tmp; tmp = tmp->next) {
         if (!tmp->next) {
-            tmp->next = cur;
+            tmp->next = c;
             return;
         }
     }

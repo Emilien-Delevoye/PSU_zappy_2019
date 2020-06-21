@@ -189,7 +189,7 @@ void end_client_validation(data_server_t *data, client_t *cli, char t_nb[62]);
 void update_food(data_server_t *data);
 void create_egg(data_server_t *data, client_t *cli);
 int init_id(void);
-void update_egg(data_server_t *data);
+void update_egg(data_server_t *d);
 void egg_to_player(data_server_t *data, client_t *cli);
 void calc_food_time(data_server_t *d, struct timeval tv, client_t *cli);
 void free_eggs(data_server_t data);
