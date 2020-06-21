@@ -29,8 +29,12 @@ public class GameScene : MonoBehaviour
     public GameObject rocket;
     public GameObject fire;
     public GameObject shockWave;
+
+    public new GameObject camera;
+
     public GameObject endScreen;
     public TextMeshProUGUI winTeamName;
+
     public GameObject hudTile;
     public TextMeshProUGUI numberFoodHudTile;
     public TextMeshProUGUI numberLinemateHudTile;
@@ -42,6 +46,7 @@ public class GameScene : MonoBehaviour
     private int tileSelectedX = 0;
     private int tileSelectedY = 0;
     private float timeUpHudTile;
+
     public GameObject hudCharacter;
     public TextMeshProUGUI numberFoodHudCharacter;
     public TextMeshProUGUI numberLinemateHudCharacter;
@@ -54,14 +59,19 @@ public class GameScene : MonoBehaviour
     public TextMeshProUGUI teamNameHudCharacter;
     private int characterSelected;
     private float timeUpHudCharacter;
+
     float timeUnit;
+
     private Vector3 spawnPos;
     private Vector3 mapPos;
     private Quaternion rotation;
+
     private int mapSizeX = 0;
     private int mapSizeY = 0;
+
     private float startPointX = 0.5f;
     private float startPointZ = 0.5f;
+
     private string receiveMessage;
     private string[] arguments;
     private LinkedList<string> teams;
@@ -182,25 +192,25 @@ public class GameScene : MonoBehaviour
             {
                 _gameObject.transform.Translate(-0.5f * Time.deltaTime * _timeUnit, 0, 0, Space.World);
                 if (_gameObject.transform.position.x < 0f)
-                    _gameObject.transform.position = new Vector3(_mapX, 0, _posY);
+                    _gameObject.transform.position = new Vector3(_mapX - 0.2f, 0, _posY);
             }
             else if (_posToMoveX < _posX && _posToMoveX == 0 && _posX >= _mapX - 1) /// Droite de la map TP gauche
             {
                 _gameObject.transform.Translate(0.5f * Time.deltaTime * _timeUnit, 0, 0, Space.World);
                 if (_gameObject.transform.position.x > _mapX)
-                    _gameObject.transform.position = new Vector3(0, 0, _posY);
+                    _gameObject.transform.position = new Vector3(0.2f, 0, _posY);
             }
             else if (_posToMoveY > _posY && _posToMoveY == _mapY - 1 && _posY <= 0) /// Bas de la map TP haut
             {
                 _gameObject.transform.Translate(0, 0, -0.5f * Time.deltaTime * _timeUnit, Space.World);
                 if (_gameObject.transform.position.z < 0f)
-                    _gameObject.transform.position = new Vector3(_posX, 0, _mapY);
+                    _gameObject.transform.position = new Vector3(_posX, 0, _mapY - 0.2f);
             }
             else if (_posToMoveY < _posY && _posToMoveY == 0 && _posY >= _mapY - 1) /// Haut de la map TP bas
             {
                 _gameObject.transform.Translate(0, 0, 0.5f * Time.deltaTime * _timeUnit, Space.World);
                 if (_gameObject.transform.position.z > _mapY)
-                    _gameObject.transform.position = new Vector3(_posX, 0, 0);
+                    _gameObject.transform.position = new Vector3(_posX, 0, 0.2f);
             }
             else
             {
@@ -368,7 +378,7 @@ public class GameScene : MonoBehaviour
 
         private void StartIncantation(string[] args)
         {
-            if (args[3] == "1")
+                        if (args[3] == "1")
                 _elevations.AddLast(new Elevation(_elevation2, int.Parse(args[1]), int.Parse(args[2])));
             else if (args[3] == "2")
                 _elevations.AddLast(new Elevation(_elevation3, int.Parse(args[1]), int.Parse(args[2])));
@@ -948,6 +958,7 @@ public class GameScene : MonoBehaviour
         SetUpMap();
         GetTeamsName();
     }
+
     // Update is called once per frame
     void Update()
     {
@@ -1034,19 +1045,21 @@ public class GameScene : MonoBehaviour
             Debug.Log("pin: Reply missing argument.");
         }
     }
+
     public void SetLevelPlayer(string receiveMessage)
     {
         int rank = 0;
 
         if (arguments.Length >= 3)
         {
-            //characters[rank].AddNewAction(receiveMessage);
             rank = int.Parse(arguments[1]);
-            characters[rank].SetLevel(int.Parse(arguments[2]));
-            if (characters[rank].GetGameObjectInstanceID() == characterSelected)
-            {
-                levelHudCharacter.text = "Level: " + characters[rank].GetLevel().ToString();
-            }
+            characters[rank].AddNewAction(receiveMessage);
+            
+            //characters[rank].SetLevel(int.Parse(arguments[2]));
+            //if (characters[rank].GetGameObjectInstanceID() == characterSelected)
+            //{
+            //    levelHudCharacter.text = "Level: " + characters[rank].GetLevel().ToString();
+            //}
         }
         else
         {
@@ -1078,6 +1091,7 @@ public class GameScene : MonoBehaviour
             Debug.Log("pbc: Reply missing argument.");
         }
     }
+
     public void DeleteEgg(string receiveMessage)
     {
         if (arguments.Length >= 2)
@@ -1097,6 +1111,7 @@ public class GameScene : MonoBehaviour
             Debug.Log("seg: Reply missing argument.");
         }
     }
+
     public void CreateEgg(string receiveMessage)
     {
         if (arguments.Length >= 4)
@@ -1109,6 +1124,7 @@ public class GameScene : MonoBehaviour
             Debug.Log("seg: Reply missing argument.");
         }
     }
+
     public void EndOfTheGame()
     {
         if (arguments.Length >= 2)
@@ -1274,6 +1290,7 @@ public class GameScene : MonoBehaviour
                 {
                     mapSizeX = int.Parse(arguments[1]);
                     mapSizeY = int.Parse(arguments[2]);
+                    camera.transform.position = new Vector3(mapSizeX / 2, 7f, -(mapSizeY / 1.5f));
                 }
             }
         }

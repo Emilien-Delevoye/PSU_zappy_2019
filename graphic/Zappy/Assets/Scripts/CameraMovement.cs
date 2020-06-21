@@ -17,8 +17,9 @@ public class CameraMovement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        xRotation = Camera.main.transform.eulerAngles.x;
         yRotation = Camera.main.transform.eulerAngles.y;
+        Camera.main.transform.eulerAngles = new Vector3(25, 0, 0);
+        xRotation = 25f;
     }
 
     // Update is called once per frame
@@ -43,5 +44,5 @@ public class CameraMovement : MonoBehaviour
         Vector3 move = transform.right * x + transform.forward * z;
 
         controller.Move(move * CameraSpeed * Time.deltaTime);
-    }
+    }  
 }
