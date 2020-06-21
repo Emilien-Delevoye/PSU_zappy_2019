@@ -765,11 +765,9 @@ class IA:
         if msg[0] == 'LEAD' and self.level_ == int(msg[1]) and int(msg[2]) > self.id_:
             dPrint(self.debugInv_, colored("CO FOUND REPLACE", "red"))
             self.broadcast(' '.join([str(self.newNb()), 'CANCELALL', str(self.id_), str(self.myIncNb_)]))
-            self.leadID = int(msg[2])
-            self.othIncNb_ = int(msg[3])
-            self.situation_ = "waitForGoNoLead"
+            self.situation_ = "normalLife"
             self.sameLvlIDs_.clear()
-            self.broadcast(' '.join([str(self.newNb()), 'OK', str(self.leadID), str(self.othIncNb_), str(self.id_), invToStr(self.inventory_)]))
+            # self.broadcast(' '.join([str(self.newNb()), 'OK', str(self.leadID), str(self.othIncNb_), str(self.id_), invToStr(self.inventory_)]))
             return
 
         if msg[0] == 'ALERT' and int(msg[1]) in list(self.sameLvlIDs_.keys()):
