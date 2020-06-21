@@ -100,6 +100,7 @@ typedef struct param_s {
     unsigned short client_nb;
     unsigned int freq;
     unsigned short *r_cli;
+    unsigned short *egg_r_c;
     unsigned short *win_cli;
     bool valid_params;
 } param_t;
@@ -188,6 +189,7 @@ void update_food(data_server_t *data);
 void create_egg(data_server_t *data, client_t *cli);
 int init_id(void);
 void update_egg(data_server_t *data);
+void egg_to_player(data_server_t *data, char t_nb[62], client_t *cli);
 
 #define get_direction1(c, o) \
     (o <= 2 ? (o == 1 ? c->top : c->right) : (o == 3 ? c->bottom : c->left))
