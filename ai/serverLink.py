@@ -35,7 +35,7 @@ class ServerLink:
         self.activeConnection = False
         self.buffers = {"read": str(), "write": bytes()}
         self.serverMsg = None
-        self.debug_ = True
+        self.debug_ = False
 
     def readWrite(self):
         while self.thread_running is True:
@@ -82,8 +82,6 @@ class ServerLink:
         self.buffers["write"] += data
 
     def read(self):
-        if len(self.buffers["read"]) > 0:
-            print(self.debug_, Colors.BOLD + "READ :[" + self.buffers["read"] + "]" + Colors.ENDC)
         if not len(self.buffers["read"]) > 0:
             return None
         if self.buffers["read"].find('\n') == -1:
