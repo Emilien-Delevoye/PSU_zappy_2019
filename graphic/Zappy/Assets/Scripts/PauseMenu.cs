@@ -5,6 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class PauseMenu : MonoBehaviour
 {
+    public Client client;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -24,6 +26,7 @@ public class PauseMenu : MonoBehaviour
 
     public void BackMainMenu()
     {
+        client.DisconectFromServer();
         SceneManager.LoadScene(0);
     }
 }
