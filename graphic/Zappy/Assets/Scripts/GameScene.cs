@@ -49,9 +49,10 @@ public class GameScene : MonoBehaviour
     public TextMeshProUGUI numberMendianeHudTile;
     public TextMeshProUGUI numberPhirasHudTile;
     public TextMeshProUGUI numberThystameHudTile;
-    private float timeUpHudTile;
     private int tileSelectedX = 0;
     private int tileSelectedY = 0;
+    private float timeUpHudTile;
+
 
     public GameObject hudCharacter;
     public TextMeshProUGUI numberFoodHudCharacter;
@@ -63,8 +64,8 @@ public class GameScene : MonoBehaviour
     public TextMeshProUGUI numberThystameHudCharacter;
     public TextMeshProUGUI levelHudCharacter;
     public TextMeshProUGUI teamNameHudCharacter;
-    private float timeUpHudCharacter;
     private int characterSelected;
+    private float timeUpHudCharacter;
 
     float timeUnit;
 
@@ -86,7 +87,9 @@ public class GameScene : MonoBehaviour
 
     public class Character
     {
-        public Character(GameObject gameObject, GameObject shockWave, int number, int posX, int posY, int orientation, int level, string teamName, int mapX, int mapY, float timeUnit, LinkedList<Tile> map)
+        public Character(GameObject gameObject, GameObject shockWave, int number, int posX, int posY, int orientation, int level, string teamName, int mapX, int mapY, float timeUnit, LinkedList<Tile> map,
+            int tileSelectedX, int tileSelectedY, TextMeshProUGUI numberFoodHudTite, TextMeshProUGUI numberLinemateHudTite, TextMeshProUGUI numberDeraumereHudTite, TextMeshProUGUI numberSiburHudTite,
+            TextMeshProUGUI numberMendianeHudTite, TextMeshProUGUI numberPhirasHudTite, TextMeshProUGUI numberThystameHudTite)
         {
             _gameObject = gameObject;
             _shockWave = shockWave;
@@ -109,6 +112,17 @@ public class GameScene : MonoBehaviour
             _numberPhiras = 0;
             _numberThystame = 0;
             _map = map;
+            _numberFoodHudTile = numberFoodHudTite;
+            _numberLinemateHudTile = numberLinemateHudTite;
+            _numberDeraumereHudTile = numberDeraumereHudTite;
+            _numberSiburHudTile = numberSiburHudTite;
+            _numberMendianeHudTile = numberMendianeHudTite;
+            _numberPhirasHudTile = numberPhirasHudTite;
+            _numberThystameHudTile = numberThystameHudTite;
+            _waitingActions = new LinkedList<string>();
+            _actionInProgress = false;
+            _tileSelectedX = tileSelectedX;
+            _tileSelectedY = tileSelectedY;
             _animator = _gameObject.gameObject.GetComponent<Animator>();
             _gameObject.transform.position = new Vector3(UnityEngine.Random.Range(posX + 0.2f, posX + 0.8f), 0, UnityEngine.Random.Range(posY + 0.2f, posY + 0.8f));
             if (orientation == 1)
@@ -134,60 +148,167 @@ public class GameScene : MonoBehaviour
             _posToMoveY = posY;
         }
 
+        public bool NeedToTP()
+        {
+            if (_posToMoveX != _posX && _posToMoveY != _posY)
+                return true;
+            return false;
+        }
+
         public bool NeedToMove()
         {
             if (_posToMoveX == _posX && _posToMoveY == _posY)
             {
                 _animator.SetInteger("run", 0);
+                _actionInProgress = false;
                 return false;
             }
             _animator.SetInteger("run", 1);
+            _actionInProgress = true;
             return true;
         }
 
         public void Move() /// Boucle
         {
-            //if (_posToMoveX > _posX && _posToMoveX >= _mapX - 1 && _posX == 0) /// Gauche de la map TP droite
-            //{
-            //    _gameObject.transform.Translate(-2f * Time.deltaTime * _timeUnit, 0, 0, Space.World);
-            //    if (_gameObject.transform.position.x < 0f)
-            //        _gameObject.transform.position = new Vector3(_mapX, 0, _posY);
-            //} else if (_posToMoveX < _posX && _posToMoveX == 0 && _posX == _mapX - 1) /// Droite de la map TP gauche
-            //{
-            //    _gameObject.transform.Translate(2f * Time.deltaTime * _timeUnit, 0, 0, Space.World);
-            //    if (_gameObject.transform.position.x > _mapX)
-            //        _gameObject.transform.position = new Vector3(0, 0, _posY);
-            //} else if (_posToMoveY > _posY && _posToMoveY == _mapY - 1 && _posY == 0) /// Bas de la map TP haut
-            //{
-            //    _gameObject.transform.Translate(0, 0, -2f * Time.deltaTime * _timeUnit, Space.World);
-            //    if (_gameObject.transform.position.z < 0f)
-            //        _gameObject.transform.position = new Vector3(_posX, 0, _mapY);
-            //} else if (_posToMoveY < _posY && _posToMoveY == 0 && _posY == _mapY - 1) /// Haut de la map TP bas
-            //{
-            //    _gameObject.transform.Translate(0, 0, 2f * Time.deltaTime * _timeUnit, Space.World);
-            //    if (_gameObject.transform.position.z > _mapY)
-            //        _gameObject.transform.position = new Vector3(_posX, 0, 0);
-            //}
-            //else
-            //{
-                if (_posToMoveX > _posX)
-                    _gameObject.transform.Translate(1f * Time.deltaTime, 0, 0, Space.World);
-                if (_posToMoveY > _posY)
-                    _gameObject.transform.Translate(0, 0, 1f * Time.deltaTime, Space.World);
-                if (_posToMoveX < _posX)
-                    _gameObject.transform.Translate(-1f * Time.deltaTime, 0, 0, Space.World);
-                if (_posToMoveY < _posY)
-                    _gameObject.transform.Translate(0, 0, -1f * Time.deltaTime, Space.World);
-            //}
+            bool posXReached = false;
+            bool posYReached = false;
 
-            if (_gameObject.transform.position.x - 0.25f >= _posToMoveX && _gameObject.transform.position.x - 0.75 <= _posToMoveX)
+            _actionInProgress = true;
+            if (_posToMoveX > _posX && _posToMoveX >= _mapX - 1 && _posX <= 0) /// Gauche de la map TP droite
+            {
+                _gameObject.transform.Translate(-0.5f * Time.deltaTime * _timeUnit, 0, 0, Space.World);
+                if (_gameObject.transform.position.x < 0f)
+                    _gameObject.transform.position = new Vector3(_mapX, 0, _posY);
+            }
+            else if (_posToMoveX < _posX && _posToMoveX == 0 && _posX >= _mapX - 1) /// Droite de la map TP gauche
+            {
+                _gameObject.transform.Translate(0.5f * Time.deltaTime * _timeUnit, 0, 0, Space.World);
+                if (_gameObject.transform.position.x > _mapX)
+                    _gameObject.transform.position = new Vector3(0, 0, _posY);
+            }
+            else if (_posToMoveY > _posY && _posToMoveY == _mapY - 1 && _posY <= 0) /// Bas de la map TP haut
+            {
+                _gameObject.transform.Translate(0, 0, -0.5f * Time.deltaTime * _timeUnit, Space.World);
+                if (_gameObject.transform.position.z < 0f)
+                    _gameObject.transform.position = new Vector3(_posX, 0, _mapY);
+            }
+            else if (_posToMoveY < _posY && _posToMoveY == 0 && _posY >= _mapY - 1) /// Haut de la map TP bas
+            {
+                _gameObject.transform.Translate(0, 0, 0.5f * Time.deltaTime * _timeUnit, Space.World);
+                if (_gameObject.transform.position.z > _mapY)
+                    _gameObject.transform.position = new Vector3(_posX, 0, 0);
+            }
+            else
+            {
+                if (_posToMoveX > _posX)
+                    _gameObject.transform.Translate(0.5f * Time.deltaTime * _timeUnit, 0, 0, Space.World);
+                if (_posToMoveY > _posY)
+                    _gameObject.transform.Translate(0, 0, 0.5f * Time.deltaTime * _timeUnit, Space.World);
+                if (_posToMoveX < _posX)
+                    _gameObject.transform.Translate(-0.5f * Time.deltaTime * _timeUnit, 0, 0, Space.World);
+                if (_posToMoveY < _posY)
+                    _gameObject.transform.Translate(0, 0, -0.5f * Time.deltaTime * _timeUnit, Space.World);
+            }
+
+            if (_posX > _posToMoveX && _gameObject.transform.position.x - 0.75 <= _posToMoveX)
             {
                 _posX = _posToMoveX;
+                posXReached = true;
+                SetPosition(_posToMoveX, _posToMoveY);
             }
-            if (_gameObject.transform.position.z - 0.25f >= _posToMoveY && _gameObject.transform.position.z - 0.75 <= _posToMoveY)
+            else if (_posX < _posToMoveX && _gameObject.transform.position.x - 0.25f >= _posToMoveX)
+            {
+                _posX = _posToMoveX;
+                posXReached = true;
+                SetPosition(_posToMoveX, _posToMoveY);
+            }
+            if (_posY > _posToMoveY && _gameObject.transform.position.z - 0.75 <= _posToMoveY)
             {
                 _posY = _posToMoveY;
+                posYReached = true;
+                SetPosition(_posToMoveX, _posToMoveY);
+
             }
+            if (_posY < _posToMoveY && _gameObject.transform.position.z - 0.25f >= _posToMoveY)
+            {
+                _posY = _posToMoveY;
+                posYReached = true;
+                SetPosition(_posToMoveX, _posToMoveY);
+            }
+
+            //if (_gameObject.transform.position.x - 0.25f >= _posToMoveX && _gameObject.transform.position.x - 0.75 <= _posToMoveX)
+            //{
+            //    _posX = _posToMoveX;
+            //    //Debug.Log("Pos X Reached");
+            //    posXReached = true;
+            //}
+            //if (_gameObject.transform.position.z - 0.25f >= _posToMoveY && _gameObject.transform.position.z - 0.75 <= _posToMoveY)
+            //{
+            //    _posY = _posToMoveY;
+            //    //Debug.Log("Pos Y Reached");
+            //    posXReached = true;
+            //}
+            if (posXReached == true && posYReached == true)
+                _actionInProgress = false;
+        }
+
+        public void AddNewAction(string action)
+        {
+            _waitingActions.AddLast(action);
+        }
+
+        public void Update() /// Boucle
+        {
+            string[] args;
+            int[] infos;
+
+            //Debug.Log(_waitingActions.Count);
+            if (_waitingActions.Count > 0 && _actionInProgress == false)
+            {
+                Debug.Log("Action in progress: " + _waitingActions.First.Value);
+                args = _waitingActions.First.Value.Split(' ');
+                _waitingActions.RemoveFirst();
+
+                if (args[0] == "ppo")
+                {
+                    SetPointToMove(int.Parse(args[2]), int.Parse(args[3]));
+                    SetOrientation(int.Parse(args[4]));
+                } else if (args[1] == "bct")
+                {
+                    foreach (Tile tile in _map)
+                    {
+                        if (tile.GoodTileSelected(int.Parse(args[2]), int.Parse(args[3])))
+                        {
+                            tile.UpdateTile(int.Parse(args[4]), int.Parse(args[5]), int.Parse(args[6]), int.Parse(args[7]),
+                                int.Parse(args[8]), int.Parse(args[9]), int.Parse(args[10]));
+                            if (_tileSelectedX == int.Parse(args[2]) && _tileSelectedY == int.Parse(args[3]))
+                            {
+                                infos = tile.GetInfoTile();
+                                _numberFoodHudTile.text = infos[0].ToString();
+                                _numberLinemateHudTile.text = infos[1].ToString();
+                                _numberDeraumereHudTile.text = infos[2].ToString();
+                                _numberSiburHudTile.text = infos[3].ToString();
+                                _numberMendianeHudTile.text = infos[4].ToString();
+                                _numberPhirasHudTile.text = infos[5].ToString();
+                                _numberThystameHudTile.text = infos[6].ToString();
+                            }
+                        }
+                    }
+                }
+                Array.Clear(args, 0, args.Length);
+            }
+            if (NeedToTP())
+                SetPosition(_posToMoveX, _posToMoveY);
+            else if (NeedToMove())
+            {
+                Move();
+            }
+        }
+
+        public void UpdateTileSelected(int posX, int posY)
+        {
+            _tileSelectedX = posX;
+            _tileSelectedX = posY;
         }
 
         public void SetOrientation(int orientation)
@@ -204,6 +325,8 @@ public class GameScene : MonoBehaviour
 
         public void StartBroadcast()
         {
+            if (_shockWave)
+                Destroy(_shockWave);
             _shockWave = Instantiate(_shockWave, new Vector3(_posX + 0.5f, 0f, _posY + 0.5f), new Quaternion(0f, 0f, 0f, 0f));
             _shockWave.SetActive(true);
             _timeBroadcast = Time.time;
@@ -297,8 +420,21 @@ public class GameScene : MonoBehaviour
         private int _numberMendiane;
         private int _numberPhiras;
         private int _numberThystame;
+
+
+        private TextMeshProUGUI _numberFoodHudTile;
+        private TextMeshProUGUI _numberLinemateHudTile;
+        private TextMeshProUGUI _numberDeraumereHudTile;
+        private TextMeshProUGUI _numberSiburHudTile;
+        private TextMeshProUGUI _numberMendianeHudTile;
+        private TextMeshProUGUI _numberPhirasHudTile;
+        private TextMeshProUGUI _numberThystameHudTile;
+        private int _tileSelectedX;
+        private int _tileSelectedY;
+
         private LinkedList<Tile> _map;
         private LinkedList<string> _waitingActions;
+        bool _actionInProgress;
     };
     private Dictionary<int, Character> characters;
 
@@ -701,10 +837,7 @@ public class GameScene : MonoBehaviour
         ReceiveMessageFromServer();
         foreach (KeyValuePair<int, Character> kvp in characters)
         {
-            if (characters[kvp.Key].NeedToMove())
-            {
-                characters[kvp.Key].Move();
-            }
+            characters[kvp.Key].Update();
             characters[kvp.Key].CheckEndBroadcast();
         }
         if (Time.fixedTime - timeUpHudCharacter >= 5)
@@ -722,9 +855,12 @@ public class GameScene : MonoBehaviour
             fire.transform.Translate(0f, 5f * Time.deltaTime, 0f, Space.World);
         }
 
-        if (Input.GetKey(KeyCode.Escape))
+        if (Input.GetKeyUp(KeyCode.Escape))
         {
-            PauseMenu.SetActive(true);
+            if (PauseMenu.activeSelf)
+                PauseMenu.SetActive(false);
+            else
+                PauseMenu.SetActive(true);
         }
     }
 
@@ -781,9 +917,9 @@ public class GameScene : MonoBehaviour
             if (arguments[0] == "pnw")
                 InstantiateNewPlayer();
             else if (arguments[0] == "ppo")
-                SetPointToMovePlayer();
+                SetPointToMovePlayer(receiveMessage);
             else if (arguments[0] == "bct")
-                UpdateContentOfTile();
+                UpdateContentOfTile(receiveMessage);
             else if (arguments[0] == "pic")
                 StartIncantation();
             else if (arguments[0] == "pie")
@@ -978,30 +1114,37 @@ public class GameScene : MonoBehaviour
         }
     }
 
-    public void UpdateContentOfTile()
+    public void UpdateContentOfTile(string receiveMessage)
     {
         int[] infos;
 
         if (arguments.Length >= 10)
         {
-            foreach (Tile tile in map)
+            if (int.Parse(arguments[1]) != -1)
             {
-                if (tile.GoodTileSelected(int.Parse(arguments[1]), int.Parse(arguments[2])))
+                characters[int.Parse(arguments[1])].AddNewAction(receiveMessage);
+            }
+            else
+            {
+                foreach (Tile tile in map)
                 {
-                    tile.UpdateTile(int.Parse(arguments[3]), int.Parse(arguments[4]), int.Parse(arguments[5]), int.Parse(arguments[6]),
-                        int.Parse(arguments[7]), int.Parse(arguments[8]), int.Parse(arguments[9]));
-                    if (tileSelectedX == int.Parse(arguments[1]) && tileSelectedY == int.Parse(arguments[2]))
+                    if (tile.GoodTileSelected(int.Parse(arguments[1]), int.Parse(arguments[2])))
                     {
-                        infos = tile.GetInfoTile();
-                        numberFoodHudTile.text = infos[0].ToString();
-                        numberLinemateHudTile.text = infos[1].ToString();
-                        numberDeraumereHudTile.text = infos[2].ToString();
-                        numberSiburHudTile.text = infos[3].ToString();
-                        numberMendianeHudTile.text = infos[4].ToString();
-                        numberPhirasHudTile.text = infos[5].ToString();
-                        numberThystameHudTile.text = infos[6].ToString();
+                        tile.UpdateTile(int.Parse(arguments[3]), int.Parse(arguments[4]), int.Parse(arguments[5]), int.Parse(arguments[6]),
+                            int.Parse(arguments[7]), int.Parse(arguments[8]), int.Parse(arguments[9]));
+                        if (tileSelectedX == int.Parse(arguments[1]) && tileSelectedY == int.Parse(arguments[2]))
+                        {
+                            infos = tile.GetInfoTile();
+                            numberFoodHudTile.text = infos[0].ToString();
+                            numberLinemateHudTile.text = infos[1].ToString();
+                            numberDeraumereHudTile.text = infos[2].ToString();
+                            numberSiburHudTile.text = infos[3].ToString();
+                            numberMendianeHudTile.text = infos[4].ToString();
+                            numberPhirasHudTile.text = infos[5].ToString();
+                            numberThystameHudTile.text = infos[6].ToString();
+                        }
                     }
-                }    
+                }
             }
         } else
         {
@@ -1010,13 +1153,15 @@ public class GameScene : MonoBehaviour
 
     }
 
-    public void SetPointToMovePlayer()
+    public void SetPointToMovePlayer(string receiveMessage)
     {
         if (arguments.Length >= 5)
         {
-            characters[int.Parse(arguments[1])].SetPointToMove(int.Parse(arguments[2]), int.Parse(arguments[3]));
-            characters[int.Parse(arguments[1])].SetOrientation(int.Parse(arguments[4]));
-        } else
+            //characters[int.Parse(arguments[1])].SetPointToMove(int.Parse(arguments[2]), int.Parse(arguments[3]));
+            //characters[int.Parse(arguments[1])].SetOrientation(int.Parse(arguments[4]));
+            characters[int.Parse(arguments[1])].AddNewAction(receiveMessage);
+        }
+        else
         {
             Debug.Log("ppo: Reply missing argument.");
         }
@@ -1026,13 +1171,14 @@ public class GameScene : MonoBehaviour
     {
         if (arguments.Length >= 7)
         {
-            characters.Add(int.Parse(arguments[1]), new Character(Instantiate(character), shockWave, int.Parse(arguments[1]), int.Parse(arguments[2]), int.Parse(arguments[3]), int.Parse(arguments[4]), int.Parse(arguments[5]), arguments[6], mapSizeX, mapSizeY, timeUnit, map));
+            characters.Add(int.Parse(arguments[1]), new Character(Instantiate(character), shockWave, int.Parse(arguments[1]), int.Parse(arguments[2]), int.Parse(arguments[3]), int.Parse(arguments[4]), int.Parse(arguments[5]),
+                arguments[6], mapSizeX, mapSizeY, timeUnit, map, tileSelectedX, tileSelectedY, numberFoodHudTile, numberLinemateHudTile, numberDeraumereHudTile, numberSiburHudTile, numberMendianeHudTile, numberPhirasHudTile,
+                numberThystameHudTile));
         } else
         {
             Debug.Log("pnw: Reply missing argument.");
         }
     }
-
 
     public void GetTeamsName()
     {
@@ -1159,15 +1305,15 @@ public class GameScene : MonoBehaviour
             arguments = receiveMessage.Split(' ');
             if (arguments[0] == "bct")
             {
-                if (arguments.Length != 10)
+                if (arguments.Length >= 11)
                 {
-                    Debug.Log("bct: Reply missing argument.");
-                    Application.Quit();
+                    map.AddLast(new Tile(x, y, int.Parse(arguments[4]), int.Parse(arguments[5]), int.Parse(arguments[6]), int.Parse(arguments[7]), int.Parse(arguments[8]), int.Parse(arguments[9]),
+                    int.Parse(arguments[10]), mapPos, food, linemate, deraumere, sibur, mendiane, phiras, thystame));
                 }
                 else
                 {
-                    map.AddLast(new Tile(x, y, int.Parse(arguments[3]), int.Parse(arguments[4]), int.Parse(arguments[5]), int.Parse(arguments[6]), int.Parse(arguments[7]), int.Parse(arguments[8]),
-                        int.Parse(arguments[9]), mapPos, food, linemate, deraumere, sibur, mendiane, phiras, thystame));
+                    Debug.Log("bct: Reply missing argument.");
+                    Application.Quit();
                 }
             }
         }
@@ -1181,8 +1327,13 @@ public class GameScene : MonoBehaviour
         {
             if (tile.GoodTileSelected(posX, posY))
             {
-                tileSelectedX = posX;
-                tileSelectedY = posY;
+                //tileSelectedX = posX;
+                //tileSelectedY = posY;
+                foreach (KeyValuePair<int, Character> kvp in characters)
+                {
+                    characters[kvp.Key].UpdateTileSelected(posX, posY);
+                }
+
                 timeUpHudTile = Time.fixedTime;
                 infos = tile.GetInfoTile();
                 hudTile.SetActive(true);

@@ -89,7 +89,7 @@ public class Client : MonoBehaviour
             }
             result = waitingCommand.First.Value;
             waitingCommand.RemoveFirst();
-            Debug.Log("Waiting Command Queue: " + waitingCommand.Count);
+            //Debug.Log("Waiting Command Queue: " + waitingCommand.Count);
             Debug.Log("Execute: " + result);
             return result;
         } else
@@ -98,7 +98,8 @@ public class Client : MonoBehaviour
             {
                 result = waitingCommand.First.Value;
                 waitingCommand.RemoveFirst();
-                Debug.Log("Waiting Command Queue: " + waitingCommand.Count);
+                //Debug.Log("Waiting Command Queue: " + waitingCommand.Count);
+                Debug.Log("Execute: " + result);
                 return result;
             }
             else
