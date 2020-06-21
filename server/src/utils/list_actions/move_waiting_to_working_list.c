@@ -21,26 +21,42 @@ static void do_move_node(data_server_t *data, list_actions_t *prev,
     }
 }
 
-static void move_to_work_list(list_actions_t *cur, data_server_t *data,
-    struct timeval cu_time)
+static void add_to_end_work_list(data_server_t *data, list_actions_t *cur)
+{
+    list_actions_t *first = data->cli_work;
+
+    if (!first) {
+        data->cli_work = cur;
+    } else {
+        while (first->next)
+            first = first->next;
+        first->next = cur;
+    }
+}
+
+static void move_to_work_list(list_actions_t *cur, data_server_t *d,
+    struct timeval ti)
 {
     list_actions_t *prev = NULL;
 
     cur->next = NULL;
-    if (!data->cli_work) {
-        data->cli_work = cur;
+    if (!d->cli_work) {
+        d->cli_work = cur;
         return;
     }
-    for (list_actions_t *tmp = data->cli_work; tmp; tmp = tmp->next) {
-        if ((tmp->tv.tv_sec == cu_time.tv_sec &&
-            tmp->tv.tv_usec < cu_time.tv_usec) ||
-            (tmp->tv.tv_sec < cu_time.tv_sec)) {
-            do_move_node(data, prev, cur);
+    if (cur->cmd_nb == 11) {
+        add_to_end_work_list(d, cur);
+        return;
+    }
+    for (list_actions_t *t = d->cli_work; t; t = t->next) {
+        if ((t->tv.tv_sec == ti.tv_sec && t->tv.tv_usec > ti.tv_usec) ||
+            (t->tv.tv_sec > ti.tv_sec)) {
+            do_move_node(d, prev, cur);
             return;
         }
-        prev = tmp;
+        prev = t;
     }
-    do_move_node(data, prev, cur);
+    add_to_end_work_list(d, cur);
 }
 
 static void calc_cu_time(data_server_t *data, struct timeval *tv, int cmd_nb,
