@@ -28,7 +28,7 @@ void set(data_server_t *data)
     char arg[30] = {0};
     client_t *cli = data->cli_work->cli;
     char *str = get_set_arg(data->cli_work->cmd_str);
-    map_t *cur = get_good_tile(cli->drone.tile, data);
+    map_t *cur = cli->drone.tile;
     char *equi[7] = {"food", "linemate", "deraumere", "sibur", "mendiane",
         "phiras", "thystame"};
 
