@@ -23,6 +23,7 @@ extern "C" {
     int setup_socket(data_server_t *data);
     void close_server(data_server_t data);
     void graphical_validation(data_server_t *data, client_t *cli);
+    data_server_t *create_data_server();
 }
 
 #endif //ZAPPY_TESTS_H
