@@ -11,6 +11,7 @@
 extern "C" {
     #include "server.h"
     #include "utils/write_list.h"
+    #include "commands/commands.h"
 
     data_server_t get_parameters(int ac, char **av);
     int setup_map(data_server_t *data);
