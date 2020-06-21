@@ -283,9 +283,6 @@ class IA:
 
     def updateConnectNbr(self, msg, obj):
         self.places = int(msg)
-        if self.first is True and self.matesNb < 8 and self.places < 1 and time.time() - self.startTime > 20:
-            self.fork()
-            self.forward()
 
     def updateSet(self, msg, obj):
         """
@@ -845,8 +842,6 @@ class IA:
                 self.places += 1
             self.eggCreated = True
 
-        if randrange(1, 40) == 1:
-            self.connectNbr()
         self.countCoolDown -= 1
         # TODO Mettre le bordel dans les incantations des autres
 
