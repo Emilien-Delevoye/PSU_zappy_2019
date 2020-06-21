@@ -26,4 +26,6 @@ TEST(create_egg, classic_test)
 
     create_egg(data, data->l_waiting.first);
     create_egg(data, data->l_waiting.first);
+    EXPECT_NE(data->egg_waiting, nullptr);
+    EXPECT_NE(data->egg_waiting->next, nullptr);
 }
