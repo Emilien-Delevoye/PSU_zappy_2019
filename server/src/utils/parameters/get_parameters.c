@@ -34,5 +34,6 @@ data_server_t get_parameters(int ac, char **av)
         data.params.r_cli[a] = data.params.client_nb;
         data.params.win_cli[a] = 0;
     }
+    data.params.win_cli[data.params.team_nb] = -1;
     return (data);
 }

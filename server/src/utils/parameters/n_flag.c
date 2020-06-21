@@ -39,7 +39,7 @@ static bool create_names(data_server_t *data)
     data->params.egg_r_c =
         malloc(sizeof(unsigned short) * (data->params.team_nb + 1));
     data->params.win_cli =
-        malloc(sizeof(unsigned short) * (data->params.team_nb + 1));
+        malloc(sizeof(short) * (data->params.team_nb + 1));
 
     if (!data->params.r_cli || !data->params.win_cli || !data->params.egg_r_c)
         return (false);
@@ -48,7 +48,7 @@ static bool create_names(data_server_t *data)
     memset(data->params.egg_r_c, 0,
         sizeof(unsigned short) * (data->params.team_nb + 1));
     memset(data->params.win_cli, 0,
-        sizeof(unsigned short) * (data->params.team_nb + 1));
+        sizeof(short) * (data->params.team_nb + 1));
     data->params.win_cli[data->params.team_nb] = -1;
     return (true);
 }

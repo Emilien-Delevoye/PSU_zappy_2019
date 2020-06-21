@@ -101,7 +101,7 @@ typedef struct param_s {
     unsigned int freq;
     unsigned short *r_cli;
     unsigned short *egg_r_c;
-    unsigned short *win_cli;
+    short *win_cli;
     bool valid_params;
 } param_t;
 

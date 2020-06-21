@@ -18,10 +18,20 @@ const unsigned int condi[7][7] = {
     {6, 2, 2, 2, 2, 2, 1}
 };
 
+bool check_trought_every(data_server_t *data)
+{
+    for (int i = 0; data->params.win_cli[i] != -1; ++i) {
+        if (data->params.win_cli[i] >= 6)
+            return false;
+    }
+    return true;
+}
+
 void check_end(data_server_t *data, client_t *cli)
 {
     if (cli->drone.lvl == 8) {
-        if (++data->params.win_cli[cli->team_id] >= 6)
+        if (++data->params.win_cli[cli->team_id] == 6 &&
+        check_trought_every(data))
             seg_command(data, data->params.team_names[cli->team_id]);
     }
 }
