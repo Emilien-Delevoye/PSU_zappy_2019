@@ -91,7 +91,8 @@ public class GameScene : MonoBehaviour
             int tileSelectedX, int tileSelectedY, TextMeshProUGUI numberFoodHudTite, TextMeshProUGUI numberLinemateHudTite, TextMeshProUGUI numberDeraumereHudTite, TextMeshProUGUI numberSiburHudTite,
             TextMeshProUGUI numberMendianeHudTite, TextMeshProUGUI numberPhirasHudTite, TextMeshProUGUI numberThystameHudTite, int characterSelected, TextMeshProUGUI numberFoodHudCharacter, TextMeshProUGUI numberLinemateHudCharacter,
             TextMeshProUGUI numberDeraumereHudCharacter, TextMeshProUGUI numberSiburHudCharacter, TextMeshProUGUI numberMendianeHudCharacter, TextMeshProUGUI numberPhirasHudCharacter, TextMeshProUGUI numberThystameHudCharacter,
-            TextMeshProUGUI levelHudCharacter, TextMeshProUGUI teamNameHudCharacter)
+            TextMeshProUGUI levelHudCharacter, TextMeshProUGUI teamNameHudCharacter, GameObject elevation2, GameObject elevation3, GameObject elevation4, GameObject elevation5,GameObject elevation6,
+            GameObject elevation7, GameObject elevation8)
         {
             _gameObject = gameObject;
             _shockWave = shockWave;
@@ -133,6 +134,14 @@ public class GameScene : MonoBehaviour
             _teamNameHudCharacter = teamNameHudCharacter;
             _levelHudCharacter = levelHudCharacter;
             _characterSelected = characterSelected;
+            _elevation2 = elevation2;
+            _elevation3 = elevation3;
+            _elevation4 = elevation4;
+            _elevation5 = elevation5;
+            _elevation6 = elevation6;
+            _elevation7 = elevation7;
+            _elevation8 = elevation8;
+            _elevations = new LinkedList<Elevation>();
             _waitingActions = new LinkedList<string>();
             _actionInProgress = false;
             _animator = _gameObject.gameObject.GetComponent<Animator>();
@@ -288,6 +297,15 @@ public class GameScene : MonoBehaviour
                 } else if (args[0] == "pin")
                 {
                     UpdatePlayerInventory(args);
+                } else if (args[0] == "pic")
+                {
+                    StartIncantation(args);
+                } else if (args[0] == "pie")
+                {
+                    EndOfIncantation(args);
+                } else if (args[0] == "pbc")
+                {
+                    StartBroadcast();
                 }
                 Array.Clear(args, 0, args.Length);
             }
@@ -297,6 +315,37 @@ public class GameScene : MonoBehaviour
             {
                 Move();
             }
+        }
+
+        public void EndOfIncantation(string[] args)
+        {
+            foreach (Elevation elev in _elevations)
+            {
+                if (elev.GoodElevationSelected(int.Parse(args[2]), int.Parse(args[3])))
+                {
+                    elev.DestroyElevation();
+                    _elevations.Remove(elev);
+                    break;
+                }
+            }
+        }
+
+        private void StartIncantation(string[] args)
+        {
+            if (args[3] == "1")
+                _elevations.AddLast(new Elevation(_elevation2, int.Parse(args[1]), int.Parse(args[2])));
+            else if (args[3] == "2")
+                _elevations.AddLast(new Elevation(_elevation3, int.Parse(args[1]), int.Parse(args[2])));
+            else if (args[3] == "3")
+                _elevations.AddLast(new Elevation(_elevation4, int.Parse(args[1]), int.Parse(args[2])));
+            else if (args[3] == "4")
+                _elevations.AddLast(new Elevation(_elevation5, int.Parse(args[1]), int.Parse(args[2])));
+            else if (args[3] == "5")
+                _elevations.AddLast(new Elevation(_elevation6, int.Parse(args[1]), int.Parse(args[2])));
+            else if (args[3] == "6")
+                _elevations.AddLast(new Elevation(_elevation7, int.Parse(args[1]), int.Parse(args[2])));
+            else if (args[3] == "7")
+                _elevations.AddLast(new Elevation(_elevation8, int.Parse(args[1]), int.Parse(args[2])));
         }
 
         private void UpdatePlayerInventory(string[] args)
@@ -482,6 +531,16 @@ public class GameScene : MonoBehaviour
         private TextMeshProUGUI _numberThystameHudCharacter;
         private TextMeshProUGUI _levelHudCharacter;
         private TextMeshProUGUI _teamNameHudCharacter;
+
+        public GameObject _elevation2;
+        public GameObject _elevation3;
+        public GameObject _elevation4;
+        public GameObject _elevation5;
+        public GameObject _elevation6;
+        public GameObject _elevation7;
+        public GameObject _elevation8;
+
+        private LinkedList<Elevation> _elevations;
 
         private int _characterSelected;
 
@@ -931,9 +990,9 @@ public class GameScene : MonoBehaviour
             else if (arguments[0] == "bct")
                 UpdateContentOfTile(receiveMessage);
             else if (arguments[0] == "pic")
-                StartIncantation();
+                StartIncantation(receiveMessage);
             else if (arguments[0] == "pie")
-                EndIncantation();
+                EndIncantation(receiveMessage);
             else if (arguments[0] == "pdi")
                 DieOfPlayer();
             else if (arguments[0] == "seg")
@@ -943,7 +1002,7 @@ public class GameScene : MonoBehaviour
             else if (arguments[0] == "eht")
                 DeleteEgg();
             else if (arguments[0] == "pbc")
-                StartBroadcast();
+                StartBroadcast(receiveMessage);
             else if (arguments[0] == "plv")
                 SetLevelPlayer(receiveMessage);
             else if (arguments[0] == "pin")
@@ -960,22 +1019,6 @@ public class GameScene : MonoBehaviour
         { 
             rank = int.Parse(arguments[1]);
             characters[rank].AddNewAction(receiveMessage);
-
-            //inventory = new int[] {int.Parse(arguments[2]), int.Parse(arguments[3]), int.Parse(arguments[4]), int.Parse(arguments[5]),
-            //    int.Parse(arguments[6]), int.Parse(arguments[7]), int.Parse(arguments[8])};
-            //characters[rank].SetInventory(inventory);
-            //if (characters[rank].GetGameObjectInstanceID() == characterSelected)
-            //{
-            //    teamNameHudCharacter.text = characters[rank].GetTeamName();
-            //    inventory = characters[rank].GetInventory();
-            //    numberFoodHudCharacter.text = inventory[0].ToString();
-            //    numberLinemateHudCharacter.text = inventory[1].ToString();
-            //    numberDeraumereHudCharacter.text = inventory[2].ToString();
-            //    numberSiburHudCharacter.text = inventory[3].ToString();
-            //    numberMendianeHudCharacter.text = inventory[4].ToString();
-            //    numberPhirasHudCharacter.text = inventory[5].ToString();
-            //    numberThystameHudCharacter.text = inventory[6].ToString();
-            //}
         } else
         {
             Debug.Log("pin: Reply missing argument.");
@@ -1015,11 +1058,11 @@ public class GameScene : MonoBehaviour
         }
     }
     
-    public void StartBroadcast()
+    public void StartBroadcast(string receiveMessage)
     {
         if (arguments.Length >= 2)
         {
-            characters[int.Parse(arguments[1])].StartBroadcast();
+            characters[int.Parse(arguments[1])].AddNewAction(receiveMessage);
         }
         else
         {
@@ -1083,18 +1126,19 @@ public class GameScene : MonoBehaviour
         }
     }
 
-    public void EndIncantation()
+    public void EndIncantation(string receiveMessage)
     {
-        if (arguments.Length >= 4) {
-            foreach (Elevation elev in elevations)
-            {
-                if (elev.GoodElevationSelected(int.Parse(arguments[1]), int.Parse(arguments[2])))
-                {
-                    elev.DestroyElevation();
-                    elevations.Remove(elev);
-                    break;
-                }
-            }
+        if (arguments.Length >= 5) {
+            characters[int.Parse(arguments[1])].AddNewAction(receiveMessage);
+            //foreach (Elevation elev in elevations)
+            //{
+            //    if (elev.GoodElevationSelected(int.Parse(arguments[1]), int.Parse(arguments[2])))
+            //    {
+            //        elev.DestroyElevation();
+            //        elevations.Remove(elev);
+            //        break;
+            //    }
+            //}
         }
         else
         {
@@ -1102,23 +1146,24 @@ public class GameScene : MonoBehaviour
         }
     }
 
-    public void StartIncantation()
+    public void StartIncantation(string receiveMessage)
     {
         if (arguments.Length >= 5) {
-            if (arguments[3] == "1")
-                elevations.AddLast(new Elevation(elevation2, int.Parse(arguments[1]), int.Parse(arguments[2])));
-            else if (arguments[3] == "2")
-                elevations.AddLast(new Elevation(elevation3, int.Parse(arguments[1]), int.Parse(arguments[2])));
-            else if (arguments[3] == "3")
-                elevations.AddLast(new Elevation(elevation4, int.Parse(arguments[1]), int.Parse(arguments[2])));
-            else if (arguments[3] == "4")
-                elevations.AddLast(new Elevation(elevation5, int.Parse(arguments[1]), int.Parse(arguments[2])));
-            else if (arguments[3] == "5")
-                elevations.AddLast(new Elevation(elevation6, int.Parse(arguments[1]), int.Parse(arguments[2])));
-            else if (arguments[3] == "6")
-                elevations.AddLast(new Elevation(elevation7, int.Parse(arguments[1]), int.Parse(arguments[2])));
-            else if (arguments[3] == "7")
-                elevations.AddLast(new Elevation(elevation8, int.Parse(arguments[1]), int.Parse(arguments[2])));
+            characters[int.Parse(arguments[4])].AddNewAction(receiveMessage);
+            //if (arguments[3] == "1")
+            //    elevations.AddLast(new Elevation(elevation2, int.Parse(arguments[1]), int.Parse(arguments[2])));
+            //else if (arguments[3] == "2")
+            //    elevations.AddLast(new Elevation(elevation3, int.Parse(arguments[1]), int.Parse(arguments[2])));
+            //else if (arguments[3] == "3")
+            //    elevations.AddLast(new Elevation(elevation4, int.Parse(arguments[1]), int.Parse(arguments[2])));
+            //else if (arguments[3] == "4")
+            //    elevations.AddLast(new Elevation(elevation5, int.Parse(arguments[1]), int.Parse(arguments[2])));
+            //else if (arguments[3] == "5")
+            //    elevations.AddLast(new Elevation(elevation6, int.Parse(arguments[1]), int.Parse(arguments[2])));
+            //else if (arguments[3] == "6")
+            //    elevations.AddLast(new Elevation(elevation7, int.Parse(arguments[1]), int.Parse(arguments[2])));
+            //else if (arguments[3] == "7")
+            //    elevations.AddLast(new Elevation(elevation8, int.Parse(arguments[1]), int.Parse(arguments[2])));
         }
         else
         {
@@ -1169,8 +1214,6 @@ public class GameScene : MonoBehaviour
     {
         if (arguments.Length >= 5)
         {
-            //characters[int.Parse(arguments[1])].SetPointToMove(int.Parse(arguments[2]), int.Parse(arguments[3]));
-            //characters[int.Parse(arguments[1])].SetOrientation(int.Parse(arguments[4]));
             characters[int.Parse(arguments[1])].AddNewAction(receiveMessage);
         }
         else
@@ -1186,7 +1229,7 @@ public class GameScene : MonoBehaviour
             characters.Add(int.Parse(arguments[1]), new Character(Instantiate(character), shockWave, int.Parse(arguments[1]), int.Parse(arguments[2]), int.Parse(arguments[3]), int.Parse(arguments[4]), int.Parse(arguments[5]),
                 arguments[6], mapSizeX, mapSizeY, timeUnit, map, tileSelectedX, tileSelectedY, numberFoodHudTile, numberLinemateHudTile, numberDeraumereHudTile, numberSiburHudTile, numberMendianeHudTile, numberPhirasHudTile,
                 numberThystameHudTile, characterSelected, numberFoodHudCharacter, numberLinemateHudCharacter, numberDeraumereHudCharacter, numberSiburHudCharacter, numberMendianeHudCharacter, numberPhirasHudCharacter,
-                numberThystameHudCharacter, levelHudCharacter, teamNameHudCharacter));
+                numberThystameHudCharacter, levelHudCharacter, teamNameHudCharacter, elevation2, elevation3, elevation4, elevation5, elevation6, elevation7, elevation8));
         } else
         {
             Debug.Log("pnw: Reply missing argument.");
@@ -1340,8 +1383,6 @@ public class GameScene : MonoBehaviour
         {
             if (tile.GoodTileSelected(posX, posY))
             {
-                //tileSelectedX = posX;
-                //tileSelectedY = posY;
                 foreach (KeyValuePair<int, Character> kvp in characters)
                 {
                     characters[kvp.Key].UpdateTileSelected(posX, posY);
