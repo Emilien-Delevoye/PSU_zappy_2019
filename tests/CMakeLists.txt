@@ -105,6 +105,9 @@ add_executable(server_tests
         src/new_client_to_ww_list.cpp
         src/create_egg.cpp
         src/move_waiting_to_working_list.cpp
-        src/pbc_command.cpp src/command_1.cpp src/command_2.cpp)
+        src/pbc_command.cpp
+        src/command_1.cpp
+        src/command_2.cpp
+        src/forward.cpp)
 
 target_link_libraries(server_tests gtest gtest_main pthread gcov)
