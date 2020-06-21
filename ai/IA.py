@@ -68,6 +68,18 @@ dirs = {
 }
 
 
+foodLevel = {
+    1: 40,
+    2: 45,
+    3: 45,
+    4: 50,
+    5: 50,
+    6: 55,
+    7: 55,
+    8: 55,
+}
+
+
 def setRequestToStr(invs):
     return '|'.join([str(i) + ':' + invToStr(j) for i, j in invs.items()])
 
@@ -123,7 +135,7 @@ class IA:
         self.maxFoodStage = 120
         self.foodStage_ = {self.maxFoodStage: "goHalfEat",  # FIXME ça doit dépendre de la durée d'un tour ou un truc comme ça ...
                            100: "goSlowEat",
-                           40 + max(x, y): "goFastEat"}
+                           60: "goFastEat"}
         self.foodStageForElev_ = {self.maxFoodStage: "goHalfEat",
                                   30 + max(x, y): "goSlowEat",
                                   20: "goFastEat"}
@@ -147,7 +159,7 @@ class IA:
 
         dPrint(self.debugInv_, "Random Id: {0}".format(self.id_))
 
-        self.coolDown = 4
+        self.coolDown = 7
         self.countCoolDown = self.coolDown
 
         # ELEVATION
@@ -633,7 +645,7 @@ class IA:
         if msg is None:
             return
 
-        if msg[0] == 'LEAD' and self.level_ == int(msg[1]) and self.inventory_[GameObj.Food] > 30 + max(self.mapSize[0], self.mapSize[1]) and self.level_ < 8:
+        if msg[0] == 'LEAD' and self.level_ == int(msg[1]) and self.inventory_[GameObj.Food] > 30 and self.level_ < 8:
             dPrint(self.debugInv_, colored("CO FOUND", "red"))
             self.leadID = int(msg[2])
             self.othIncNb_ = int(msg[3])
@@ -845,7 +857,7 @@ class IA:
 
         self.countCoolDown -= 1
 
-        if self.haveGoodAmountOfStones() and self.situation_ == 'normalLife' and self.inventory_[GameObj.Food] > 38 + max(self.mapSize[0], self.mapSize[1]) and self.countCoolDown <= 0 and self.level_ < 8:
+        if self.haveGoodAmountOfStones() and self.situation_ == 'normalLife' and self.inventory_[GameObj.Food] > foodLevel[self.level_] and self.countCoolDown <= 0 and self.level_ < 8:
             self.countLimit_ = self.limit_
             self.countCoolDown = self.coolDown
             self.countItersBeforeCancel = self.itersBeforeCancel
