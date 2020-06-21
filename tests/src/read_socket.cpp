@@ -24,6 +24,6 @@ TEST(read_socket, read_socket)
     add_client_to_list(&data, fd);
     client_validation(&data, data.l_waiting.first, fd);
     read_socket(&data);
-    EXPECT_NE(data.l_waiting.first->cmd_queue, nullptr);
+    EXPECT_EQ(data.l_waiting.first->cmd_queue, nullptr);
     EXPECT_EQ(std::string(data.l_connected.first->cmd_queue->command), "##");
 }
