@@ -5,6 +5,7 @@
 ** Created by emilien
 */
 
+#include "commands/commands.h"
 #include "server.h"
 
 static void calc_food_time(data_server_t *d, struct timeval tv, client_t *cli)
@@ -51,6 +52,7 @@ void check_food(data_server_t *data, client_t *cli)
         move_to_end_of_the_list(data);
     } else {
         add_to_write_list(cli, "dead\n");
+        pdi_command(cli, data);
         cli->to_close = true;
         cli->dead = true;
     }
