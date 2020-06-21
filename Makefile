@@ -99,7 +99,8 @@ SRC_TEST	=	tests/src/main.cpp	\
 				tests/src/pbc_command.cpp	\
 				tests/src/command_1.cpp	\
 				tests/src/command_2.cpp	\
-				tests/src/forward.cpp
+				tests/src/forward.cpp	\
+				tests/src/broadcast.cpp
 
 OBJ	=	$(SRC_SERVER:.c=.o)
 

@@ -108,6 +108,7 @@ add_executable(server_tests
         src/pbc_command.cpp
         src/command_1.cpp
         src/command_2.cpp
-        src/forward.cpp)
+        src/forward.cpp
+        src/broadcast.cpp)
 
 target_link_libraries(server_tests gtest gtest_main pthread gcov)
