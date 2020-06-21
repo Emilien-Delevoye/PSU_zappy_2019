@@ -22,7 +22,7 @@ void add_client_from_egg(data_server_t *data, client_t *cli, list_egg_t *hatch,
     c[0] = hatch->coord[0];
     c[1] = hatch->coord[1];
     free(hatch);
-    sprintf(str, "%d\n%d %d\n", (--data->params.r_cli[cli->team_id] +
+    sprintf(str, "%d\n%d %d\n", (data->params.r_cli[cli->team_id] +
         data->params.egg_r_c[cli->team_id]),
         data->params.width, data->params.height);
     add_to_write_list(cli, str);

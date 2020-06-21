@@ -19,6 +19,7 @@ void update_egg(data_server_t *data)
         return;
     data->egg_waiting = cur->next;
     cur->next = NULL;
+    ++data->params.egg_r_c[cur->team_id];
     if (!data->hatch_eggs) {
         data->hatch_eggs = cur;
         return;
