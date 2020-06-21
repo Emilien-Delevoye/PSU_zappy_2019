@@ -9,11 +9,11 @@
 
 void ppo_command(client_t *cli, data_server_t *data)
 {
-    int ori[4] = {3, 4, 1, 2};
+//    int ori[4] = {3, 4, 1, 2};
     int n = cli->drone.id;
     unsigned int x = cli->drone.tile->coord[0];
     unsigned int y = cli->drone.tile->coord[1];
-    unsigned int o = ori[cli->drone.orientation - 1];
+    unsigned int o = cli->drone.orientation;
     char str[53] = {0};
 
     if (o > 4)
