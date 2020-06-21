@@ -14,11 +14,16 @@
 #include <stdio.h>
 #include <string.h>
 
+int init_id(void)
+{
+    static int id = -1;
+
+    return (++id);
+}
+
 static bool add_drone(client_t *new)
 {
-    static int id_cli = -1;
-
-    new->drone = initialise_new_drone(id_cli++);
+    new->drone = initialise_new_drone(init_id());
     return (true);
 }
 

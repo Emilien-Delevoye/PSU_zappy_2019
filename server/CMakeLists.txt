@@ -79,4 +79,10 @@ add_executable(zappy_server
         src/commands/plv_command.c
         src/commands/pin_command.c
         include/lib.h
-        src/sockets/end_valid_client.c)
+        src/sockets/end_valid_client.c
+        src/utils/egg/create_egg.c
+        src/utils/egg/update_egg.c
+        src/utils/egg/egg_to_player.c
+        src/sockets/end_valid_client.c
+        src/commands/enw_command.c
+        src/commands/eht_command.c src/utils/free/free_eggs.c)

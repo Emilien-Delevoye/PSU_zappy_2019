@@ -31,4 +31,5 @@ void tna_command(client_t *cli, data_server_t *data,
     }
     strcat(str, "\n");
     add_to_write_list(cli, str);
+    free(str);
 }

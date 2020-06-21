@@ -59,10 +59,34 @@ add_executable(server_tests
         ../server/src/ai_interaction/movement.c
         ../server/src/setup_map/spawn_player.c
         ../server/src/ai_interaction/forward.c
+        ../server/src/ai_interaction/broadcast.c
         ../server/src/ai_interaction/inventory.c
         ../server/src/ai_interaction/look.c
+        ../server/src/ai_interaction/broadcast.c
         ../server/src/ai_interaction/connect_nbr.c
         ../server/src/ai_interaction/eject.c
+        ../server/src/ai_interaction/fork.c
+        ../server/src/ai_interaction/take.c
+        ../server/src/ai_interaction/set.c
+        ../server/src/ai_interaction/incantation.c
+        ../server/src/ai_interaction/search_right_broadcast.c
+        ../server/include/commands/broadcast.h
+        ../server/src/ai_interaction/search_left_broadcast.c
+        ../server/src/commands/seg_command.c
+        ../server/src/commands/pic_command.c
+        ../server/src/commands/pie_command.c
+        ../server/src/commands/pdi_command.c
+        ../server/src/commands/pbc_command.c
+        ../server/src/commands/sgt_command.c
+        ../server/src/commands/plv_command.c
+        ../server/src/commands/pin_command.c
+        ../server/include/lib.h
+        ../server/src/sockets/end_valid_client.c
+        ../server/src/utils/egg/create_egg.c
+        ../server/src/utils/egg/update_egg.c
+        ../server/src/utils/egg/egg_to_player.c
+        ../server/src/commands/enw_command.c
+        ../server/src/commands/eht_command.c
         include/tests.h
         src/main.cpp
         src/get_parameters.cpp

@@ -19,6 +19,6 @@ void pnw_command(client_t *cli, data_server_t *data)
     char str[66 + strlen(name)];
 
     memset(str, 0, 66 + strlen(name));
-    sprintf(str, "pnw %d %d %d %d %d %s\n", n, y, x, o, l, name);
+    sprintf(str, "pnw %d %d %d %d %d %s\n", n, x, y, o, l, name);
     add_to_write_list(data->l_graphical.first, str);
 }

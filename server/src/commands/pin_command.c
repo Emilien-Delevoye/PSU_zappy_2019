@@ -14,6 +14,10 @@ void pin_command(client_t *cli, data_server_t *data)
     int n = cli->drone.id;
 
     memset(str, 0, sizeof(str));
-    sprintf(str, "pin %d %d %d %d %d %d %d %d\n", n, cli->drone.inventory[0], cli->drone.inventory[1], cli->drone.inventory[2], cli->drone.inventory[3], cli->drone.inventory[4], cli->drone.inventory[5], cli->drone.inventory[6]);
+    sprintf(str, "pin %d %d %d %d %d %d %d %d\n", n,
+        cli->drone.inventory[0], cli->drone.inventory[1],
+        cli->drone.inventory[2], cli->drone.inventory[3],
+        cli->drone.inventory[4], cli->drone.inventory[5],
+        cli->drone.inventory[6]);
     add_to_write_list(data->l_graphical.first, str);
 }

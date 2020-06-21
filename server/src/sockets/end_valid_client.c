@@ -5,9 +5,10 @@
 ** Created by emilien
 */
 
+#include "commands/commands.h"
 #include "server.h"
 
-static void calc_food_time(data_server_t *d, struct timeval tv, client_t *cli)
+void calc_food_time(data_server_t *d, struct timeval tv, client_t *cli)
 {
     double time = (double)126 / d->params.freq;
     int seconds = (int)time;
@@ -23,9 +24,11 @@ static void calc_food_time(data_server_t *d, struct timeval tv, client_t *cli)
 
 void end_client_validation(data_server_t *data, client_t *cli, char t_nb[62])
 {
+    int c[2] = {-1, -1};
+
     add_to_write_list(cli, t_nb);
     new_client_to_ww_list(cli, &data->cli_wait);
-    spawn_player(data, cli);
+    spawn_player(data, cli, c);
     calc_food_time(data, data->tv, cli);
 }
 
@@ -49,8 +52,10 @@ void check_food(data_server_t *data, client_t *cli)
     if (cli->drone.inventory[FOOD] > 0) {
         --cli->drone.inventory[FOOD];
         move_to_end_of_the_list(data);
+        pin_command(cli, data);
     } else {
         add_to_write_list(cli, "dead\n");
+        pdi_command(cli, data);
         cli->to_close = true;
         cli->dead = true;
     }

@@ -43,7 +43,7 @@ typedef struct map_s {
     struct map_s *top;
     struct map_s *bottom;
     tile_players_t *list_players;
-    unsigned int items[100];
+    unsigned int items[7];
 } map_t;
 
 typedef struct write_cli_s {
@@ -100,9 +100,18 @@ typedef struct param_s {
     unsigned short client_nb;
     unsigned int freq;
     unsigned short *r_cli;
+    unsigned short *egg_r_c;
     unsigned short *win_cli;
     bool valid_params;
 } param_t;
+
+typedef struct list_egg_s {
+    int egg_id;
+    struct timeval tv;
+    unsigned short team_id;
+    int coord[2];
+    struct list_egg_s *next;
+} list_egg_t;
 
 typedef struct data_server_s {
     //Server settings
@@ -117,6 +126,10 @@ typedef struct data_server_s {
     struct list_client_s l_waiting;
     struct list_client_s l_connected;
     struct list_client_s l_graphical;
+
+    //Egg structures
+    list_egg_t *egg_waiting;
+    list_egg_t *hatch_eggs;
 
     //Map pointer :
     map_t *bottom_left;
@@ -161,7 +174,7 @@ void forward(data_server_t *data);
 void right(data_server_t *data);
 void left(data_server_t *data);
 void broadcast(data_server_t *data);
-void spawn_player(data_server_t *data, client_t *cli);
+void spawn_player(data_server_t *data, client_t *cli, const int c[2]);
 void inventory(data_server_t *data);
 void look(data_server_t *data);
 void connect_nbr(data_server_t *data);
@@ -174,6 +187,13 @@ void incantation_after(data_server_t *data);
 void move_to_other_tile(map_t *dest, tile_players_t *cu_l);
 void end_client_validation(data_server_t *data, client_t *cli, char t_nb[62]);
 void update_food(data_server_t *data);
+void create_egg(data_server_t *data, client_t *cli);
+int init_id(void);
+void update_egg(data_server_t *data);
+void egg_to_player(data_server_t *data, client_t *cli);
+void calc_food_time(data_server_t *d, struct timeval tv, client_t *cli);
+map_t *get_good_tile(map_t *cur, data_server_t *data);
+void free_eggs(data_server_t data);
 
 #define get_direction1(c, o) \
     (o <= 2 ? (o == 1 ? c->top : c->right) : (o == 3 ? c->bottom : c->left))

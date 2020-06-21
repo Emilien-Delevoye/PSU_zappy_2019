@@ -31,12 +31,25 @@ void spawn_random_food(data_server_t *data, int value, client_t *cli)
     map_t *start = data->bottom_left;
 
     if (value == FOOD) {
-        for (int i = 0; i < x; ++i, start = start->right);
-        for (int i = 0; i < y; ++i, start = start->top);
+        for (int i = 0; i < y; ++i, start = start->right);
+        for (int i = 0; i < x; ++i, start = start->top);
         start->items[FOOD] += 1;
         sprintf(arg, "bct %d %d", start->coord[0], start->coord[1]);
         bct_command(cli, data, my_str_to_word_array(arg));
     }
+}
+
+map_t *get_good_tile(map_t *cur, data_server_t *data)
+{
+    unsigned int x = cur->coord[0];
+    unsigned int y = cur->coord[1];
+
+    printf("%d|%d\n", cur->coord[0], cur->coord[1]);
+    cur = data->bottom_left;
+    for (unsigned int i = 0; i < x; ++i, cur = cur->right);
+    for (unsigned int i = 0; i < y; ++i, cur = cur->top);
+    printf("%d|%d\n", cur->coord[0], cur->coord[1]);
+    return cur;
 }
 
 void take(data_server_t *data)
