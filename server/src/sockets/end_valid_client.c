@@ -52,6 +52,7 @@ void check_food(data_server_t *data, client_t *cli)
     if (cli->drone.inventory[FOOD] > 0) {
         --cli->drone.inventory[FOOD];
         move_to_end_of_the_list(data);
+        pin_command(cli, data);
     } else {
         add_to_write_list(cli, "dead\n");
         pdi_command(cli, data);

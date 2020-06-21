@@ -13,7 +13,6 @@
 
 void write_for_broadcast(client_t *client, char *text, int tile)
 {
-    printf("%s\n", text);
     char str[13 + strlen(text)];
     int tile_tmp;
 
@@ -43,7 +42,6 @@ char *get_broadcast_arg(char *str)
 void search_tile(data_server_t *data, client_t *client, int x, int y)
 {
     char *str = get_broadcast_arg(data->cli_work->cmd_str);
-    printf("%s\n", str);
 
     if (x > 0) {
         search_right(client, str, x, y);
