@@ -75,7 +75,6 @@ SRC_SERVER	=	server/src/utils/parameters/get_parameters.c	\
 			server/src/sockets/end_valid_client.c	\
 			server/src/commands/enw_command.c	\
 			server/src/commands/eht_command.c	\
-			server/src/sockets/end_valid_client.c	\
 			server/src/utils/egg/create_egg.c	\
 			server/src/utils/egg/update_egg.c	\
 			server/src/utils/egg/egg_to_player.c
