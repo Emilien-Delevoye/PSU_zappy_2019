@@ -16,6 +16,6 @@ drone_t initialise_new_drone(int previous_id)
     new.orientation = (rand() % 4 + 1);
     for (int i = 0; i < 7; ++i)
         new.inventory[i] = 0;
-    new.id = previous_id + 1;
+    new.id = previous_id;
     return new;
 }
