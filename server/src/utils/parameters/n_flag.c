@@ -49,6 +49,7 @@ static bool create_names(data_server_t *data)
         sizeof(unsigned short) * (data->params.team_nb + 1));
     memset(data->params.win_cli, 0,
         sizeof(unsigned short) * (data->params.team_nb + 1));
+    data->params.win_cli[data->params.team_nb] = -1;
     return (true);
 }
 
