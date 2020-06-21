@@ -52,3 +52,20 @@ TEST(pic_command, classic_test)
     EXPECT_EQ(std::string(data.l_graphical.first->list_msg->to_write),
         "pic 0 0 0 3 3\n");
 }
+
+TEST(pie_command, classic_test)
+{
+    data_server_t data{};
+    client_t cli{};
+
+    data.l_graphical.first = new client_t;
+    memset(data.l_graphical.first, 0, sizeof(client_t));
+    memset(&cli, 0, sizeof(client_t));
+    cli.drone.tile = new map_t;
+    cli.drone.tile->coord[0] = 0;
+    cli.drone.tile->coord[1] = 0;
+    cli.drone.id = 3;
+    pie_command(&cli, &data, 'a');
+    EXPECT_EQ(std::string(data.l_graphical.first->list_msg->to_write),
+        "pie 3 0 0 a\n");
+}
