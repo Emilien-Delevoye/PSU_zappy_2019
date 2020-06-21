@@ -18,8 +18,8 @@ public class CameraMovement : MonoBehaviour
     void Start()
     {
         yRotation = Camera.main.transform.eulerAngles.y;
-        Camera.main.transform.eulerAngles = new Vector3(25, 0, 0);
-        xRotation = 25f;
+        Camera.main.transform.eulerAngles = new Vector3(35f, 0f, 0f);
+        xRotation = 35f;
     }
 
     // Update is called once per frame
