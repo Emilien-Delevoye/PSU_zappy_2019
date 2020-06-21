@@ -882,8 +882,8 @@ class IA:
         # getattr(self, self.foodStageForElev_[min([va if self.inventory_[GameObj.Food] < va else self.maxFoodStage for va, v in self.foodStageForElev_.items()])])()
         self.goSlowEat()  # FIXME ?
 
+        self.updateDataFromServForce()
         if self.elevDir is not None and self.elevDir != 0 and self.situation_ == 'goToIncantationNoLead':
-            self.updateDataFromServForce()
             self.goToDir(self.elevDir, self.countNbMoves)
             self.updateDataFromServForce()
             self.broadcast(' '.join([str(self.newNb()), 'ASKED', str(self.leadID), str(self.id_)]))
