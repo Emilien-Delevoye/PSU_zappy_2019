@@ -46,6 +46,8 @@ void create_egg(data_server_t *data, client_t *cli)
     new->next = NULL;
     new->team_id = cli->team_id;
     new->egg_id = init_id();
+    new->coord[0] = (int)cli->drone.tile->coord[0];
+    new->coord[1] = (int)cli->drone.tile->coord[1];
     calc_egg_time(data, data->tv, &new->tv);
     add_to_end_egg_list(data, new);
 }
