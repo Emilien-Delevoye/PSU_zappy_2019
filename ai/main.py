@@ -1,4 +1,4 @@
-#!/usr/bin/python3.7
+#!/usr/bin/python3
 
 from ai.IA import IA
 from ai.serverLink import ServerLink, Command

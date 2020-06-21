@@ -117,7 +117,7 @@ class IA:
         self.around_ = None
         self.currentPos_ = 0
         self.currentDir_ = Command.Forward
-        self.debug_ = True
+        self.debug_ = False
         self.debugInv_ = True
         self.reverse = True if randrange(1, 3) == 1 else False
         self.inventory_ = {GameObj.Food: 10,
@@ -182,7 +182,7 @@ class IA:
         self.places = 1
         self.eggCreated = False
         self.startTime = time.time()
-        # self.connectNbr()
+        self.connectNbr()
 
     """
     EMERGENCY
@@ -424,16 +424,18 @@ class IA:
         dPrint(self.debugInv_, Colors.UNDERLINE + "ELEVATION" + Colors.ENDC)
 
     def connectNbr(self):
-        self.waitForPlace()
-        self.CSLink_.connectNbr()
-        self.pendingRqt_ += [(Command.Connect_nbr, None)]
-        dPrint(self.debugInv_, Colors.UNDERLINE + "Connect nbr" + Colors.ENDC)
+        pass
+        # self.waitForPlace()
+        # self.CSLink_.connectNbr()
+        # self.pendingRqt_ += [(Command.Connect_nbr, None)]
+        # dPrint(self.debugInv_, Colors.UNDERLINE + "Connect nbr" + Colors.ENDC)
 
     def fork(self):
-        self.waitForPlace()
-        self.CSLink_.fork()
-        self.pendingRqt_ += [(Command.Fork, None)]
-        dPrint(self.debugInv_, Colors.UNDERLINE + "Fork" + Colors.ENDC)
+        pass
+        # self.waitForPlace()
+        # self.CSLink_.fork()
+        # self.pendingRqt_ += [(Command.Fork, None)]
+        # dPrint(self.debugInv_, Colors.UNDERLINE + "Fork" + Colors.ENDC)
 
     """
         IA
@@ -982,17 +984,9 @@ class IA:
         pass
 
     def run(self):
-        # self.inventory()
-        # self.lookAroundNow()
-        # self.updateDataFromServ()
-        # getattr(self, self.situation_)()
-        if randrange(1, 4) == 1:
-            self.forward()
-        if randrange(1, 4) == 1:
-            self.left()
-        if randrange(1, 4) == 1:
-            self.take(GameObj.Food)
-        if randrange(1, 4) == 1:
-            self.right()
+        self.inventory()
+        self.lookAroundNow()
+        self.updateDataFromServ()
+        getattr(self, self.situation_)()
 
         return True

@@ -81,4 +81,5 @@ void broadcast(data_server_t *data)
             search_tile(data, tmp, x, y);
         }
     }
+    add_to_write_list(data->cli_work->cli, "ok\n");
 }
