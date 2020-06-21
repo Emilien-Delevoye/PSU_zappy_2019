@@ -10,6 +10,6 @@
 
 void generate_stone_on_one_case(map_t *map)
 {
-    for (int i = 0; i < rand() % 12 + 8; ++i)
+    for (int i = 0; i < 7; ++i)
         map->items[i] = rand() % 2;
 }
