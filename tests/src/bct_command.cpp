@@ -46,6 +46,6 @@ TEST(bct_command, good_arg)
     data.bottom_left->right->right->top->items[PHIRAS] = 0;
     data.bottom_left->right->right->top->items[THYSTAME] = 0;
     bct_command(data.l_graphical.first, &data, static_cast<char **>(arg));
-    EXPECT_STREQ(data.l_graphical.first->list_msg->to_write, "bct 1 2 0 0 0 0 0 0 0\n");
+    EXPECT_STREQ(data.l_graphical.first->list_msg->to_write, "bct -1 1 2 0 0 0 0 0 0 0\n");
     free_map(data);
 }

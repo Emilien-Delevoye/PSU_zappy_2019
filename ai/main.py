@@ -1,7 +1,7 @@
-#!/usr/bin/python3.7
+#!/usr/bin/python3
 
-from IA import IA
-from serverLink import ServerLink, Command
+from ai.IA import IA
+from ai.serverLink import ServerLink, Command
 import argparse
 from sys import stderr
 import time
@@ -24,7 +24,7 @@ def main():
     port = int()
     name = str()
     hostname = str()
-    x, y = 0, 0
+    id, x, y = 0, 0, 0
 
     try:
         port, name, hostname = take_args()
@@ -34,12 +34,12 @@ def main():
         exit(84)
     CSLink = ServerLink(hostname, port, name)
     try:
-        x, y = CSLink.connect()
+        id, x, y = CSLink.connect()
     except ConnectionRefusedError:
         print("Connection failed", file=stderr)
         exit(84)
 
-    ia = IA(CSLink, name, x, y)
+    ia = IA(CSLink, name, id, x, y)
     while CSLink.isAlive() and ia.run():
         # print("AI is Alive", flush=True) # FIXME
         pass
@@ -49,4 +49,7 @@ def main():
 
 
 if __name__ == "__main__":
+    # try: FIXME
     main()
+    # except:
+      #  exit(84)

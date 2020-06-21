@@ -10,13 +10,19 @@
 #include <stdlib.h>
 #include <string.h>
 
-void send_bct_info(data_server_t *data, char **arg, map_t *map)
+void send_bct_info(data_server_t *data, char **arg, map_t *map, client_t *cli)
 {
-    char str[113] = {0};
+    char str[200] = {0};
 
-    sprintf(str, "bct %s %s %d %d %d %d %d %d %d\n", arg[1], arg[2],
-        map->items[0], map->items[1], map->items[2], map->items[3],
-        map->items[4], map->items[5], map->items[6]);
+    if (cli != data->l_graphical.first) {
+        sprintf(str, "bct %d %s %s %d %d %d %d %d %d %d\n", cli->drone.id,
+            arg[1], arg[2], map->items[0], map->items[1], map->items[2],
+            map->items[3], map->items[4], map->items[5], map->items[6]);
+    } else {
+        sprintf(str, "bct %d %s %s %d %d %d %d %d %d %d\n", -1,
+            arg[1], arg[2], map->items[0], map->items[1], map->items[2],
+            map->items[3], map->items[4], map->items[5], map->items[6]);
+    }
     add_to_write_list(data->l_graphical.first, str);
 }
 
@@ -31,5 +37,5 @@ void bct_command(__attribute__((unused))client_t *cli,
         cur = cur->right;
     for (int j = 0; j < atoi(arg[1]); ++j)
         cur = cur->top;
-    send_bct_info(data, arg, cur);
+    send_bct_info(data, arg, cur, cli);
 }

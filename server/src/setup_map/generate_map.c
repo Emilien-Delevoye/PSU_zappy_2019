@@ -10,6 +10,10 @@
 
 void generate_stone_on_one_case(map_t *map)
 {
-    for (int i = 0; i < 7; ++i)
-        map->items[i] = rand() % 2;
+    for (int i = 0; i < 7; ++i) {
+        if (i == FOOD)
+            map->items[i] = rand() % 9;
+        else
+            map->items[i] = rand() % 2;
+    }
 }
