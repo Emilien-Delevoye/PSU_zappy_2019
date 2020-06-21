@@ -86,3 +86,20 @@ TEST(pin_command, classic_test)
     EXPECT_EQ(std::string(data.l_graphical.first->list_msg->to_write),
         "pin 3 0 0 0 0 0 0 0\n");
 }
+
+TEST(plv_command, classic_test)
+{
+    data_server_t data{};
+    client_t cli{};
+
+    data.l_graphical.first = new client_t;
+    memset(data.l_graphical.first, 0, sizeof(client_t));
+    memset(&cli, 0, sizeof(client_t));
+    cli.drone.tile = new map_t;
+    cli.drone.tile->coord[0] = 0;
+    cli.drone.tile->coord[1] = 0;
+    cli.drone.id = 3;
+    plv_command(&cli, &data);
+    EXPECT_EQ(std::string(data.l_graphical.first->list_msg->to_write),
+        "plv 3 0\n");
+}
