@@ -41,7 +41,6 @@ void spawn_player(data_server_t *data, client_t *cli, const int c[2])
     map_t *obj_tile = data->bottom_left;
     param_t param = data->params;
     unsigned int coord[2];
-
     if (!obj_tile)
         return;
     if (!param.width || !param.height || (c[0] != -1 && c[1] != -1)) {
@@ -58,4 +57,5 @@ void spawn_player(data_server_t *data, client_t *cli, const int c[2])
         obj_tile = obj_tile->top;
     add_to_tile(obj_tile, cli);
     pnw_command(cli, data);
+    pin_command(cli, data);
 }
