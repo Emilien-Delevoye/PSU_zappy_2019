@@ -11,6 +11,7 @@
 extern "C" {
     #include "server.h"
     #include "utils/write_list.h"
+    #include "commands/commands.h"
 
     data_server_t get_parameters(int ac, char **av);
     int setup_map(data_server_t *data);
@@ -23,6 +24,7 @@ extern "C" {
     int setup_socket(data_server_t *data);
     void close_server(data_server_t data);
     void graphical_validation(data_server_t *data, client_t *cli);
+    data_server_t *create_data_server();
 }
 
 #endif //ZAPPY_TESTS_H
