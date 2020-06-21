@@ -18,7 +18,6 @@ int init_id(void)
 {
     static int id = -1;
 
-    printf("%d\n", id);
     return (++id);
 }
 
