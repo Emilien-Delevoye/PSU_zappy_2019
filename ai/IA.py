@@ -118,7 +118,7 @@ class IA:
         self.currentPos_ = 0
         self.currentDir_ = Command.Forward
         self.debug_ = False
-        self.debugInv_ = False
+        self.debugInv_ = True
         self.reverse = True if randrange(1, 3) == 1 else False
         self.inventory_ = {GameObj.Food: 10,
                            GameObj.Linemate: 0,
@@ -190,7 +190,7 @@ class IA:
     """
 
     def emergency(self):
-        if self.inventory_[GameObj.Food] <= 3:
+        if self.inventory_[GameObj.Food] <= 7:
             self.broadcast(' '.join([str(self.newNb()), "ALERT", str(self.id_)]))
             dPrint(self.debugInv_, Colors.OKGREEN + "ALLLLLLLLLLLLLLLLLERRRRRRRRRTTT" + Colors.ENDC)
             for i in range(15):
