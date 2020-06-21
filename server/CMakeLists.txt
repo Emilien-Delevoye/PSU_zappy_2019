@@ -85,4 +85,4 @@ add_executable(zappy_server
         src/utils/egg/egg_to_player.c
         src/sockets/end_valid_client.c
         src/commands/enw_command.c
-        src/commands/eht_command.c)
+        src/commands/eht_command.c src/utils/free/free_eggs.c)

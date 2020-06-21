@@ -13,5 +13,6 @@ void close_server(data_server_t data)
 {
     free_team_names(data);
     free_map(data);
+    free_eggs(data);
     close(data.fd);
 }

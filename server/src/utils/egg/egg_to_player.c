@@ -42,8 +42,10 @@ void egg_to_player(data_server_t *data, client_t *cli)
     }
     --data->params.egg_r_c[cli->team_id];
     for (list_egg_t *hatch = data->hatch_eggs; hatch; hatch = hatch->next) {
-        if (hatch->team_id == cli->team_id)
+        if (hatch->team_id == cli->team_id) {
             add_client_from_egg(data, cli, hatch, prev);
+            return;
+        }
         prev = hatch;
     }
 }

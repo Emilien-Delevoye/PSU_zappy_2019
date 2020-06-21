@@ -193,6 +193,7 @@ void update_egg(data_server_t *data);
 void egg_to_player(data_server_t *data, client_t *cli);
 void calc_food_time(data_server_t *d, struct timeval tv, client_t *cli);
 map_t *get_good_tile(map_t *cur, data_server_t *data);
+void free_eggs(data_server_t data);
 
 #define get_direction1(c, o) \
     (o <= 2 ? (o == 1 ? c->top : c->right) : (o == 3 ? c->bottom : c->left))
