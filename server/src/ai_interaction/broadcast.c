@@ -46,7 +46,7 @@ void search_tile(data_server_t *data, client_t *client, int x, int y)
     if (x > 0) {
         search_right(client, str, x, y);
     } else if (x == 0) {
-        search_vertical(client, str, y);
+        search_horizontal(client, str, y);
     } else {
         search_left(client, str, x, y);
     }
@@ -56,6 +56,7 @@ int get_fastest_way(data_server_t *data, client_t *tmp, int i)
 {
     int x = (int)(data->cli_work->cli->drone.tile->coord[i] -
         tmp->drone.tile->coord[i]);
+
     if (abs(x) > data->params.width / 2) {
         if (data->cli_work->cli->drone.tile->coord[i] <
         (unsigned)data->params.width / 2)
