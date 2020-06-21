@@ -35,12 +35,17 @@ class ServerLink:
         self.activeConnection = False
         self.buffers = {"read": str(), "write": bytes()}
         self.serverMsg = None
-        self.debug_ = False
+        self.debug_ = True
+        self.stopM = False
+        self.stopT = False
 
     def readWrite(self):
         while self.thread_running is True:
             read_sckt = [self.socket]
             write_sckt = []
+            while self.stopM is True:
+                self.stopT = True
+            self.stopT = False
             if len(self.buffers["write"]) != 0:
                 write_sckt.append(self.socket)
             readable, writable, useless = select.select(read_sckt, write_sckt, [], 0)
@@ -82,14 +87,25 @@ class ServerLink:
         self.buffers["write"] += data
 
     def read(self):
+
+        if self.buffers["read"].find('\n') == -1:
+            return None
+
+        self.stopM = True
+
+        while not self.stopT:
+            pass
+        while not self.stopT:
+            pass
+        while not self.stopT:
+            pass
+
         tmp = ''.join(self.buffers["read"])
-        if not len(tmp) > 0:
-            return None
-        if tmp.find('\n') == -1:
-            return None
 
         out = tmp[:tmp.find('\n')]
         self.buffers['read'] = self.buffers['read'][len(out) + 1:]
+
+        self.stopM = False
 
         return out if out != "" else None
 
