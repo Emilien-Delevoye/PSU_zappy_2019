@@ -19,4 +19,5 @@ class Colors:
     FAIL = '\033[91m'
     ENDC = '\033[0m'
     BOLD = '\033[1m'
+    SMALL = '\033[2m'
     UNDERLINE = '\033[4m'

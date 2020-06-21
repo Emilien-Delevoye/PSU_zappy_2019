@@ -58,6 +58,8 @@ int run_server(data_server_t *data)
         write_socket(data);
         read_socket(data);
         close_clients(data);
+        update_food(data);
+        update_egg(data);
         ai_interaction(data);
         loop_tmp_check_every_buffer(data);
     }

@@ -9,16 +9,15 @@
 #include "commands/commands.h"
 #include "lib.h"
 #include <string.h>
-#include <stdio.h>
 
-static void (*array[3])(client_t *, data_server_t *, char **) = {msz_command,
-    bct_command, tna_command};
+static void (*array[4])(client_t *, data_server_t *, char **) = {msz_command,
+    bct_command, tna_command, sgt_command};
 
 void call_command_function(data_server_t *data, client_t *cli, char **arg)
 {
-    const char *corresponding[3] = {"msz", "bct", "tna"};
+    const char *corresponding[4] = {"msz", "bct", "tna", "sgt"};
 
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < 4; ++i) {
         if (strcmp(arg[0], corresponding[i]) == 0) {
             array[i](cli, data, arg);
             return;

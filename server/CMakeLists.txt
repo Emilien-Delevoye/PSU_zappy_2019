@@ -63,7 +63,10 @@ add_executable(zappy_server
         src/ai_interaction/broadcast.c
         src/ai_interaction/connect_nbr.c
         src/ai_interaction/eject.c
-        src/ai_interaction/fork.c src/ai_interaction/take.c src/ai_interaction/set.c src/ai_interaction/incantation.c
+        src/ai_interaction/fork.c
+        src/ai_interaction/take.c
+        src/ai_interaction/set.c
+        src/ai_interaction/incantation.c
         src/ai_interaction/search_right_broadcast.c
         include/commands/broadcast.h
         src/ai_interaction/search_left_broadcast.c
@@ -71,4 +74,16 @@ add_executable(zappy_server
         src/commands/pic_command.c
         src/commands/pie_command.c
         src/commands/pdi_command.c
-        src/commands/pbc_command.c)
+        src/commands/pbc_command.c
+        src/commands/sgt_command.c
+        src/commands/plv_command.c
+        src/commands/pin_command.c
+        include/lib.h
+        src/sockets/end_valid_client.c
+        src/utils/egg/create_egg.c
+        src/utils/egg/update_egg.c
+        src/utils/egg/egg_to_player.c
+        src/sockets/end_valid_client.c
+        src/commands/enw_command.c
+        src/commands/eht_command.c
+        src/utils/free/free_eggs.c)

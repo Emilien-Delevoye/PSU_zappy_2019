@@ -6,6 +6,7 @@
 */
 
 #include "server.h"
+#include "commands/commands.h"
 #include <stdlib.h>
 
 static tile_players_t *get_new_tile(client_t *cli)
@@ -35,34 +36,32 @@ static void add_to_tile(map_t *tile, client_t *cli)
     cli->drone.orientation = (rand() % 4) + 1;
 }
 
-void spawn_player_graph(data_server_t *data, client_t *cli)
+void spawn_player_end(data_server_t *data, client_t *cli, map_t *obj_tile,
+    const unsigned int *coord)
 {
-    char str[100] = {0};
-
-    sprintf(str, "ppo %d %d %d %d", cli->drone.id,
-        cli->drone.tile->coord[WIDTH], cli->drone.tile->coord[HEIGHT],
-        cli->drone.orientation);
-    add_to_write_list(data->l_graphical.first, str);
-}
-
-void spawn_player(data_server_t *data, client_t *cli)
-{
-    unsigned int coord[2];
-    map_t *obj_tile = data->bottom_left;
-
-    if (!obj_tile)
-        return;
-    if (!data->params.width || !data->params.height) {
-        coord[WIDTH] = 0;
-        coord[HEIGHT] = 0;
-    } else {
-        coord[WIDTH] = rand() % data->params.width;
-        coord[HEIGHT] = rand() % data->params.height;
-    }
+    cli->drone.inventory[FOOD] = 9;
     while (obj_tile->coord[WIDTH] != coord[WIDTH])
         obj_tile = obj_tile->right;
     while (obj_tile->coord[HEIGHT] != coord[HEIGHT])
         obj_tile = obj_tile->top;
     add_to_tile(obj_tile, cli);
-    spawn_player_graph(data, cli);
+    pnw_command(cli, data);
+    pin_command(cli, data);
+}
+
+void spawn_player(data_server_t *data, client_t *cli, const int c[2])
+{
+    map_t *obj_tile = data->bottom_left;
+    unsigned int coord[2];
+
+    if (!obj_tile)
+        return;
+    if (c[0] != -1 && c[1] != -1) {
+        coord[HEIGHT] = (c[0] < 0) ? 0 : c[0];
+        coord[WIDTH] = (c[1] < 0) ? 0 : c[1];
+    } else {
+        coord[WIDTH] = rand() % data->params.width;
+        coord[HEIGHT] = rand() % data->params.height;
+    }
+    spawn_player_end(data, cli, obj_tile, coord);
 }

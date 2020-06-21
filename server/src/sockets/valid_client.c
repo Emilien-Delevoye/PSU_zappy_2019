@@ -56,15 +56,14 @@ void client_validation(data_server_t *data, client_t *cli, int team_id)
     cli->team_id = (unsigned short)team_id;
     add_to_valid_list(data, cli);
     if (!data->params.r_cli || !data->params.r_cli[team_id]) {
-        sprintf(team_nb, "ko\n");
-         cli->to_close = true;
+        egg_to_player(data, cli);
+        return;
     } else {
-        sprintf(team_nb, "%d\n%d %d\n", --data->params.r_cli[cli->team_id],
+        sprintf(team_nb, "%d\n%d %d\n", (--data->params.r_cli[cli->team_id] +
+            data->params.egg_r_c[cli->team_id]),
             data->params.width, data->params.height);
     }
-    add_to_write_list(cli, team_nb);
-    new_client_to_ww_list(cli, &data->cli_wait);
-    spawn_player(data, cli);
+    end_client_validation(data, cli, team_nb);
 }
 
 void graphical_validation(data_server_t *data, client_t *cli)

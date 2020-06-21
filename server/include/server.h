@@ -72,6 +72,8 @@ typedef struct client_s {
     command_queue_t *cmd_queue;
     write_cli_t *list_msg;
     drone_t drone;
+    bool dead;
+    struct timeval tv_food;
     struct client_s *prev;
     struct client_s *next;
 } client_t;
@@ -98,8 +100,18 @@ typedef struct param_s {
     unsigned short client_nb;
     unsigned int freq;
     unsigned short *r_cli;
+    unsigned short *egg_r_c;
+    short *win_cli;
     bool valid_params;
 } param_t;
+
+typedef struct list_egg_s {
+    int egg_id;
+    struct timeval tv;
+    unsigned short team_id;
+    int coord[2];
+    struct list_egg_s *next;
+} list_egg_t;
 
 typedef struct data_server_s {
     //Server settings
@@ -115,6 +127,10 @@ typedef struct data_server_s {
     struct list_client_s l_connected;
     struct list_client_s l_graphical;
 
+    //Egg structures
+    list_egg_t *egg_waiting;
+    list_egg_t *hatch_eggs;
+
     //Map pointer :
     map_t *bottom_left;
 
@@ -125,8 +141,6 @@ typedef struct data_server_s {
     //Timer structures
     struct timeval tv;
     struct tm *tm;
-    long int timer;
-    int sec;
 } data_server_t;
 
 struct cmd_ai_s {
@@ -134,7 +148,7 @@ struct cmd_ai_s {
     int duration;
 };
 
-#define READ_SIZE 2048
+#define READ_SIZE 4096
 
 bool add_to_client(client_t *, char *);
 bool select_fd(data_server_t *);
@@ -160,7 +174,7 @@ void forward(data_server_t *data);
 void right(data_server_t *data);
 void left(data_server_t *data);
 void broadcast(data_server_t *data);
-void spawn_player(data_server_t *data, client_t *cli);
+void spawn_player(data_server_t *data, client_t *cli, const int c[2]);
 void inventory(data_server_t *data);
 void look(data_server_t *data);
 void connect_nbr(data_server_t *data);
@@ -168,6 +182,23 @@ void eject(data_server_t *data);
 void fork_cmd(data_server_t *data);
 void take(data_server_t *data);
 void set(data_server_t *data);
-void incantation(data_server_t *data);
+void incantation_before(client_t *cli, data_server_t *data);
+void incantation_after(data_server_t *data);
+void move_to_other_tile(map_t *dest, tile_players_t *cu_l);
+void end_client_validation(data_server_t *data, client_t *cli, char t_nb[62]);
+void update_food(data_server_t *data);
+void create_egg(data_server_t *data, client_t *cli);
+int init_id(void);
+void update_egg(data_server_t *d);
+void egg_to_player(data_server_t *data, client_t *cli);
+void calc_food_time(data_server_t *d, struct timeval tv, client_t *cli);
+void free_eggs(data_server_t data);
+
+#define get_direction1(c, o) \
+    (o <= 2 ? (o == 1 ? c->top : c->right) : (o == 3 ? c->bottom : c->left))
+#define get_direction2(c, o) \
+    (o <= 2 ? (o == 1 ? c->left : c->top) : (o == 3 ? c->right : c->bottom))
+#define get_direction3(c, o) \
+    (o <= 2 ? (o == 1 ? c->right : c->bottom) : (o == 3 ? c->left : c->top))
 
 #endif //SERVER_SERVER_H

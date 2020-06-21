@@ -55,7 +55,7 @@ SRC_SERVER	=	server/src/utils/parameters/get_parameters.c	\
 			server/src/ai_interaction/forward.c	\
 			server/src/ai_interaction/broadcast.c	\
 			server/src/ai_interaction/search_left_broadcast.c	\
-            		server/src/ai_interaction/search_right_broadcast.c	\
+			server/src/ai_interaction/search_right_broadcast.c	\
 			server/src/ai_interaction/look.c	\
 			server/src/ai_interaction/inventory.c	\
 			server/src/ai_interaction/connect_nbr.c	\
@@ -68,7 +68,17 @@ SRC_SERVER	=	server/src/utils/parameters/get_parameters.c	\
 			server/src/commands/pic_command.c	\
 			server/src/commands/pie_command.c	\
 			server/src/commands/pdi_command.c	\
-			server/src/commands/pbc_command.c
+			server/src/commands/pbc_command.c	\
+			server/src/commands/sgt_command.c	\
+			server/src/commands/plv_command.c	\
+			server/src/commands/pin_command.c	\
+			server/src/sockets/end_valid_client.c	\
+			server/src/commands/enw_command.c	\
+			server/src/commands/eht_command.c	\
+			server/src/utils/egg/create_egg.c	\
+			server/src/utils/egg/update_egg.c	\
+			server/src/utils/egg/egg_to_player.c	\
+			server/src/utils/free/free_eggs.c
 
 SRC_TEST	=	tests/src/bct_command.cpp	\
                         tests/src/close_server.cpp	\
@@ -91,7 +101,7 @@ OBJ_SRC_MAIN	=	$(SRC_MAIN_SERVER:.c=.o)
 
 OBJ_SRC_TEST	=	$(SRC_TEST:.cpp=.o)
 
-CFLAGS	=	-W -Wall -Wextra -I server/include -Ofast
+CFLAGS	=	-W -Wall -Wextra -I server/include -O3 -std=gnu11
 CPPFLAGS	=	-W -Wall -Wextra -I server/include -I tests/include
 
 all:	$(NAME_SERVER) $(NAME_AI)
@@ -106,7 +116,7 @@ $(NAME_AI):
 	cp ai/main.py $(NAME_AI)
 
 $(NAME_SERVER):	$(OBJ) $(OBJ_SRC_MAIN)
-	gcc -o $(NAME_SERVER) $(OBJ) $(OBJ_SRC_MAIN) -I server/include
+	gcc -o $(NAME_SERVER) $(OBJ) $(OBJ_SRC_MAIN) -I server/include -O3
 
 clean:
 	rm -f $(OBJ_SRC_TEST) $(OBJ_SRC_MAIN) $(OBJ)

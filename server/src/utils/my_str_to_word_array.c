@@ -23,7 +23,7 @@ int spaces(const char *str)
     return (counter_spaces);
 }
 
-char **check_null()
+char **check_null(void)
 {
     char **all = malloc(sizeof(char *) * 2);
 

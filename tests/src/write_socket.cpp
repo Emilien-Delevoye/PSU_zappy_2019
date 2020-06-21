@@ -28,6 +28,7 @@ TEST(write_socket, write_socket)
     std::string out[2];
 
     memset(&data, 0, sizeof(data_server_t));
+    data.params.egg_r_c = new unsigned short[4]{0, 0, 0, 0};
     setup_write_socket(&data);
     client_validation(&data, data.l_waiting.first, 1);
     test_get_max_fd(&data);

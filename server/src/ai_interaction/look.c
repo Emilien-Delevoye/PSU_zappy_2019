@@ -33,19 +33,19 @@ static void str_to_list_write(char str[len_str], client_t *cli)
     add_to_write_list(cli, str);
 }
 
-static void map_move(map_t *start, char *str, int a)
+static void map_move(map_t *start, char *str, int a, int orientation)
 {
     map_t *current = start;
 
     for (int b = 0; b < a; ++b)
-        current = current->top;
+        current = get_direction1(current, orientation);
     for (int b = a; b > 0; --b)
-        current = current->left;
+        current = get_direction2(current, orientation);
     for (int b = (a * 2 + 1); b > 0; --b) {
         if (a != 0)
             strcat(str, ",");
         read_tile(str, current);
-        current = current->right;
+        current = get_direction3(current, orientation);
     }
 }
 
@@ -57,10 +57,10 @@ void look(data_server_t *data)
 
     memset(str, 0, len_str);
     str[0] = '[';
-    for (int a = 0; a <= (cli->drone.lvl + 1); ++a) {
+    for (int a = 0; a <= cli->drone.lvl; ++a) {
         if (strlen(str) > (len_str - 96))
             break;
-        map_move(start, str, a);
+        map_move(start, str, a, cli->drone.orientation);
     }
     str_to_list_write(str, cli);
 }

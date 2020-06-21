@@ -29,12 +29,12 @@ void write_for_broadcast(client_t *client, char *text, int tile)
 
 char *get_broadcast_arg(char *str)
 {
-    char *tmp = malloc(sizeof(char) * strlen(str) - 9 + 1);
+    char *tmp = malloc(sizeof(char) * strlen(str) - 9);
 
-    memset(tmp, 0, sizeof(char) * strlen(str) - 9 + 1);
+    memset(tmp, 0, sizeof(char) * strlen(str) - 9);
     for (int i = 9; str[i]; ++i) {
         if (i != 9)
-            tmp[i - 9] = str[i];
+            tmp[i - 10] = str[i];
     }
     return tmp;
 }
@@ -46,16 +46,18 @@ void search_tile(data_server_t *data, client_t *client, int x, int y)
     if (x > 0) {
         search_right(client, str, x, y);
     } else if (x == 0) {
-        search_vertical(client, str, y);
+        search_horizontal(client, str, y);
     } else {
         search_left(client, str, x, y);
     }
+    free(str);
 }
 
 int get_fastest_way(data_server_t *data, client_t *tmp, int i)
 {
     int x = (int)(data->cli_work->cli->drone.tile->coord[i] -
         tmp->drone.tile->coord[i]);
+
     if (abs(x) > data->params.width / 2) {
         if (data->cli_work->cli->drone.tile->coord[i] <
         (unsigned)data->params.width / 2)
@@ -75,8 +77,11 @@ void broadcast(data_server_t *data)
 
     pbc_command(data->l_connected.first, data);
     for (client_t *tmp = data->l_connected.first; tmp; tmp = tmp->next) {
-        x = get_fastest_way(data, tmp, 0);
-        y = get_fastest_way(data, tmp, 1);
-        search_tile(data, tmp, x, y);
+        if (tmp != data->cli_work->cli) {
+            x = get_fastest_way(data, tmp, 0);
+            y = get_fastest_way(data, tmp, 1);
+            search_tile(data, tmp, x, y);
+        }
     }
+    add_to_write_list(data->cli_work->cli, "ok\n");
 }

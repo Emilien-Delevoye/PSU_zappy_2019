@@ -1,0 +1,27 @@
+#!/usr/bin/env python3
+
+'''
+This program is useful to test the resistance of the Zappy server.
+Moreover, it allows us to test our AI.
+'''
+
+from sys import argv
+import os
+
+def loadingTest(teamName, numberOfClients, port):
+    while (numberOfClients != 0):
+        os.system("../../ai/main.py -p {0} -n {1} &".format(port, teamName))
+        numberOfClients = numberOfClients - 1
+
+def main():
+    if (len(argv) != 4):
+        print("Invalid number of arguments. Please submit team's name, clients number and port.")
+    else:
+        teamName = argv[1]
+        numberOfClients = argv[2]
+        port = argv[3]
+        loadingTest(teamName, numberOfClients, port)
+
+
+if __name__ == "__main__":
+    main()

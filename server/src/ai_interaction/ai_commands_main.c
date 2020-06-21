@@ -30,9 +30,12 @@ void read_new_cmd(data_server_t *data, client_t *cl, struct timeval cu_time)
     short cmd_nb;
 
     for (short a = 0; cmd[a].c; ++a) {
-        if (strncmp(cmd[a].c, cl->cmd_queue->command, strlen(cmd[a].c)) == 0) {
+        if (strncmp(cmd[a].c, cl->cmd_queue->command,
+            strlen(cmd[a].c)) == 0) {
             valid_cmd = true;
             cmd_nb = a;
+            if (cmd_nb == 11)
+                incantation_before(cl, data);
             break;
         }
     }

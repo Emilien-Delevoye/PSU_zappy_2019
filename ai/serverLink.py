@@ -4,7 +4,7 @@ from threading import Thread
 import select
 import sys
 from enum import Enum
-from utils import dPrint
+from ai.utils import dPrint, Colors
 from termcolor import colored
 
 
@@ -35,12 +35,17 @@ class ServerLink:
         self.activeConnection = False
         self.buffers = {"read": str(), "write": bytes()}
         self.serverMsg = None
-        self.debug_ = True
+        self.debug_ = False
+        self.stopM = False
+        self.stopT = False
 
     def readWrite(self):
         while self.thread_running is True:
             read_sckt = [self.socket]
             write_sckt = []
+            while self.stopM is True:
+                self.stopT = True
+            self.stopT = False
             if len(self.buffers["write"]) != 0:
                 write_sckt.append(self.socket)
             readable, writable, useless = select.select(read_sckt, write_sckt, [], 0)
@@ -52,9 +57,13 @@ class ServerLink:
                 self.buffers["read"] += buf
             if len(writable) != 0 and len(self.buffers["write"]) != 0:
                 tmp = self.buffers["write"]
-                dPrint(self.debug_, colored("send \"" + str(tmp) + "\" to server", "green"))
-                writable[0].send(bytes(tmp))
-                self.buffers["write"] = self.buffers["write"][len(tmp):]
+                # dPrint(self.debug_, colored("tmp \"" + str(tmp) + "\"", "green"), tmp.find(b'\n'))
+                while tmp.find(b'\n') != -1:
+                    tmp2 = tmp[:tmp.find(b'\n') + 1]
+                    tmp = tmp[tmp.find(b'\n') + 1:]
+                    dPrint(self.debug_, colored("send \"" + str(tmp2) + "\" to server", "green"))
+                    writable[0].send(bytes(tmp2))
+                    self.buffers["write"] = self.buffers["write"][len(tmp2):]
 
     def connect(self):
         self.socket.connect((self.hostname, self.port))
@@ -71,17 +80,33 @@ class ServerLink:
         self.thread_running = True
         self.thread = Thread(target=self.readWrite)
         self.thread.start()
+        return int(coReturn.split('\n')[0]), int(coReturn.split('\n')[1].split(' ')[0]), int(coReturn.split('\n')[1].split(' ')[1])
 
     def write(self, string):
         data = bytes(string, 'utf-8')
         self.buffers["write"] += data
 
     def read(self):
-        if not len(self.buffers["read"]) > 0:
-            return None
+
         if self.buffers["read"].find('\n') == -1:
             return None
-        out, self.buffers["read"] = self.buffers["read"][:self.buffers["read"].find('\n')], self.buffers["read"][self.buffers["read"].find('\n') + 1:]
+
+        self.stopM = True
+
+        while not self.stopT:
+            pass
+        while not self.stopT:
+            pass
+        while not self.stopT:
+            pass
+
+        tmp = ''.join(self.buffers["read"])
+
+        out = tmp[:tmp.find('\n')]
+        self.buffers['read'] = self.buffers['read'][len(out) + 1:]
+
+        self.stopM = False
+
         return out if out != "" else None
 
     def disconnect(self):

@@ -14,6 +14,8 @@ static data_server_t generate_data()
 
     memset(&data, 0, sizeof(data));
     data.params.r_cli = new unsigned short[4];
+    data.params.egg_r_c = new unsigned short[4];
+    memset(data.params.egg_r_c, 0, sizeof(unsigned short[4]));
     data.params.r_cli[0] = 10;
     data.params.r_cli[1] = 10;
     data.params.r_cli[2] = 10;

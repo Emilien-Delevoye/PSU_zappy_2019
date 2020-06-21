@@ -34,6 +34,7 @@ TEST(close_clients, remove_a_cli_co)
     data_server_t data;
 
     memset(&data, 0, sizeof(data_server_t));
+    data.params.egg_r_c = new unsigned short[5]{0, 0, 0, 0, 0};
     for (int a = 0; a < 5; ++a)
         add_client_to_list(&data, 0);
     for (int a = 0; a < 5; ++a)
@@ -54,6 +55,7 @@ TEST(close_clients, close_clients)
     data_server_t data;
 
     memset(&data, 0, sizeof(data_server_t));
+    data.params.egg_r_c = new unsigned short[5]{0, 0, 0, 0, 0};
     add_client_to_list(&data, 0);
     add_client_to_list(&data, 0);
     add_client_to_list(&data, 0);

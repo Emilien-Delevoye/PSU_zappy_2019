@@ -13,7 +13,7 @@ void inventory(data_server_t *data)
     drone_t cur = data->cli_work->cli->drone;
 
     sprintf(str, "[linemate %d, sibur %d, deraumere %d, mendiane %d,"
-        "phiras %d, thystame %d, food %d\n", cur.inventory[LINEMATE],
+        "phiras %d, thystame %d, food %d]\n", cur.inventory[LINEMATE],
         cur.inventory[SIBUR], cur.inventory[DERAUMERE],
         cur.inventory[MENDIANE], cur.inventory[PHIRAS],
         cur.inventory[THYSTAME], cur.inventory[FOOD]);

@@ -2,17 +2,17 @@
 ** EPITECH PROJECT, 2020
 ** zappy_server
 ** File description:
-** File for the seg command
+** File for the eht command
 */
 
 #include "server.h"
 #include <string.h>
 
-void seg_command(data_server_t *data, char *team_name)
+void eht_command(int egg_id, data_server_t *data)
 {
-    char str[7 + strlen(team_name)];
+    char str[20];
 
     memset(str, 0, sizeof(str));
-    sprintf(str, "seg %s\n", team_name);
+    sprintf(str, "eht %d\n", egg_id);
     add_to_write_list(data->l_graphical.first, str);
 }

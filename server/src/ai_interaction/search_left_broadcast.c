@@ -51,7 +51,7 @@ void search_left(client_t *client, char *str, int x, int y)
     if (y > 0) {
         search_left_up(client, str, x, y);
     } else if (y == 0) {
-        search_horizontal(client, str, x);
+        search_vertical(client, str, x);
     } else {
         search_left_down(client, str, x, y);
     }
