@@ -306,14 +306,25 @@ public class GameScene : MonoBehaviour
                 } else if (args[0] == "pbc")
                 {
                     StartBroadcast();
+                } else if (args[0] == "plv")
+                {
+                    SetPlayerLevel(args);
                 }
-                Array.Clear(args, 0, args.Length);
             }
             if (NeedToTP())
                 SetPosition(_posToMoveX, _posToMoveY);
             else if (NeedToMove())
             {
                 Move();
+            }
+        }
+
+        public void SetPlayerLevel(string[] args)
+        {
+            SetLevel(int.Parse(args[2]));
+            if (_gameObject.GetInstanceID() == _characterSelected)
+            {
+                _levelHudCharacter.text = "Level: " + GetLevel().ToString();
             }
         }
 
@@ -921,6 +932,9 @@ public class GameScene : MonoBehaviour
 
     private bool end;
 
+    private LinkedList<string> waitingActions;
+    private bool actionInProgress;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -934,6 +948,8 @@ public class GameScene : MonoBehaviour
         map = new LinkedList<Tile>();
         elevations = new LinkedList<Elevation>();
         eggs = new Dictionary<int, Egg>();
+        waitingActions = new LinkedList<string>();
+        actionInProgress = false;
         end = false;
 
         GetTimeUnit();
@@ -946,7 +962,13 @@ public class GameScene : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        string[] args;
+
         ReceiveMessageFromServer();
+        if (waitingActions.Count > 0 && actionInProgress == false)
+        {
+
+        }
         foreach (KeyValuePair<int, Character> kvp in characters)
         {
             characters[kvp.Key].Update();
@@ -994,7 +1016,7 @@ public class GameScene : MonoBehaviour
             else if (arguments[0] == "pie")
                 EndIncantation(receiveMessage);
             else if (arguments[0] == "pdi")
-                DieOfPlayer();
+                DieOfPlayer(receiveMessage);
             else if (arguments[0] == "seg")
                 EndOfTheGame();
             else if (arguments[0] == "enw")
@@ -1031,6 +1053,7 @@ public class GameScene : MonoBehaviour
 
         if (arguments.Length >= 3)
         {
+            //characters[rank].AddNewAction(receiveMessage);
             rank = int.Parse(arguments[1]);
             characters[rank].SetLevel(int.Parse(arguments[2]));
             if (characters[rank].GetGameObjectInstanceID() == characterSelected)
@@ -1113,12 +1136,13 @@ public class GameScene : MonoBehaviour
         }
     }
 
-    public void DieOfPlayer()
+    public void DieOfPlayer(string receiveMessage)
     {
         if (arguments.Length >= 2)
         {
-            characters[int.Parse(arguments[1])].DestroyPlayer();
-            characters.Remove(int.Parse(arguments[1]));
+            characters[int.Parse(arguments[1])].AddNewAction(receiveMessage);
+            //characters[int.Parse(arguments[1])].DestroyPlayer();
+            //characters.Remove(int.Parse(arguments[1]));
         }
         else
         {
