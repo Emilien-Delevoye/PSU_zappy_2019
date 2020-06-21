@@ -130,9 +130,9 @@ class IA:
         self.maxFoodStage = 120
         self.foodStage_ = {self.maxFoodStage: "goHalfEat",  # FIXME ça doit dépendre de la durée d'un tour ou un truc comme ça ...
                            100: "goSlowEat",
-                           80: "goFastEat"}
+                           40 + max(x, y): "goFastEat"}
         self.foodStageForElev_ = {self.maxFoodStage: "goHalfEat",
-                                  80: "goSlowEat",
+                                  30 + max(x, y): "goSlowEat",
                                   20: "goFastEat"}
         self.updateFcts = {Command.Take: "updateTake",
                            Command.Inventory: "updateInv",
@@ -192,6 +192,7 @@ class IA:
     def emergency(self):
         if self.inventory_[GameObj.Food] <= 3:
             self.broadcast(' '.join([str(self.newNb()), "ALERT", str(self.id_)]))
+            dPrint(self.debugInv_, Colors.OKGREEN + "ALLLLLLLLLLLLLLLLLERRRRRRRRRTTT" + Colors.ENDC)
             for i in range(15):
                 self.lookAroundNow()
                 self.goFastEat()
@@ -341,12 +342,7 @@ class IA:
         self.waitForPlace()
         self.CSLink_.broadcast(msg)
         self.pendingRqt_ += [(Command.Broadcast, None)]
-        dPrint(self.debugInv_, Colors.BOLD + "Broadcast " + Colors.ENDC + msg)
-
-    def broadcastIP(self, msg):
-        self.CSLink_.broadcast(msg)
-        self.pendingRqt_ += [(Command.Broadcast, None)]
-        dPrint(self.debugInv_, Colors.BOLD + "Broadcast " + Colors.ENDC + msg)
+        dPrint(self.debugInv_ or self.debug_, Colors.BOLD + "Broadcast " + Colors.ENDC + msg)
 
     def inventory(self):
         self.waitForPlace()
@@ -644,7 +640,7 @@ class IA:
         if msg is None:
             return
 
-        if msg[0] == 'LEAD' and self.level_ == int(msg[1]) and self.inventory_[GameObj.Food] > 50:
+        if msg[0] == 'LEAD' and self.level_ == int(msg[1]) and self.inventory_[GameObj.Food] > 30 + max(self.mapSize[0], self.mapSize[1]):
             dPrint(self.debugInv_, colored("CO FOUND", "red"))
             self.leadID = int(msg[2])
             self.othIncNb_ = int(msg[3])
@@ -735,6 +731,7 @@ class IA:
 
         if msg[0] == 'CANCELALL' and int(msg[1]) == self.leadID and self.othIncNb_ == int(msg[2]):
             self.situation_ = "normalLife"
+            self.leadID = -1
             return
 
         if msg[0] == 'ALERT' and int(msg[1]) == self.leadID:
@@ -811,7 +808,11 @@ class IA:
         Puis on passe à la situation suivante
         [Gestion Des messages]
         """
-
+        if msg[0] == 'ALERT' and int(msg[1]) in list(self.sameLvlIDs_.keys()):
+            self.broadcast(' '.join([str(self.newNb()), 'CANCELALL', str(self.id_), str(self.myIncNb_)]))
+            self.sameLvlIDs_.clear()
+            self.situation_ = 'normalLife'
+            return
         pass
 
     def secureElevationSecondLeadMsg(self, dirC, msg):
@@ -819,18 +820,23 @@ class IA:
         On vérifie le bon fonctionnement de l'incantation
         [Gestion Des messages]
         """
-
+        if msg[0] == 'ALERT' and int(msg[1]) in list(self.sameLvlIDs_.keys()):
+            self.broadcast(' '.join([str(self.newNb()), 'CANCELALL', str(self.id_), str(self.myIncNb_)]))
+            self.sameLvlIDs_.clear()
+            self.situation_ = 'normalLife'
+            return
         pass
 
     """ IA MAIN RUN """
 
     def normalLife(self):
         dPrint(self.debugInv_, Colors.SMALL + "Normal Life" + Colors.ENDC, self.id_, self.leadID)
+        self.emergency()
         getattr(self, self.foodStage_[min([va if self.inventory_[GameObj.Food] < va else self.maxFoodStage for va, v in self.foodStage_.items()])])()
         self.getStones()
 
         # dPrint(self.debugInv_, self.eggCreated, self.places, self.first, self.inventory_[GameObj.Food])
-        if self.eggCreated is False and self.places < 8 and self.first is True and self.inventory_[GameObj.Food] > 40 and time.time() - self.startTime > 4:
+        if self.eggCreated is False and self.places < 8 and self.first is True and self.inventory_[GameObj.Food] > 30 and time.time() - self.startTime > 4:
             while self.places < 8:
                 self.fork()
                 self.forward()
@@ -842,7 +848,7 @@ class IA:
         self.countCoolDown -= 1
         # TODO Mettre le bordel dans les incantations des autres
 
-        if self.haveGoodAmountOfStones() and self.situation_ == 'normalLife' and self.inventory_[GameObj.Food] > 70 and self.countCoolDown <= 0:
+        if self.haveGoodAmountOfStones() and self.situation_ == 'normalLife' and self.inventory_[GameObj.Food] > 38 + max(self.mapSize[0], self.mapSize[1]) and self.countCoolDown <= 0:
             self.countLimit_ = self.limit_
             self.countCoolDown = self.coolDown
             self.countItersBeforeCancel = self.itersBeforeCancel
@@ -860,6 +866,7 @@ class IA:
         On attend de savoir si on doit se diriger vers une incantation ou si c'est cancel
         """
         dPrint(self.debugInv_, Colors.SMALL + "waitForGoNoLead" + Colors.ENDC, self.id_, self.leadID)
+        self.emergency()
 
         getattr(self, self.foodStage_[min([va if self.inventory_[GameObj.Food] < va else self.maxFoodStage for va, v in self.foodStage_.items()])])()
         self.getStones()
@@ -870,6 +877,7 @@ class IA:
         """
 
         dPrint(self.debugInv_, Colors.SMALL + "goToIncantationNoLead" + Colors.ENDC, self.id_, self.leadID)
+        self.emergency()
 
         # getattr(self, self.foodStageForElev_[min([va if self.inventory_[GameObj.Food] < va else self.maxFoodStage for va, v in self.foodStageForElev_.items()])])()
         self.goSlowEat()  # FIXME ?
@@ -894,6 +902,7 @@ class IA:
         / Je ne fais rien s'il n'y pas d'instructions (incantation en cours)
         """
         dPrint(self.debugInv_, Colors.SMALL + "waitForInstructions" + Colors.ENDC, self.id_, self.leadID)
+        self.emergency()
 
         pass  # FIXME
 
@@ -903,6 +912,7 @@ class IA:
         Si trop de temps est écoulé on retourne au cas 1
         """
         dPrint(self.debugInv_, Colors.SMALL + "waitForAnswersLead" + Colors.ENDC, self.id_, self.leadID)
+        self.emergency()
 
         getattr(self, self.foodStage_[min([va if self.inventory_[GameObj.Food] < va else self.maxFoodStage for va, v in self.foodStage_.items()])])()
 
@@ -940,6 +950,7 @@ class IA:
         On envoie la position régulièrement
         """
         dPrint(self.debugInv_, Colors.SMALL + "waitForOthersCmgLead" + Colors.ENDC, self.id_, self.leadID)
+        self.emergency()
 
         for i, j in self.sameLvlIDs_.items():
             if j[0] is False:
@@ -953,6 +964,7 @@ class IA:
         Puis on passe à la situation suivante
         """
         dPrint(self.debugInv_, Colors.SMALL + "setOrganizationLead" + Colors.ENDC, self.id_, self.leadID)
+        self.emergency()
 
         if self.placeIsReadyToElevLead() is False:
             dPrint(self.debugInv_, "Place is not ready")
@@ -978,6 +990,7 @@ class IA:
         On vérifie le bon fonctionnement de l'incantation
         """
         dPrint(self.debugInv_, Colors.SMALL + "secureElevationSecondLead" + Colors.ENDC, self.id_, self.leadID)
+        self.emergency()
 
         # Si un truc pop, on le prend, si un joueur est en trop on dégage tout TODO
         # Si c'est fini on revient au cas 1
