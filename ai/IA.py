@@ -11,12 +11,6 @@ import time
 
 # FIXME retirer les assert à la fin
 
-# TODO gérer si qqun attend une ia qui finnalement ne vient pas
-# TODO vérifier qu'on clear bien les ids qu'on a trouvé au bon moment
-# TODO considérer que tout peut fail si on se fait emmerder (A vérifier)
-
-# TODO Brouiller les communications des autres
-
 
 class GameObj(Enum):
     Empty = 1 << 0,
@@ -733,8 +727,11 @@ class IA:
             self.leadID = -1
             return
 
+        if msg[0] == 'SAFE' and int(msg[1]) == self.leadID and self.othIncNb_ == int(msg[2]) and int(msg[3]) == self.id_:
+            self.situation_ = "secureElevationSecondLead"
+            return
+
         if msg[0] == 'ALERT' and int(msg[1]) == self.leadID:
-            self.elevDir = -1
             self.leadID = -1
             self.situation_ = "normalLife"
             return
@@ -819,12 +816,16 @@ class IA:
         On vérifie le bon fonctionnement de l'incantation
         [Gestion Des messages]
         """
-        if msg[0] == 'ALERT' and int(msg[1]) in list(self.sameLvlIDs_.keys()):
-            self.broadcast(' '.join([str(self.newNb()), 'CANCELALL', str(self.id_), str(self.myIncNb_)]))
-            self.sameLvlIDs_.clear()
-            self.situation_ = 'normalLife'
+
+        if msg[0] == 'CANCELALL' and int(msg[1]) == self.leadID and self.othIncNb_ == int(msg[2]):
+            self.situation_ = "normalLife"
+            self.leadID = -1
             return
-        pass
+
+        if msg[0] == 'ALERT' and int(msg[1]) == self.leadID:
+            self.leadID = -1
+            self.situation_ = "normalLife"
+            return
 
     """ IA MAIN RUN """
 
@@ -843,7 +844,6 @@ class IA:
             self.eggCreated = True
 
         self.countCoolDown -= 1
-        # TODO Mettre le bordel dans les incantations des autres
 
         if self.haveGoodAmountOfStones() and self.situation_ == 'normalLife' and self.inventory_[GameObj.Food] > 38 + max(self.mapSize[0], self.mapSize[1]) and self.countCoolDown <= 0 and self.level_ < 8:
             self.countLimit_ = self.limit_
@@ -900,8 +900,6 @@ class IA:
         """
         dPrint(self.debugInv_, Colors.SMALL + "waitForInstructions" + Colors.ENDC, self.id_, self.leadID)
         self.emergency()
-
-        pass  # FIXME
 
     def waitForAnswersLead(self):
         """
@@ -977,8 +975,9 @@ class IA:
 
         if self.level_ > 1:
             pass  # Définir un second leader
-        self.lookAroundNow()
         dPrint(self.debugInv_, "INCANTATION PLACE", self.around_[self.currentPos_])
+        if self.level_ > 1:
+            self.broadcast(' '.join([self.newNb(), 'SAFE', str(self.id_), str(self.myIncNb_), str(list(self.sameLvlIDs_.keys())[0])]))
         self.incantation()
         self.updateDataFromServBlock((Command.Incantation, "End"))
 
@@ -989,9 +988,9 @@ class IA:
         dPrint(self.debugInv_, Colors.SMALL + "secureElevationSecondLead" + Colors.ENDC, self.id_, self.leadID)
         self.emergency()
 
-        # Si un truc pop, on le prend, si un joueur est en trop on dégage tout TODO
-        # Si c'est fini on revient au cas 1
-        pass
+        if self.placeIsReadyToElevLead() is False:
+            dPrint(self.debugInv_, "Try to fix place")
+            self.removeItemThatShouldntBeThereSecondLead()
 
     def run(self):
         self.inventory()
