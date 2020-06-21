@@ -39,6 +39,14 @@ void spawn_random_food(data_server_t *data, int value, client_t *cli)
     }
 }
 
+void take_bis(data_server_t *data, char *arg, client_t *cli, map_t *cur)
+{
+    add_to_write_list(cli, "ok\n");
+    sprintf(arg, "bct %d %d", cur->coord[0], cur->coord[1]);
+    bct_command(cli, data, my_str_to_word_array(arg));
+    pin_command(cli, data);
+}
+
 void take(data_server_t *data)
 {
     char arg[30] = {0};
@@ -53,10 +61,7 @@ void take(data_server_t *data)
             spawn_random_food(data, i, cli);
             cur->items[i] -= 1;
             cli->drone.inventory[i] += 1;
-            add_to_write_list(cli, "ok\n");
-            sprintf(arg, "bct %d %d", cur->coord[0], cur->coord[1]);
-            bct_command(cli, data, my_str_to_word_array(arg));
-            pin_command(cli, data);
+            take_bis(data, arg, cli, cur);
             free(str);
             return;
         }
