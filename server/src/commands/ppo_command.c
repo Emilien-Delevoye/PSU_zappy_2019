@@ -15,6 +15,6 @@ void ppo_command(client_t *cli, data_server_t *data)
     unsigned int o = cli->drone.orientation;
     char str[53] = {0};
 
-    sprintf(str, "ppo %d %d %d %d\n", n, y, x, o);
+    sprintf(str, "ppo %d %d %d %d\n", n, x, y, o);
     add_to_write_list(data->l_graphical.first, str);
 }

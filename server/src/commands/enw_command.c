@@ -17,6 +17,6 @@ void enw_command(client_t *cli, data_server_t *data, const int param[2])
     unsigned int y = cli->drone.tile->coord[1];
 
     memset(str, 0, sizeof(str));
-    sprintf(str, "enw %d %d %d %d\n", n, e, y, x);
+    sprintf(str, "enw %d %d %d %d\n", n, e, x, y);
     add_to_write_list(data->l_graphical.first, str);
 }
