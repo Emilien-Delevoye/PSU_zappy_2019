@@ -35,7 +35,7 @@ class ServerLink:
         self.activeConnection = False
         self.buffers = {"read": str(), "write": bytes()}
         self.serverMsg = None
-        self.debug_ = True
+        self.debug_ = False
         self.stopM = False
         self.stopT = False
 
