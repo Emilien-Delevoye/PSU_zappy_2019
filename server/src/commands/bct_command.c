@@ -15,19 +15,13 @@ void send_bct_info(data_server_t *data, char **arg, map_t *map, client_t *cli)
     char str[200] = {0};
 
     if (cli != data->l_graphical.first) {
-//        sprintf(str, "bct %d %s %s %d %d %d %d %d %d %d\n", cli->drone.id,
-//            arg[1], arg[2], map->items[0], map->items[1], map->items[2],
-//            map->items[3], map->items[4], map->items[5], map->items[6]);
         sprintf(str, "bct %d %s %s %d %d %d %d %d %d %d\n", cli->drone.id,
-            arg[1], arg[2], 1, 1, 1,
-            1, 1, 1, 1);
+            arg[1], arg[2], map->items[0], map->items[1], map->items[2],
+            map->items[3], map->items[4], map->items[5], map->items[6]);
     } else {
-//        sprintf(str, "bct %d %s %s %d %d %d %d %d %d %d\n", -1,
-//            arg[1], arg[2], map->items[0], map->items[1], map->items[2],
-//            map->items[3], map->items[4], map->items[5], map->items[6]);
         sprintf(str, "bct %d %s %s %d %d %d %d %d %d %d\n", -1,
-            arg[1], arg[2], 0, 0, 0,
-            0, 0, 0, 0);
+            arg[1], arg[2], map->items[0], map->items[1], map->items[2],
+            map->items[3], map->items[4], map->items[5], map->items[6]);
     }
     add_to_write_list(data->l_graphical.first, str);
 }
