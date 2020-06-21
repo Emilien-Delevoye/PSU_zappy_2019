@@ -179,3 +179,25 @@ TEST(sgt_command, classic_test)
     EXPECT_EQ(std::string(cli.list_msg->to_write),
         "sgt 40\n");
 }
+
+TEST(tna_command, classic_test)
+{
+    data_server_t data{};
+    client_t cli{};
+
+    data.l_graphical.first = new client_t;
+    memset(data.l_graphical.first, 0, sizeof(client_t));
+    memset(&cli, 0, sizeof(client_t));
+    cli.drone.tile = new map_t;
+    cli.drone.tile->coord[0] = 0;
+    cli.drone.tile->coord[1] = 0;
+    cli.drone.id = 3;
+    cli.drone.orientation = 3;
+    data.params.freq = 40;
+    data.params.team_names = new char *[2];
+    data.params.team_names[0] = strdup("Team1");
+    data.params.team_names[1] = nullptr;
+    tna_command(&cli, &data, nullptr);
+    EXPECT_EQ(std::string(cli.list_msg->to_write),
+        "tna Team1\n");
+}
