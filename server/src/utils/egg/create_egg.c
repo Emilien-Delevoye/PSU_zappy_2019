@@ -16,6 +16,6 @@ void create_egg(data_server_t *data, client_t *cli)
         return;
     new->next = NULL;
     new->team_id = cli->team_id;
-    new->egg_id = 0;
+    new->egg_id = init_id();
     (void)data;
 }
