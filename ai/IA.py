@@ -117,8 +117,8 @@ class IA:
         self.around_ = None
         self.currentPos_ = 0
         self.currentDir_ = Command.Forward
-        self.debug_ = False
-        self.debugInv_ = True
+        self.debug_ = True
+        self.debugInv_ = False
         self.reverse = True if randrange(1, 3) == 1 else False
         self.inventory_ = {GameObj.Food: 10,
                            GameObj.Linemate: 0,
@@ -342,12 +342,7 @@ class IA:
         self.waitForPlace()
         self.CSLink_.broadcast(msg)
         self.pendingRqt_ += [(Command.Broadcast, None)]
-        dPrint(self.debugInv_, Colors.BOLD + "Broadcast " + Colors.ENDC + msg)
-
-    def broadcastIP(self, msg):
-        self.CSLink_.broadcast(msg)
-        self.pendingRqt_ += [(Command.Broadcast, None)]
-        dPrint(self.debugInv_, Colors.BOLD + "Broadcast " + Colors.ENDC + msg)
+        dPrint(self.debugInv_ or self.debug_, Colors.BOLD + "Broadcast " + Colors.ENDC + msg)
 
     def inventory(self):
         self.waitForPlace()

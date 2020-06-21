@@ -4,7 +4,7 @@ from threading import Thread
 import select
 import sys
 from enum import Enum
-from ai.utils import dPrint
+from ai.utils import dPrint, Colors
 from termcolor import colored
 
 
@@ -35,7 +35,7 @@ class ServerLink:
         self.activeConnection = False
         self.buffers = {"read": str(), "write": bytes()}
         self.serverMsg = None
-        self.debug_ = False
+        self.debug_ = True
 
     def readWrite(self):
         while self.thread_running is True:
@@ -52,9 +52,13 @@ class ServerLink:
                 self.buffers["read"] += buf
             if len(writable) != 0 and len(self.buffers["write"]) != 0:
                 tmp = self.buffers["write"]
-                dPrint(self.debug_, colored("send \"" + str(tmp) + "\" to server", "green"))
-                writable[0].send(bytes(tmp))
-                self.buffers["write"] = self.buffers["write"][len(tmp):]
+                dPrint(self.debug_, colored("tmp \"" + str(tmp) + "\"", "green"), tmp.find(b'\n'))
+                while tmp.find(b'\n') != -1:
+                    tmp2 = tmp[:tmp.find(b'\n') + 1]
+                    tmp = tmp[tmp.find(b'\n') + 1:]
+                    dPrint(self.debug_, colored("send \"" + str(tmp2) + "\" to server", "green"))
+                    writable[0].send(bytes(tmp2))
+                    self.buffers["write"] = self.buffers["write"][len(tmp2):]
 
     def connect(self):
         self.socket.connect((self.hostname, self.port))
@@ -78,6 +82,8 @@ class ServerLink:
         self.buffers["write"] += data
 
     def read(self):
+        if len(self.buffers["read"]) > 0:
+            print(self.debug_, Colors.BOLD + "READ :[" + self.buffers["read"] + "]" + Colors.ENDC)
         if not len(self.buffers["read"]) > 0:
             return None
         if self.buffers["read"].find('\n') == -1:
