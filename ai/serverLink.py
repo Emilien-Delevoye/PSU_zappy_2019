@@ -82,7 +82,7 @@ class ServerLink:
         self.buffers["write"] += data
 
     def read(self):
-        tmp = self.buffers["read"]
+        tmp = ''.join(self.buffers["read"])
         if not len(tmp) > 0:
             return None
         if tmp.find('\n') == -1:
