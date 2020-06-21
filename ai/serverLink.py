@@ -82,11 +82,15 @@ class ServerLink:
         self.buffers["write"] += data
 
     def read(self):
-        if not len(self.buffers["read"]) > 0:
+        tmp = self.buffers["read"]
+        if not len(tmp) > 0:
             return None
-        if self.buffers["read"].find('\n') == -1:
+        if tmp.find('\n') == -1:
             return None
-        out, self.buffers["read"] = self.buffers["read"][:self.buffers["read"].find('\n')], self.buffers["read"][self.buffers["read"].find('\n') + 1:]
+
+        out = tmp[:tmp.find('\n')]
+        self.buffers['read'] = self.buffers['read'][len(out) + 1:]
+
         return out if out != "" else None
 
     def disconnect(self):
