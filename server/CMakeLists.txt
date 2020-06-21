@@ -80,4 +80,5 @@ add_executable(zappy_server
         src/commands/pin_command.c
         include/lib.h
         src/sockets/end_valid_client.c
-        src/utils/egg/create_egg.c)
+        src/utils/egg/create_egg.c
+        src/utils/egg/update_egg.c)
