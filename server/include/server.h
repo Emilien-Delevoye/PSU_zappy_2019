@@ -125,6 +125,10 @@ typedef struct data_server_s {
     struct list_client_s l_connected;
     struct list_client_s l_graphical;
 
+    //Egg structures
+    list_egg_t *egg_waiting;
+
+
     //Map pointer :
     map_t *bottom_left;
 

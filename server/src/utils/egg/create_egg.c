@@ -23,6 +23,20 @@ static void calc_egg_time(data_server_t *d, struct timeval tv,
     tv_out->tv_sec += seconds;
 }
 
+void add_to_end_egg_list(data_server_t *data, list_egg_t *new)
+{
+    if (!data->egg_waiting) {
+        data->egg_waiting = new;
+        return;
+    }
+    for (list_egg_t *cur = data->egg_waiting; cur; cur = cur->next) {
+        if (!cur->next) {
+            cur->next = new;
+            return;
+        }
+    }
+}
+
 void create_egg(data_server_t *data, client_t *cli)
 {
     list_egg_t *new = malloc(sizeof(list_egg_t));
@@ -33,5 +47,5 @@ void create_egg(data_server_t *data, client_t *cli)
     new->team_id = cli->team_id;
     new->egg_id = init_id();
     calc_egg_time(data, data->tv, &new->tv);
-    (void)data;
+    add_to_end_egg_list(data, new);
 }
