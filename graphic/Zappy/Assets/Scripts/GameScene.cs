@@ -340,7 +340,6 @@ public class GameScene : MonoBehaviour
         public void CreateNewEgg(string[] args)
         {
             _eggs.Add(int.Parse(args[2]), new Egg(_egg, int.Parse(args[3]), int.Parse(args[4])));
-
         }
 
         public void DeathOfPlayer(string[] args)
@@ -349,7 +348,7 @@ public class GameScene : MonoBehaviour
             _playerIsDead = true;
         }
 
-        public bool playerIsDead()
+        public bool PlayerIsDead()
         {
             return _playerIsDead;
         }
@@ -461,9 +460,9 @@ public class GameScene : MonoBehaviour
 
         public void StartBroadcast()
         {
-            _shockWave.SetActive(false);
-            _shockWave = Instantiate(_shockWave, new Vector3(_posX + 0.5f, 0f, _posY + 0.5f), new Quaternion(0f, 0f, 0f, 0f));
-            _shockWave.SetActive(true);
+            if (_instantiateShockWave)
+                Destroy(_instantiateShockWave);
+            _instantiateShockWave = Instantiate(_shockWave, new Vector3(_posX + 0.5f, 0f, _posY + 0.5f), new Quaternion(0f, 0f, 0f, 0f));
             _timeBroadcast = Time.time;
         }
 
@@ -471,7 +470,8 @@ public class GameScene : MonoBehaviour
         {
             if (Time.time - _timeBroadcast >= 0.80)
             {
-                _shockWave.SetActive(false); ;
+                Destroy(_instantiateShockWave);
+                //_shockWave.SetActive(false);
             }
         }
 
@@ -535,6 +535,7 @@ public class GameScene : MonoBehaviour
         private GameObject _gameObject;
         private Animator _animator;
         private GameObject _shockWave;
+        private GameObject _instantiateShockWave;
         private float _timeBroadcast;
         private int _posX;
         private int _posY;
@@ -914,7 +915,6 @@ public class GameScene : MonoBehaviour
         private Quaternion _rotation;
         private GameObject _elev;
     }
-    //private LinkedList<Elevation> elevations;
 
     private class Egg
     {
@@ -934,7 +934,6 @@ public class GameScene : MonoBehaviour
         int _posX;
         int _posY;
     }
-    //private Dictionary<int, Egg> eggs;
 
     private bool end;
 
@@ -948,8 +947,6 @@ public class GameScene : MonoBehaviour
         mapPos.z = startPointZ;
         characters = new Dictionary<int, Character>();
         map = new LinkedList<Tile>();
-        //elevations = new LinkedList<Elevation>();
-        //eggs = new Dictionary<int, Egg>();
         end = false;
 
         GetTimeUnit();
@@ -969,7 +966,7 @@ public class GameScene : MonoBehaviour
         {
             characters[kvp.Key].Update();
             characters[kvp.Key].CheckEndBroadcast();
-            if (characters[kvp.Key].playerIsDead())
+            if (characters[kvp.Key].PlayerIsDead())
             {
                 saveKey = kvp.Key;
             }
@@ -1054,12 +1051,6 @@ public class GameScene : MonoBehaviour
         {
             rank = int.Parse(arguments[1]);
             characters[rank].AddNewAction(receiveMessage);
-            
-            //characters[rank].SetLevel(int.Parse(arguments[2]));
-            //if (characters[rank].GetGameObjectInstanceID() == characterSelected)
-            //{
-            //    levelHudCharacter.text = "Level: " + characters[rank].GetLevel().ToString();
-            //}
         }
         else
         {
@@ -1103,8 +1094,6 @@ public class GameScene : MonoBehaviour
                     characters[kvp.Key].AddNewAction(receiveMessage);
                 }
             }
-            //eggs[int.Parse(arguments[1])].DeleteEgg();
-            //eggs.Remove(int.Parse(arguments[1]));
         }
         else
         {
@@ -1116,7 +1105,6 @@ public class GameScene : MonoBehaviour
     {
         if (arguments.Length >= 4)
         {
-            //eggs.Add(int.Parse(arguments[1]), new Egg(egg, int.Parse(arguments[2]), int.Parse(arguments[3])));
             characters[int.Parse(arguments[1])].AddNewAction(receiveMessage);
         }
         else
@@ -1150,8 +1138,6 @@ public class GameScene : MonoBehaviour
         if (arguments.Length >= 2)
         {
             characters[int.Parse(arguments[1])].AddNewAction(receiveMessage);
-            //characters[int.Parse(arguments[1])].DestroyPlayer();
-            //characters.Remove(int.Parse(arguments[1]));
         }
         else
         {
@@ -1305,8 +1291,7 @@ public class GameScene : MonoBehaviour
         float diffY = 0f;
         float pourcY = 0f;
         float maxSize = 0f;
-        //if (mapSizeX <= mapSizeY)
-        //{
+
         for (int y = 0; y < mapSizeY; y++)
         {
             for (int x = 0; x < mapSizeX; x++)
@@ -1334,26 +1319,6 @@ public class GameScene : MonoBehaviour
             mapPos.z += 1f;
             mapPos.x = startPointZ;
         }
-        //}
-        //else
-        //{
-        //    for (int x = 0; x < mapSizeX; x++)
-        //    {
-        //        for (int y = 0; y < mapSizeY; y++)
-        //        {
-        //            if (maxSize < 1f)
-        //                maxSize = 1f;
-        //            client.SendMessageToServer("bct " + x + " " + y + "\n");
-        //            plane.transform.localScale = new Vector3(1f, maxSize, 1f);
-        //            mapPos.y = -plane.transform.localScale.y / 2;
-        //            Instantiate(plane, mapPos, rotation);
-        //            SetUpTile(x, y);
-        //            mapPos.z += 1f;
-        //        }
-        //        mapPos.x += 1f;
-        //        mapPos.z = startPointZ;
-        //    }
-        //}
     }
 
     private void SetUpTile(int x, int y)
