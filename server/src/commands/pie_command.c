@@ -10,11 +10,11 @@
 
 void pie_command(client_t *cli, data_server_t *data, char result)
 {
-    char str[35];
+    char str[60];
     unsigned int x = cli->drone.tile->coord[0];
     unsigned int y = cli->drone.tile->coord[1];
 
     memset(str, 0, sizeof(str));
-    sprintf(str, "pie %d %d %c\n", x, y, result);
+    sprintf(str, "pie %d %d %d %c\n", cli->drone.id, x, y, result);
     add_to_write_list(data->l_graphical.first, str);
 }
