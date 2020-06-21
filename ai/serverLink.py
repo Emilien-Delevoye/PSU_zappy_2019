@@ -40,30 +40,36 @@ class ServerLink:
         self.stopT = False
 
     def readWrite(self):
-        while self.thread_running is True:
-            read_sckt = [self.socket]
-            write_sckt = []
-            while self.stopM is True:
-                self.stopT = True
-            self.stopT = False
-            if len(self.buffers["write"]) != 0:
-                write_sckt.append(self.socket)
-            readable, writable, useless = select.select(read_sckt, write_sckt, [], 0)
-            if len(readable) != 0:
-                buf = str(readable[0].recv(1024), 'utf-8')
-                if len(buf) == 0:
-                    self.activeConnection = False
-                    exit(0)
-                self.buffers["read"] += buf
-            if len(writable) != 0 and len(self.buffers["write"]) != 0:
-                tmp = self.buffers["write"]
-                # dPrint(self.debug_, colored("tmp \"" + str(tmp) + "\"", "green"), tmp.find(b'\n'))
-                while tmp.find(b'\n') != -1:
-                    tmp2 = tmp[:tmp.find(b'\n') + 1]
-                    tmp = tmp[tmp.find(b'\n') + 1:]
-                    dPrint(self.debug_, colored("send \"" + str(tmp2) + "\" to server", "green"))
-                    writable[0].send(bytes(tmp2))
-                    self.buffers["write"] = self.buffers["write"][len(tmp2):]
+        try:
+            while self.thread_running is True:
+                read_sckt = [self.socket]
+                write_sckt = []
+                while self.stopM is True:
+                    self.stopT = True
+                self.stopT = False
+                if len(self.buffers["write"]) != 0:
+                    write_sckt.append(self.socket)
+                readable, writable, useless = select.select(read_sckt, write_sckt, [], 0)
+                if len(readable) != 0:
+                    buf = str(readable[0].recv(1024), 'utf-8')
+                    if len(buf) == 0:
+                        self.activeConnection = False
+                        exit(0)
+                    self.buffers["read"] += buf
+                if len(writable) != 0 and len(self.buffers["write"]) != 0:
+                    tmp = self.buffers["write"]
+                    # dPrint(self.debug_, colored("tmp \"" + str(tmp) + "\"", "green"), tmp.find(b'\n'))
+                    while tmp.find(b'\n') != -1:
+                        tmp2 = tmp[:tmp.find(b'\n') + 1]
+                        tmp = tmp[tmp.find(b'\n') + 1:]
+                        dPrint(self.debug_, colored("send \"" + str(tmp2) + "\" to server", "green"))
+                        writable[0].send(bytes(tmp2))
+                        self.buffers["write"] = self.buffers["write"][len(tmp2):]
+        except:
+            self.activeConnection = False
+            self.thread_running = False
+            exit(0)
+            pass
 
     def connect(self):
         self.socket.connect((self.hostname, self.port))
@@ -110,9 +116,12 @@ class ServerLink:
         return out if out != "" else None
 
     def disconnect(self):
-        self.thread_running = False
-        self.thread.join()
-        self.socket.close()
+        try:
+            self.thread_running = False
+            self.thread.join()
+            self.socket.close()
+        except:
+            exit(0)
 
     def isAlive(self):
         return self.activeConnection
