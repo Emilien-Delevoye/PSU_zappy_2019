@@ -25,7 +25,7 @@ void pdi_command(client_t *cli, data_server_t *data);
 void pbc_command(client_t *cli, data_server_t *data);
 void plv_command(client_t *cli, data_server_t *data);
 void pin_command(client_t *cli, data_server_t *data);
-void enw_command(client_t *cli, data_server_t *data);
+void enw_command(client_t *cli, data_server_t *data, const int param[2]);
 void eht_command(client_t *cli, data_server_t *data);
 
 #endif //PSU_ZAPPY_2019_COMMANDS_H

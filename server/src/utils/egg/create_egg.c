@@ -6,6 +6,7 @@
 */
 
 #include "server.h"
+#include "commands/commands.h"
 #include <stdlib.h>
 
 static void calc_egg_time(data_server_t *d, struct timeval tv,
@@ -40,6 +41,7 @@ void add_to_end_egg_list(data_server_t *data, list_egg_t *new)
 void create_egg(data_server_t *data, client_t *cli)
 {
     list_egg_t *new = malloc(sizeof(list_egg_t));
+    int pouet[2] = {0, 0};
 
     if (!new)
         return;
@@ -48,6 +50,9 @@ void create_egg(data_server_t *data, client_t *cli)
     new->egg_id = init_id();
     new->coord[0] = (int)cli->drone.tile->coord[0];
     new->coord[1] = (int)cli->drone.tile->coord[1];
+    pouet[0] = cli->drone.id;
+    pouet[1] = new->egg_id;
+    enw_command(cli, data, pouet);
     calc_egg_time(data, data->tv, &new->tv);
     add_to_end_egg_list(data, new);
 }
