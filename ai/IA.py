@@ -32,7 +32,7 @@ class GameObj(Enum):
     Thystame = 1 << 8,
 
 
-elevPlayers = {1: 1, 2: 2, 3: 2, 4: 4, 5: 4, 6: 6, 7: 6}
+elevPlayers = {1: 1, 2: 2, 3: 2, 4: 4, 5: 4, 6: 6, 7: 6, 8: 1}
 
 elevRqrmts = {
     1: {GameObj.Linemate: 1, GameObj.Deraumere: 0, GameObj.Sibur: 0, GameObj.Mendiane: 0, GameObj.Phiras: 0, GameObj.Thystame: 0},
@@ -41,7 +41,8 @@ elevRqrmts = {
     4: {GameObj.Linemate: 1, GameObj.Deraumere: 1, GameObj.Sibur: 2, GameObj.Mendiane: 0, GameObj.Phiras: 1, GameObj.Thystame: 0},
     5: {GameObj.Linemate: 1, GameObj.Deraumere: 2, GameObj.Sibur: 1, GameObj.Mendiane: 3, GameObj.Phiras: 0, GameObj.Thystame: 0},
     6: {GameObj.Linemate: 1, GameObj.Deraumere: 2, GameObj.Sibur: 3, GameObj.Mendiane: 0, GameObj.Phiras: 1, GameObj.Thystame: 0},
-    7: {GameObj.Linemate: 2, GameObj.Deraumere: 2, GameObj.Sibur: 2, GameObj.Mendiane: 2, GameObj.Phiras: 2, GameObj.Thystame: 1}
+    7: {GameObj.Linemate: 2, GameObj.Deraumere: 2, GameObj.Sibur: 2, GameObj.Mendiane: 2, GameObj.Phiras: 2, GameObj.Thystame: 1},
+    8: {GameObj.Linemate: 0, GameObj.Deraumere: 0, GameObj.Sibur: 0, GameObj.Mendiane: 0, GameObj.Phiras: 0, GameObj.Thystame: 0}
 }
 
 keys = [i for i in range(1, 8)]
@@ -640,7 +641,7 @@ class IA:
         if msg is None:
             return
 
-        if msg[0] == 'LEAD' and self.level_ == int(msg[1]) and self.inventory_[GameObj.Food] > 30 + max(self.mapSize[0], self.mapSize[1]):
+        if msg[0] == 'LEAD' and self.level_ == int(msg[1]) and self.inventory_[GameObj.Food] > 30 + max(self.mapSize[0], self.mapSize[1]) and self.level_ < 8:
             dPrint(self.debugInv_, colored("CO FOUND", "red"))
             self.leadID = int(msg[2])
             self.othIncNb_ = int(msg[3])
@@ -848,7 +849,7 @@ class IA:
         self.countCoolDown -= 1
         # TODO Mettre le bordel dans les incantations des autres
 
-        if self.haveGoodAmountOfStones() and self.situation_ == 'normalLife' and self.inventory_[GameObj.Food] > 38 + max(self.mapSize[0], self.mapSize[1]) and self.countCoolDown <= 0:
+        if self.haveGoodAmountOfStones() and self.situation_ == 'normalLife' and self.inventory_[GameObj.Food] > 38 + max(self.mapSize[0], self.mapSize[1]) and self.countCoolDown <= 0 and self.level_ < 8:
             self.countLimit_ = self.limit_
             self.countCoolDown = self.coolDown
             self.countItersBeforeCancel = self.itersBeforeCancel

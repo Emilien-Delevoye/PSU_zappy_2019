@@ -9,7 +9,7 @@
 
 void ppo_command(client_t *cli, data_server_t *data)
 {
-    int ori[4] = {4, 3, 2, 1};
+    int ori[4] = {2, 1, 4, 3};
     int n = cli->drone.id;
     unsigned int x = cli->drone.tile->coord[0];
     unsigned int y = cli->drone.tile->coord[1];
