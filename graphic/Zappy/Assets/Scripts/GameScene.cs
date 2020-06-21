@@ -139,7 +139,7 @@ public class GameScene : MonoBehaviour
         {
             _posX = posX;
             _posY = posY;
-            _gameObject.transform.position = new Vector3(_posX, 0, _posY);
+            _gameObject.transform.position = new Vector3(UnityEngine.Random.Range(posX + 0.2f, posX + 0.8f), 0, UnityEngine.Random.Range(posY + 0.2f, posY + 0.8f));
         }
 
         public void SetPointToMove(int posX, int posY)
@@ -214,40 +214,38 @@ public class GameScene : MonoBehaviour
             {
                 _posX = _posToMoveX;
                 posXReached = true;
-                SetPosition(_posToMoveX, _posToMoveY);
+                if (_timeUnit >= 20)
+                {
+                    SetPosition(_posToMoveX, _posToMoveY);
+                }
             }
             else if (_posX < _posToMoveX && _gameObject.transform.position.x - 0.25f >= _posToMoveX)
             {
                 _posX = _posToMoveX;
                 posXReached = true;
-                SetPosition(_posToMoveX, _posToMoveY);
+                if (_timeUnit >= 20)
+                {
+                    SetPosition(_posToMoveX, _posToMoveY);
+                }
             }
             if (_posY > _posToMoveY && _gameObject.transform.position.z - 0.75 <= _posToMoveY)
             {
                 _posY = _posToMoveY;
                 posYReached = true;
-                SetPosition(_posToMoveX, _posToMoveY);
-
+                if (_timeUnit >= 20)
+                {
+                    SetPosition(_posToMoveX, _posToMoveY);
+                }
             }
             if (_posY < _posToMoveY && _gameObject.transform.position.z - 0.25f >= _posToMoveY)
             {
                 _posY = _posToMoveY;
                 posYReached = true;
-                SetPosition(_posToMoveX, _posToMoveY);
+                if (_timeUnit >= 20)
+                {
+                    SetPosition(_posToMoveX, _posToMoveY);
+                }
             }
-
-            //if (_gameObject.transform.position.x - 0.25f >= _posToMoveX && _gameObject.transform.position.x - 0.75 <= _posToMoveX)
-            //{
-            //    _posX = _posToMoveX;
-            //    //Debug.Log("Pos X Reached");
-            //    posXReached = true;
-            //}
-            //if (_gameObject.transform.position.z - 0.25f >= _posToMoveY && _gameObject.transform.position.z - 0.75 <= _posToMoveY)
-            //{
-            //    _posY = _posToMoveY;
-            //    //Debug.Log("Pos Y Reached");
-            //    posXReached = true;
-            //}
             if (posXReached == true && posYReached == true)
                 _actionInProgress = false;
         }
@@ -265,7 +263,7 @@ public class GameScene : MonoBehaviour
             //Debug.Log(_waitingActions.Count);
             if (_waitingActions.Count > 0 && _actionInProgress == false)
             {
-                Debug.Log("Action in progress: " + _waitingActions.First.Value);
+                //Debug.Log("Action in progress: " + _waitingActions.First.Value);
                 args = _waitingActions.First.Value.Split(' ');
                 _waitingActions.RemoveFirst();
 
@@ -325,8 +323,7 @@ public class GameScene : MonoBehaviour
 
         public void StartBroadcast()
         {
-            if (_shockWave)
-                Destroy(_shockWave);
+            _shockWave.SetActive(false);
             _shockWave = Instantiate(_shockWave, new Vector3(_posX + 0.5f, 0f, _posY + 0.5f), new Quaternion(0f, 0f, 0f, 0f));
             _shockWave.SetActive(true);
             _timeBroadcast = Time.time;
@@ -754,28 +751,28 @@ public class GameScene : MonoBehaviour
 
     private class Elevation
     {
-        public Elevation(GameObject elev, int mapX, int mapY)
+        public Elevation(GameObject elev, int posX, int posY)
         {
             _elev = elev;
-            _posX = mapX;
-            _posY = mapY;
+            _posX = posX;
+            _posY = posY;
             _rotation = new Quaternion(0f, 0f, 0f, 0f);
-            _spawnPos.x = mapX + 0.5f;
-            _spawnPos.z = mapY + 0.5f;
+            _spawnPos.x = posX + 0.5f;
+            _spawnPos.z = posY + 0.5f;
             _spawnPos.y = 0.1f;
             _elev = Instantiate(elev, _spawnPos, _rotation);
         }
 
-        public bool GoodElevationSelected(int mapX, int mapY)
+        public bool GoodElevationSelected(int posX, int posY)
         {
-            if (_posX == mapX && _posY == mapY)
+            if (_posX == posX && _posY == posY)
                 return true;
             return false;
         }
 
         public void DestroyElevation()
         {
-            Destroy(_elev, 1f);
+            Destroy(_elev);
         }
 
         private int _posX;
@@ -1093,19 +1090,19 @@ public class GameScene : MonoBehaviour
     public void StartIncantation()
     {
         if (arguments.Length >= 5) {
-            if (arguments[3] == "2")
+            if (arguments[3] == "1")
                 elevations.AddLast(new Elevation(elevation2, int.Parse(arguments[1]), int.Parse(arguments[2])));
-            else if (arguments[3] == "3")
+            else if (arguments[3] == "2")
                 elevations.AddLast(new Elevation(elevation3, int.Parse(arguments[1]), int.Parse(arguments[2])));
-            else if (arguments[3] == "4")
+            else if (arguments[3] == "3")
                 elevations.AddLast(new Elevation(elevation4, int.Parse(arguments[1]), int.Parse(arguments[2])));
-            else if (arguments[3] == "5")
+            else if (arguments[3] == "4")
                 elevations.AddLast(new Elevation(elevation5, int.Parse(arguments[1]), int.Parse(arguments[2])));
-            else if (arguments[3] == "6")
+            else if (arguments[3] == "5")
                 elevations.AddLast(new Elevation(elevation6, int.Parse(arguments[1]), int.Parse(arguments[2])));
-            else if (arguments[3] == "7")
+            else if (arguments[3] == "6")
                 elevations.AddLast(new Elevation(elevation7, int.Parse(arguments[1]), int.Parse(arguments[2])));
-            else if (arguments[3] == "8")
+            else if (arguments[3] == "7")
                 elevations.AddLast(new Elevation(elevation8, int.Parse(arguments[1]), int.Parse(arguments[2])));
         }
         else
