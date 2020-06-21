@@ -165,7 +165,7 @@ class IA:
         self.myIncNb_ = 0
         self.sameLvlIDs_ = {}  # On stocke l'id (int), s'il est là (bool), son inventaire (dict)
         self.itersBeforeCancel = 30  # FIXME ça doit dépendre d'autre chose comme la vitesse de réponse de la première IA (ou bien y'en a pas besoin et tout est reset quand on recommence)
-        self.limit_ = 25
+        self.limit_ = 18
         self.countLimit_ = self.limit_
         self.countItersBeforeCancel = self.itersBeforeCancel
 
