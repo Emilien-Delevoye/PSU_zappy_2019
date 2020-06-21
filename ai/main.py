@@ -41,7 +41,6 @@ def main():
 
     ia = IA(CSLink, name, id, x, y)
     while CSLink.isAlive() and ia.run():
-        # print("AI is Alive", flush=True) # FIXME
         pass
 
     print("Exit.", flush=True)

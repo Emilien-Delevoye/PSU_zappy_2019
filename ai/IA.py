@@ -249,15 +249,20 @@ class IA:
     def updateDataFromServ(self):
         if self.CSLink_.isAlive() is False:
             self.CSLink_.disconnect()
-            print("Disconnected.", flush=True)
             exit(0)
         while self.CSLink_.msgReceived() is True:
+            if self.CSLink_.isAlive() is False:
+                self.CSLink_.disconnect()
+                exit(0)
             self.rcvDead()
             if self.rcvBroadCast() is True or self.rcvEject() is True:
                 continue
             getattr(self, self.updateFcts[self.pendingRqt_[0][0]])(self.CSLink_.getServerMsg(), self.pendingRqt_[0][1])
             self.pendingRqt_ = self.pendingRqt_[1:]
             self.CSLink_.clearServerMsg()
+        if self.CSLink_.isAlive() is False:
+            self.CSLink_.disconnect()
+            exit(0)
 
     def updateDataFromServForce(self):
         while len(self.pendingRqt_) > 0:
