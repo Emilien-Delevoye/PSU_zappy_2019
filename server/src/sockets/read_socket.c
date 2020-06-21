@@ -66,10 +66,6 @@ void read_buffer(client_t *cli)
     char tmp_buffer[READ_SIZE] = {0};
     ssize_t len = read(cli->fd, &tmp_buffer, (sizeof(tmp_buffer) - 1));
 
-    while (len == (sizeof(tmp_buffer) - 1)) {
-        cli->buffer = my_strcat(cli->buffer, tmp_buffer);
-        len = read(cli->fd, &tmp_buffer, (sizeof(tmp_buffer) - 1));
-    }
     if (len == 0) {
         cli->to_close = true;
         return;
