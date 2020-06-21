@@ -60,4 +60,6 @@ void eject(data_server_t *data)
     }
     if (counter == 0)
         add_to_write_list(cli, "ko\n");
+    else
+        add_to_write_list(cli, "ok\n");
 }
