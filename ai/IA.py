@@ -9,8 +9,6 @@ from ai.serverLink import Command
 from ai.utils import dPrint, Colors
 import time
 
-# TODO gérer les ejects
-
 # FIXME retirer les assert à la fin
 
 # TODO gérer si qqun attend une ia qui finnalement ne vient pas
@@ -164,7 +162,7 @@ class IA:
         """ LEAD """
         self.myIncNb_ = 0
         self.sameLvlIDs_ = {}  # On stocke l'id (int), s'il est là (bool), son inventaire (dict)
-        self.itersBeforeCancel = 30  # FIXME ça doit dépendre d'autre chose comme la vitesse de réponse de la première IA (ou bien y'en a pas besoin et tout est reset quand on recommence)
+        self.itersBeforeCancel = 30
         self.limit_ = 18
         self.countLimit_ = self.limit_
         self.countItersBeforeCancel = self.itersBeforeCancel
@@ -422,17 +420,17 @@ class IA:
 
     def connectNbr(self):
         pass
-        # self.waitForPlace()
-        # self.CSLink_.connectNbr()
-        # self.pendingRqt_ += [(Command.Connect_nbr, None)]
-        # dPrint(self.debugInv_, Colors.UNDERLINE + "Connect nbr" + Colors.ENDC)
+        self.waitForPlace()
+        self.CSLink_.connectNbr()
+        self.pendingRqt_ += [(Command.Connect_nbr, None)]
+        dPrint(self.debugInv_, Colors.UNDERLINE + "Connect nbr" + Colors.ENDC)
 
     def fork(self):
         pass
-        # self.waitForPlace()
-        # self.CSLink_.fork()
-        # self.pendingRqt_ += [(Command.Fork, None)]
-        # dPrint(self.debugInv_, Colors.UNDERLINE + "Fork" + Colors.ENDC)
+        self.waitForPlace()
+        self.CSLink_.fork()
+        self.pendingRqt_ += [(Command.Fork, None)]
+        dPrint(self.debugInv_, Colors.UNDERLINE + "Fork" + Colors.ENDC)
 
     """
         IA
