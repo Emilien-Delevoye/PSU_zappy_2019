@@ -16,8 +16,9 @@ void ppo_command(client_t *cli, data_server_t *data)
     unsigned int o = cli->drone.orientation;
     char str[53] = {0};
 
-    if (o > 4)
-        o -= 4;
+//    if (o > 4)
+//        o -= 4;
+    printf("orientation = %d\n", o);
     sprintf(str, "ppo %d %d %d %d\n", n, x, y, o);
     add_to_write_list(data->l_graphical.first, str);
 }

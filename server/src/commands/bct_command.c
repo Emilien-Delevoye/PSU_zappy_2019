@@ -8,7 +8,6 @@
 #include "utils/write_list.h"
 #include "server.h"
 #include <stdlib.h>
-#include <string.h>
 
 void send_bct_info(data_server_t *data, char **arg, map_t *map, client_t *cli)
 {
