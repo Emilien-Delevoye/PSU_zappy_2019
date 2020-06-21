@@ -218,7 +218,7 @@ class IA:
 
     def rcvDead(self):
         if self.CSLink_.isDead() is True:
-            dPrint(self.debug_ or self.debugInv_, Colors.WARNING + "Dead." + Colors.ENDC)
+            print('Dead.', flush=True)
             self.CSLink_.disconnect()
             exit(0)
 
@@ -248,6 +248,8 @@ class IA:
 
     def updateDataFromServ(self):
         if self.CSLink_.isAlive() is False:
+            self.CSLink_.disconnect()
+            print("Disconnected.", flush=True)
             exit(0)
         while self.CSLink_.msgReceived() is True:
             self.rcvDead()

@@ -51,5 +51,6 @@ def main():
 if __name__ == "__main__":
     try:
         main()
+        exit(0)
     except:
         exit(84)
